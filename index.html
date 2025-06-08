@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgenticLearn - Portal Dosen</title>
+
+    <!-- Import Shared CSS -->
+    <link rel="stylesheet" href="https://YOUR_USERNAME.github.io/agenticlearn-shared/css/green-components.css">
+
+    <style>
+        :root { 
+            --primary: #2563eb; --success: #059669; --warning: #f59e0b; --error: #dc2626;
+            --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-800: #1f2937; 
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
+            background: var(--gray-50); color: var(--gray-800);
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 1rem; }
+        .card { 
+            background: white; border-radius: 8px; padding: 1.5rem; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12); margin-bottom: 1rem; 
+        }
+        .btn { 
+            padding: 0.5rem 1rem; border: none; border-radius: 8px; cursor: pointer; 
+            background: var(--primary); color: white; margin: 0.25rem; transition: all 0.2s;
+        }
+        .btn:hover { background: #3b82f6; }
+        .btn-success { background: var(--success); }
+        .btn-warning { background: var(--warning); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+        .metric-card { text-align: center; padding: 1rem; background: var(--gray-50); border-radius: 8px; }
+        .metric-value { font-size: 2rem; font-weight: bold; color: var(--primary); }
+        .metric-label { font-size: 0.875rem; color: #666; }
+        .student-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        .student-table th, .student-table td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--gray-100); }
+        .student-table th { background: var(--gray-50); font-weight: 600; }
+        .progress-mini { width: 100px; height: 6px; background: var(--gray-100); border-radius: 3px; overflow: hidden; }
+        .progress-mini-fill { height: 100%; background: var(--success); border-radius: 3px; }
+        .status-active { color: var(--success); font-weight: 500; }
+        .status-inactive { color: #666; }
+        @media (max-width: 768px) {
+            .container { padding: 0.5rem; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="card">
+            <h1>🌱 AgenticLearn - Portal Dosen</h1>
+            <p>Kelola pembelajaran adaptif dengan AI - <span id="educator-name">Memuat...</span></p>
+        </header>
+
+        <section class="card">
+            <h2>📊 Ringkasan Kelas</h2>
+            <div class="grid" id="class-stats">
+                <div class="metric-card">
+                    <div class="metric-value" id="total-students">-</div>
+                    <div class="metric-label">Total Mahasiswa</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="active-classes">-</div>
+                    <div class="metric-label">Kelas Aktif</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="avg-progress">-</div>
+                    <div class="metric-label">Rata-rata Progress</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="completion-rate">-</div>
+                    <div class="metric-label">Tingkat Penyelesaian</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>👥 Daftar Mahasiswa</h2>
+            <div style="margin-bottom: 1rem;">
+                <button class="btn btn-success" id="btn-export-progress">📊 Export Progress</button>
+                <button class="btn btn-warning" id="btn-send-reminder">📧 Kirim Reminder</button>
+                <button class="btn" id="btn-refresh-data">🔄 Refresh Data</button>
+            </div>
+            <div id="student-list" style="overflow-x: auto;">
+                <p>Memuat daftar mahasiswa...</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>🤖 AI Analytics & Insights</h2>
+            <div id="ai-insights">
+                <div class="grid">
+                    <div class="card" style="background: #eff6ff;">
+                        <h4>📈 Learning Patterns</h4>
+                        <p id="learning-patterns">Menganalisis pola pembelajaran...</p>
+                    </div>
+                    <div class="card" style="background: #f0fdf4;">
+                        <h4>⚠️ At-Risk Students</h4>
+                        <p id="at-risk-students">Identifikasi mahasiswa berisiko...</p>
+                    </div>
+                    <div class="card" style="background: #fefce8;">
+                        <h4>🎯 Recommendations</h4>
+                        <p id="ai-recommendations">Rekomendasi pembelajaran...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>⚡ Aksi Cepat</h2>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button class="btn" id="btn-create-assignment">📝 Buat Assignment</button>
+                <button class="btn" id="btn-schedule-class">📅 Jadwalkan Kelas</button>
+                <button class="btn" id="btn-view-analytics">📊 Lihat Analytics Detail</button>
+                <button class="btn" id="btn-manage-content">📚 Kelola Konten</button>
+                <button class="btn" id="btn-chat-ai">🤖 Konsultasi AI</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Green Computing Indicator -->
+    <div class="carbon-indicator" id="carbon-indicator">
+        🌱 0.000g CO2
+    </div>
+
+    <script type="module" src="./js/educator-portal.js"></script>
+</body>
+</html>
