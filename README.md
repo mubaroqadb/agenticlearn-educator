@@ -40,13 +40,6 @@ Portal dosen untuk mengelola pembelajaran dan analytics mahasiswa dengan JSCroot
 - Content management
 - AI chat assistant
 
-## 🔑 Demo Access
-
-Gunakan credentials berikut untuk testing:
-
-**Educator Login:**
-- Email: `educator@agenticlearn.id`
-- Password: `password123`
 
 **Login URL:** https://mubaroqadb.github.io/agenticlearn-auth/
 
