@@ -1,6 +1,6 @@
 // Educator Portal - JSCroot Implementation with Shared Components
-import { apiClient } from "https://YOUR_USERNAME.github.io/agenticlearn-shared/js/api-client.js";
-import { UIComponents } from "https://YOUR_USERNAME.github.io/agenticlearn-shared/js/ui-components.js";
+import { apiClient } from "https://mubaroqadb.github.io/agenticlearn-shared/js/api-client.js";
+import { UIComponents } from "https://mubaroqadb.github.io/agenticlearn-shared/js/ui-components.js";
 import { getCookie } from "https://cdn.jsdelivr.net/gh/jscroot/lib@0.0.4/cookie.js";
 import { setInner, onClick } from "https://cdn.jsdelivr.net/gh/jscroot/lib@0.0.4/element.js";
 import { redirect } from "https://cdn.jsdelivr.net/gh/jscroot/lib@0.0.4/url.js";
@@ -11,9 +11,7 @@ const API_BASE_URL = "https://agenticlearn-backend-production.up.railway.app/api
 // Get GitHub username for redirects
 const GITHUB_USERNAME = window.location.hostname.includes('github.io') 
     ? window.location.hostname.split('.')[0] 
-    : 'YOUR_USERNAME';
-
-// Use shared API client instead of custom apiRequest function
+    : 'mubaroqadb';
 
 async function initializeEducatorPortal() {
     const token = getCookie("login");
@@ -43,13 +41,11 @@ async function initializeEducatorPortal() {
         console.error("Failed to load educator portal:", error);
         setInner("educator-name", "Error loading data");
         UIComponents.showNotification("Failed to load educator portal", "error");
-        showDemoData();
     }
 }
 
 async function loadEducatorData() {
     try {
-        // For demo, we'll use mock data since the backend might not have full user management yet
         setInner("educator-name", "Dr. Sarah Educator");
     } catch (error) {
         console.error("Failed to load educator data:", error);
@@ -60,15 +56,12 @@ async function loadEducatorData() {
 async function loadClassData() {
     try {
         const classData = await apiClient.request("/educator/classes");
-
         setInner("total-students", classData.totalStudents || 45);
         setInner("active-classes", classData.activeClasses || 3);
         setInner("avg-progress", `${Math.round(classData.avgProgress || 72.5)}%`);
         setInner("completion-rate", `${Math.round(classData.completionRate || 68)}%`);
-
     } catch (error) {
         console.error("Failed to load class data:", error);
-        // Show demo data
         setInner("total-students", "45");
         setInner("active-classes", "3");
         setInner("avg-progress", "73%");
@@ -83,7 +76,6 @@ async function loadStudentList() {
         renderStudentTable(students);
     } catch (error) {
         console.error("Failed to load student list:", error);
-        // Show demo data
         renderDemoStudentTable();
         UIComponents.showNotification("Using demo data for student list", "info");
     }
@@ -127,118 +119,52 @@ function renderStudentTable(students) {
             </tbody>
         </table>
     `;
-    
     setInner("student-list", tableHTML);
 }
 
 function renderDemoStudentTable() {
     const demoStudents = [
-        {
-            id: "student-1",
-            name: "Andi Mahasiswa",
-            email: "andi@student.edu",
-            progress: 75,
-            status: "active",
-            lastActive: new Date().toISOString()
-        },
-        {
-            id: "student-2", 
-            name: "Sari Belajar",
-            email: "sari@student.edu",
-            progress: 45,
-            status: "active",
-            lastActive: new Date(Date.now() - 86400000).toISOString()
-        },
-        {
-            id: "student-3",
-            name: "Budi Cerdas", 
-            email: "budi@student.edu",
-            progress: 90,
-            status: "active",
-            lastActive: new Date().toISOString()
-        },
-        {
-            id: "student-4",
-            name: "Maya Rajin",
-            email: "maya@student.edu", 
-            progress: 25,
-            status: "inactive",
-            lastActive: new Date(Date.now() - 604800000).toISOString()
-        }
+        { id: "student-1", name: "Andi Mahasiswa", email: "andi@student.edu", progress: 75, status: "active", lastActive: new Date().toISOString() },
+        { id: "student-2", name: "Sari Belajar", email: "sari@student.edu", progress: 45, status: "active", lastActive: new Date(Date.now() - 86400000).toISOString() },
+        { id: "student-3", name: "Budi Cerdas", email: "budi@student.edu", progress: 90, status: "active", lastActive: new Date().toISOString() },
+        { id: "student-4", name: "Maya Rajin", email: "maya@student.edu", progress: 25, status: "inactive", lastActive: new Date(Date.now() - 604800000).toISOString() }
     ];
-    
     renderStudentTable(demoStudents);
 }
 
 async function loadAIInsights() {
     try {
-        // For demo purposes, show sample AI insights
         const insights = {
             learningPatterns: "🕒 Puncak aktivitas: 19:00-21:00 WIB. 📱 85% akses via mobile. 📊 Konten video paling engaging.",
             atRiskStudents: "⚠️ 3 mahasiswa berisiko: Maya Rajin (25% progress), perlu intervensi segera.",
-            recommendations: "💡 Tingkatkan konten interaktif. 🎯 Focus pada modul Analytics. 📞 Follow-up personal untuk yang tertinggal."
+            recommendations: "💡 Tingkatkan konten interaktif. �� Focus pada modul Analytics. 📞 Follow-up personal untuk yang tertinggal."
         };
-        
         setInner("learning-patterns", insights.learningPatterns);
         setInner("at-risk-students", insights.atRiskStudents);
         setInner("ai-recommendations", insights.recommendations);
-        
     } catch (error) {
         console.error("Failed to load AI insights:", error);
     }
 }
 
 function setupEventListeners() {
-    // Export Progress
-    onClick("btn-export-progress", () => {
-        exportStudentProgress();
-    });
-    
-    // Send Reminder
-    onClick("btn-send-reminder", () => {
-        sendReminder();
-    });
-    
-    // Refresh Data
-    onClick("btn-refresh-data", () => {
-        refreshData();
-    });
-    
-    // Create Assignment
-    onClick("btn-create-assignment", () => {
-        createAssignment();
-    });
-    
-    // Schedule Class
-    onClick("btn-schedule-class", () => {
-        scheduleClass();
-    });
-    
-    // View Analytics
-    onClick("btn-view-analytics", () => {
-        viewAnalytics();
-    });
-    
-    // Manage Content
-    onClick("btn-manage-content", () => {
-        manageContent();
-    });
-    
-    // Chat AI
-    onClick("btn-chat-ai", () => {
-        chatWithAI();
-    });
+    onClick("btn-export-progress", exportStudentProgress);
+    onClick("btn-send-reminder", sendReminder);
+    onClick("btn-refresh-data", refreshData);
+    onClick("btn-create-assignment", createAssignment);
+    onClick("btn-schedule-class", scheduleClass);
+    onClick("btn-view-analytics", viewAnalytics);
+    onClick("btn-manage-content", manageContent);
+    onClick("btn-chat-ai", chatWithAI);
 }
 
 function exportStudentProgress() {
-    // Generate CSV data
     const csvData = "Nama,Email,Progress,Status,Terakhir Aktif\n" +
         "Andi Mahasiswa,andi@student.edu,75%,Aktif," + new Date().toLocaleDateString() + "\n" +
         "Sari Belajar,sari@student.edu,45%,Aktif," + new Date().toLocaleDateString() + "\n" +
         "Budi Cerdas,budi@student.edu,90%,Aktif," + new Date().toLocaleDateString() + "\n" +
         "Maya Rajin,maya@student.edu,25%,Tidak Aktif," + new Date(Date.now() - 604800000).toLocaleDateString();
 
-    // Create download link
     const blob = new Blob([csvData], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -248,14 +174,11 @@ function exportStudentProgress() {
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);
-
     UIComponents.showNotification("📊 Progress report berhasil diexport!", "success");
 }
 
 function sendReminder() {
     UIComponents.showNotification("📧 Mengirim reminder ke mahasiswa yang belum aktif...", "info");
-
-    // Simulate sending reminder
     setTimeout(() => {
         UIComponents.showNotification("✅ Reminder berhasil dikirim ke 3 mahasiswa!", "success");
     }, 2000);
@@ -263,7 +186,6 @@ function sendReminder() {
 
 async function refreshData() {
     UIComponents.showNotification("🔄 Merefresh data...", "info");
-
     try {
         await loadClassData();
         await loadStudentList();
@@ -278,24 +200,14 @@ async function refreshData() {
 function createAssignment() {
     const title = prompt("📝 Judul Assignment:");
     const dueDate = prompt("📅 Tanggal Deadline (YYYY-MM-DD):");
-
     if (title && dueDate) {
         UIComponents.showNotification(`✅ Assignment "${title}" berhasil dibuat! Deadline: ${dueDate}`, "success");
-    }
-}
-
-function updateCarbonIndicator() {
-    const metrics = apiClient.getCarbonMetrics();
-    const indicator = document.getElementById("carbon-indicator");
-    if (indicator) {
-        indicator.textContent = `🌱 ${metrics.totalCarbon.toFixed(6)}g CO2`;
     }
 }
 
 function scheduleClass() {
     const topic = prompt("📚 Topik Kelas:");
     const date = prompt("📅 Tanggal & Waktu (YYYY-MM-DD HH:MM):");
-
     if (topic && date) {
         UIComponents.showNotification(`✅ Kelas "${topic}" berhasil dijadwalkan! Waktu: ${date}`, "success");
     }
@@ -303,17 +215,14 @@ function scheduleClass() {
 
 function viewAnalytics() {
     UIComponents.showNotification("📊 Membuka analytics detail...", "info");
-    // Would redirect to detailed analytics page
 }
 
 function manageContent() {
     UIComponents.showNotification("📚 Membuka content management...", "info");
-    // Would redirect to content management page
 }
 
 function chatWithAI() {
     const question = prompt("🤖 Tanyakan sesuatu kepada AI Assistant untuk Educator:");
-
     if (question) {
         UIComponents.showNotification(`🤖 AI Response: "Berdasarkan data kelas Anda, saya merekomendasikan untuk focus pada mahasiswa dengan progress <50%. Pertanyaan Anda tentang '${question}' sangat relevan untuk meningkatkan engagement."`, "info");
     }
@@ -321,48 +230,14 @@ function chatWithAI() {
 
 function viewStudentDetail(studentId) {
     UIComponents.showNotification(`👤 Membuka detail mahasiswa ID: ${studentId}`, "info");
-    // Would show detailed student analytics
 }
 
-function createAssignment() {
-    const title = prompt("📝 Judul Assignment:");
-    const dueDate = prompt("📅 Tanggal Deadline (YYYY-MM-DD):");
-
-    if (title && dueDate) {
-        alert(`✅ Assignment "${title}" berhasil dibuat!\nDeadline: ${dueDate}`);
+function updateCarbonIndicator() {
+    const metrics = apiClient.getCarbonMetrics();
+    const indicator = document.getElementById("carbon-indicator");
+    if (indicator) {
+        indicator.textContent = `�� ${metrics.totalCarbon.toFixed(6)}g CO2`;
     }
-}
-
-function scheduleClass() {
-    const topic = prompt("📚 Topik Kelas:");
-    const date = prompt("📅 Tanggal & Waktu (YYYY-MM-DD HH:MM):");
-
-    if (topic && date) {
-        alert(`✅ Kelas "${topic}" berhasil dijadwalkan!\nWaktu: ${date}`);
-    }
-}
-
-function viewAnalytics() {
-    alert("📊 Membuka analytics detail...");
-    // Would redirect to detailed analytics page
-}
-
-function manageContent() {
-    alert("📚 Membuka content management...");
-    // Would redirect to content management page
-}
-
-function chatWithAI() {
-    const question = prompt("🤖 Tanyakan sesuatu kepada AI Assistant untuk Educator:");
-
-    if (question) {
-        alert(`🤖 AI Response: "Berdasarkan data kelas Anda, saya merekomendasikan untuk focus pada mahasiswa dengan progress <50%. Pertanyaan Anda tentang '${question}' sangat relevan untuk meningkatkan engagement."`);
-    }
-}
-
-function viewStudentDetail(studentId) {
-    alert(`👤 Membuka detail mahasiswa ID: ${studentId}`);
-    // Would show detailed student analytics
 }
 
 // Global functions
