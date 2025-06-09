@@ -6,7 +6,7 @@ import { setInner, onClick } from "https://cdn.jsdelivr.net/gh/jscroot/lib@0.0.4
 import { redirect } from "https://cdn.jsdelivr.net/gh/jscroot/lib@0.0.4/url.js";
 
 // Dynamic API Configuration
-const API_BASE_URL = "https://agenticlearn-backend-production.up.railway.app/api/v1";
+const API_BASE_URL = "window.location.hostname.includes("localhost") ? "http://localhost:8080/api/v1" : "https://agenticlearn-backend-production.up.railway.app/api/v1"";
 
 // Get GitHub username for redirects
 const GITHUB_USERNAME = window.location.hostname.includes('github.io') 
