@@ -719,21 +719,82 @@
                 </div>
             </div>
 
-            <!-- Detailed Analytics Charts Section -->
+            <!-- Advanced Analytics Visualization Section -->
             <div style="border-top: 1px solid var(--accent); padding-top: 1.5rem;">
-                <h3 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 1rem;">Detailed Analytics</h3>
-                <div class="grid">
-                    <div style="background: var(--white); padding: 1rem; border-radius: 8px; border: 1px solid var(--accent);">
-                        <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; font-size: 0.875rem;">Weekly Progress Trend</h4>
-                        <div id="progress-chart" style="height: 120px; background: var(--accent); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--gray-600); font-size: 0.75rem;">
-                            Progress chart will be rendered here
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 style="color: var(--gray-800); margin: 0; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>📊</span> Advanced Analytics Dashboard
+                    </h3>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <select id="analytics-timeframe" style="padding: 0.5rem; border: 1px solid var(--accent); border-radius: 6px; background: var(--white); font-size: 0.75rem;">
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="semester">This Semester</option>
+                            <option value="all">All Time</option>
+                        </select>
+                        <button class="btn" id="btn-export-analytics" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                            📈 Export Charts
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Progress Trend Charts -->
+                <div class="grid" style="margin-bottom: 2rem;">
+                    <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                        <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>📈</span> Weekly Progress Trend
+                        </h4>
+                        <div id="progress-trend-chart" style="height: 200px; position: relative;">
+                            <!-- Progress trend chart will be rendered here -->
                         </div>
                     </div>
-                    <div style="background: var(--white); padding: 1rem; border-radius: 8px; border: 1px solid var(--accent);">
-                        <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; font-size: 0.875rem;">Engagement Heatmap</h4>
-                        <div id="engagement-heatmap" style="height: 120px; background: var(--accent); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--gray-600); font-size: 0.75rem;">
-                            Engagement heatmap will be rendered here
+                    <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                        <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>🔥</span> Engagement Heatmap
+                        </h4>
+                        <div id="engagement-heatmap" style="height: 200px; position: relative;">
+                            <!-- Engagement heatmap will be rendered here -->
                         </div>
+                    </div>
+                </div>
+
+                <!-- Performance Analytics -->
+                <div class="grid" style="margin-bottom: 2rem;">
+                    <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                        <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>🎯</span> Performance Distribution
+                        </h4>
+                        <div id="performance-distribution" style="height: 200px; position: relative;">
+                            <!-- Performance distribution chart will be rendered here -->
+                        </div>
+                    </div>
+                    <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                        <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>⏱️</span> Learning Time Analysis
+                        </h4>
+                        <div id="time-analysis-chart" style="height: 200px; position: relative;">
+                            <!-- Time analysis chart will be rendered here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comparative Analytics -->
+                <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent); margin-bottom: 2rem;">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>📊</span> Class Performance Comparison
+                    </h4>
+                    <div id="class-comparison-chart" style="height: 250px; position: relative;">
+                        <!-- Class comparison chart will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Learning Path Analytics -->
+                <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🛤️</span> Learning Path Effectiveness
+                    </h4>
+                    <div id="learning-path-chart" style="height: 200px; position: relative;">
+                        <!-- Learning path effectiveness chart will be rendered here -->
                     </div>
                 </div>
             </div>
