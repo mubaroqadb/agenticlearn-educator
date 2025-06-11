@@ -413,6 +413,9 @@ async function loadAIInsights() {
         // Load advanced analytics charts
         await loadAdvancedAnalytics();
 
+        // Load communication center
+        await loadCommunicationCenter();
+
         UIComponents.showNotification("📊 AI Analytics loaded successfully", "success");
     } catch (error) {
         console.error("Failed to load AI insights:", error);
@@ -543,6 +546,9 @@ function setupEventListeners() {
     // Advanced analytics controls
     onClick("btn-export-analytics", exportAnalytics);
     document.getElementById("analytics-timeframe")?.addEventListener("change", updateAnalyticsTimeframe);
+
+    // Communication controls
+    onClick("btn-mark-all-read", markAllMessagesRead);
 
     // Real-time monitoring controls
     onClick("btn-toggle-realtime", toggleRealTimeMonitoring);
@@ -1500,6 +1506,483 @@ window.adjustLearningPath = adjustLearningPath;
 window.generateReport = generateReport;
 window.exportAnalytics = exportAnalytics;
 window.updateAnalyticsTimeframe = updateAnalyticsTimeframe;
+
+// Communication Center Functions
+async function loadCommunicationCenter() {
+    try {
+        // Load communication data
+        await loadMessages();
+        await loadAnnouncements();
+        await loadDiscussions();
+        await loadNotifications();
+        await loadCommunicationAnalytics();
+
+        // Set default active tab
+        switchCommTab('messages');
+    } catch (error) {
+        console.error("Failed to load communication center:", error);
+        loadDemoCommunicationData();
+    }
+}
+
+function loadDemoCommunicationData() {
+    loadDemoMessages();
+    loadDemoAnnouncements();
+    loadDemoDiscussions();
+    loadDemoNotifications();
+    loadDemoCommunicationAnalytics();
+    switchCommTab('messages');
+}
+
+function switchCommTab(tabName) {
+    // Hide all tab contents
+    document.querySelectorAll('.comm-tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+
+    // Remove active class from all tab buttons
+    document.querySelectorAll('.comm-tab-button').forEach(button => {
+        button.classList.remove('active');
+    });
+
+    // Show selected tab content
+    document.getElementById(`comm-tab-${tabName}`).classList.add('active');
+
+    // Add active class to selected tab button
+    event.target.classList.add('active');
+
+    // Load tab-specific content if needed
+    loadCommTabContent(tabName);
+}
+
+function loadCommTabContent(tabName) {
+    switch(tabName) {
+        case 'messages':
+            loadDemoMessages();
+            break;
+        case 'announcements':
+            loadDemoAnnouncements();
+            break;
+        case 'discussions':
+            loadDemoDiscussions();
+            break;
+        case 'notifications':
+            loadDemoNotifications();
+            break;
+        case 'analytics':
+            loadDemoCommunicationAnalytics();
+            break;
+    }
+}
+
+async function loadMessages() {
+    try {
+        const messages = await apiClient.request("/communication/messages");
+        renderMessages(messages);
+    } catch (error) {
+        loadDemoMessages();
+    }
+}
+
+function loadDemoMessages() {
+    const demoMessages = [
+        {
+            id: 1,
+            sender: "Andi Mahasiswa",
+            subject: "Question about Module 3",
+            content: "Hi, I'm having trouble understanding the data visualization concepts in Module 3. Could you help explain the difference between bar charts and histograms?",
+            time: "2 hours ago",
+            unread: true,
+            priority: "medium"
+        },
+        {
+            id: 2,
+            sender: "Sari Belajar",
+            subject: "Assignment Submission",
+            content: "I've completed the Python assignment but I'm not sure if I submitted it correctly. Can you confirm if you received my submission?",
+            time: "5 hours ago",
+            unread: true,
+            priority: "high"
+        },
+        {
+            id: 3,
+            sender: "Budi Cerdas",
+            subject: "Thank you for feedback",
+            content: "Thank you for the detailed feedback on my project. The suggestions really helped me improve my analysis approach.",
+            time: "1 day ago",
+            unread: false,
+            priority: "low"
+        },
+        {
+            id: 4,
+            sender: "Maya Rajin",
+            subject: "Schedule conflict",
+            content: "I have a conflict with the upcoming live session. Is it possible to get a recording or schedule a makeup session?",
+            time: "2 days ago",
+            unread: true,
+            priority: "medium"
+        }
+    ];
+
+    renderMessages(demoMessages);
+}
+
+function renderMessages(messages) {
+    const messagesHTML = `
+        <div style="margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h4 style="color: var(--gray-800); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>📨</span> Student Messages
+                </h4>
+                <button class="btn" onclick="composeMessage()" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--primary);">
+                    ✏️ Compose Message
+                </button>
+            </div>
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                <select id="message-filter" style="padding: 0.5rem; border: 1px solid var(--accent); border-radius: 6px; background: var(--white); font-size: 0.75rem;">
+                    <option value="all">All Messages</option>
+                    <option value="unread">Unread Only</option>
+                    <option value="high">High Priority</option>
+                    <option value="medium">Medium Priority</option>
+                </select>
+                <input type="search" placeholder="Search messages..." style="flex: 1; padding: 0.5rem; border: 1px solid var(--accent); border-radius: 6px; background: var(--white); font-size: 0.75rem;">
+            </div>
+        </div>
+
+        <div style="max-height: 400px; overflow-y: auto;">
+            ${messages.map(message => `
+                <div class="message-item ${message.unread ? 'unread' : ''}" onclick="openMessage(${message.id})">
+                    <div class="message-header">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span class="message-sender">${message.sender}</span>
+                            ${message.unread ? '<span style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 10px; font-size: 10px; font-weight: 600;">NEW</span>' : ''}
+                            ${message.priority === 'high' ? '<span style="background: var(--error); color: white; padding: 2px 6px; border-radius: 10px; font-size: 10px; font-weight: 600;">HIGH</span>' : ''}
+                        </div>
+                        <span class="message-time">${message.time}</span>
+                    </div>
+                    <div style="font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem; font-size: 0.875rem;">${message.subject}</div>
+                    <div class="message-content">${message.content.substring(0, 100)}${message.content.length > 100 ? '...' : ''}</div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+
+    setInner("comm-tab-messages", messagesHTML);
+}
+
+function loadDemoAnnouncements() {
+    const demoAnnouncements = [
+        {
+            id: 1,
+            title: "New Module Released: Advanced Analytics",
+            content: "We're excited to announce the release of Module 4: Advanced Analytics. This module covers machine learning fundamentals and advanced data visualization techniques.",
+            date: "2024-12-10",
+            priority: "high",
+            author: "Dr. Sarah Johnson",
+            recipients: "All Students"
+        },
+        {
+            id: 2,
+            title: "Upcoming Live Session: Q&A Session",
+            content: "Join us for a live Q&A session this Friday at 2 PM. We'll be discussing common challenges in data analysis and answering your questions.",
+            date: "2024-12-09",
+            priority: "medium",
+            author: "Prof. Michael Chen",
+            recipients: "Class A & B"
+        },
+        {
+            id: 3,
+            title: "System Maintenance Notice",
+            content: "The learning platform will undergo scheduled maintenance on Sunday from 2 AM to 6 AM. During this time, access may be limited.",
+            date: "2024-12-08",
+            priority: "low",
+            author: "System Admin",
+            recipients: "All Users"
+        }
+    ];
+
+    const announcementsHTML = `
+        <div style="margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h4 style="color: var(--gray-800); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>📢</span> Announcements
+                </h4>
+                <button class="btn" onclick="createAnnouncement()" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--secondary-dark);">
+                    📝 Create Announcement
+                </button>
+            </div>
+        </div>
+
+        <div style="max-height: 400px; overflow-y: auto;">
+            ${demoAnnouncements.map(announcement => `
+                <div class="announcement-item announcement-priority-${announcement.priority}">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <h5 style="color: var(--gray-800); margin: 0; font-size: 1rem; font-weight: 600;">${announcement.title}</h5>
+                        <span style="font-size: 0.75rem; color: var(--gray-600);">${new Date(announcement.date).toLocaleDateString('id-ID')}</span>
+                    </div>
+                    <p style="color: var(--gray-700); margin-bottom: 0.75rem; line-height: 1.5;">${announcement.content}</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--gray-600);">
+                        <span>By: <strong>${announcement.author}</strong></span>
+                        <span>To: ${announcement.recipients}</span>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+
+    setInner("comm-tab-announcements", announcementsHTML);
+}
+
+function loadDemoDiscussions() {
+    const demoDiscussions = [
+        {
+            id: 1,
+            title: "Best practices for data cleaning",
+            author: "Andi Mahasiswa",
+            replies: 12,
+            lastActivity: "2 hours ago",
+            category: "Technical Discussion"
+        },
+        {
+            id: 2,
+            title: "Study group for Module 3",
+            author: "Sari Belajar",
+            replies: 8,
+            lastActivity: "5 hours ago",
+            category: "Study Groups"
+        },
+        {
+            id: 3,
+            title: "Career advice: Data Analyst vs Data Scientist",
+            author: "Budi Cerdas",
+            replies: 15,
+            lastActivity: "1 day ago",
+            category: "Career Guidance"
+        }
+    ];
+
+    const discussionsHTML = `
+        <div style="margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h4 style="color: var(--gray-800); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>💭</span> Discussion Forums
+                </h4>
+                <button class="btn" onclick="createDiscussion()" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--accent-dark);">
+                    💬 Start Discussion
+                </button>
+            </div>
+        </div>
+
+        <div style="max-height: 400px; overflow-y: auto;">
+            ${demoDiscussions.map(discussion => `
+                <div style="background: var(--accent); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid var(--accent-dark); cursor: pointer; transition: var(--transition);"
+                     onclick="openDiscussion(${discussion.id})"
+                     onmouseover="this.style.transform='translateX(2px)'"
+                     onmouseout="this.style.transform='translateX(0)'">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <h5 style="color: var(--gray-800); margin: 0; font-size: 0.875rem; font-weight: 600;">${discussion.title}</h5>
+                        <span style="background: var(--primary); color: white; padding: 2px 6px; border-radius: 10px; font-size: 10px; font-weight: 600;">${discussion.category}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--gray-600);">
+                        <span>By: <strong>${discussion.author}</strong> • ${discussion.replies} replies</span>
+                        <span>${discussion.lastActivity}</span>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+
+    setInner("comm-tab-discussions", discussionsHTML);
+}
+
+function loadDemoNotifications() {
+    const demoNotifications = [
+        {
+            id: 1,
+            type: "assignment",
+            title: "Assignment Due Reminder",
+            message: "Python Basics assignment is due in 2 days",
+            time: "1 hour ago",
+            read: false
+        },
+        {
+            id: 2,
+            type: "achievement",
+            title: "Student Achievement",
+            message: "Andi Mahasiswa completed Module 3 with 95% score",
+            time: "3 hours ago",
+            read: false
+        },
+        {
+            id: 3,
+            type: "system",
+            title: "System Update",
+            message: "New features added to the analytics dashboard",
+            time: "1 day ago",
+            read: true
+        }
+    ];
+
+    const notificationsHTML = `
+        <div style="margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h4 style="color: var(--gray-800); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>🔔</span> Notifications
+                </h4>
+                <button class="btn" onclick="clearAllNotifications()" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--gray-500);">
+                    🗑️ Clear All
+                </button>
+            </div>
+        </div>
+
+        <div style="max-height: 400px; overflow-y: auto;">
+            ${demoNotifications.map(notification => {
+                const iconMap = {
+                    assignment: "📝",
+                    achievement: "🏆",
+                    system: "⚙️"
+                };
+
+                return `
+                    <div style="background: ${notification.read ? 'var(--accent)' : 'var(--bg-light)'}; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid ${notification.read ? 'var(--gray-400)' : 'var(--primary)'};">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                            <span style="font-size: 1.25rem;">${iconMap[notification.type]}</span>
+                            <div style="flex: 1;">
+                                <h5 style="color: var(--gray-800); margin: 0; font-size: 0.875rem; font-weight: 600;">${notification.title}</h5>
+                                <p style="color: var(--gray-700); margin: 0; font-size: 0.75rem;">${notification.message}</p>
+                            </div>
+                            <span style="font-size: 0.75rem; color: var(--gray-600);">${notification.time}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+
+    setInner("comm-tab-notifications", notificationsHTML);
+}
+
+function loadDemoCommunicationAnalytics() {
+    const analyticsHTML = `
+        <div style="margin-bottom: 1.5rem;">
+            <h4 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📊</span> Communication Analytics
+            </h4>
+        </div>
+
+        <!-- Communication Metrics -->
+        <div class="grid" style="margin-bottom: 2rem;">
+            <div style="background: var(--accent); padding: 1rem; border-radius: 8px; text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">24</div>
+                <div style="font-size: 0.75rem; color: var(--gray-600);">Messages This Week</div>
+            </div>
+            <div style="background: var(--secondary-light); padding: 1rem; border-radius: 8px; text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: 700; color: var(--secondary-dark);">3</div>
+                <div style="font-size: 0.75rem; color: var(--gray-600);">Active Discussions</div>
+            </div>
+            <div style="background: var(--white); padding: 1rem; border-radius: 8px; text-align: center; border: 1px solid var(--accent);">
+                <div style="font-size: 1.5rem; font-weight: 700; color: var(--info);">92%</div>
+                <div style="font-size: 0.75rem; color: var(--gray-600);">Response Rate</div>
+            </div>
+            <div style="background: var(--bg-light); padding: 1rem; border-radius: 8px; text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: 700; color: var(--success);">2.5h</div>
+                <div style="font-size: 0.75rem; color: var(--gray-600);">Avg Response Time</div>
+            </div>
+        </div>
+
+        <!-- Communication Trends -->
+        <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent); margin-bottom: 1.5rem;">
+            <h5 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem;">Weekly Communication Trends</h5>
+            <div style="display: flex; align-items: end; height: 120px; gap: 8px;">
+                ${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, index) => {
+                    const heights = [40, 65, 55, 80, 70, 30, 20];
+                    return `
+                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                            <div style="background: var(--info); width: 100%; height: ${heights[index]}px; border-radius: 4px 4px 0 0;"></div>
+                            <div style="margin-top: 8px; font-size: 12px; color: var(--gray-600);">${day}</div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        </div>
+
+        <!-- Top Discussion Topics -->
+        <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+            <h5 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem;">Top Discussion Topics</h5>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                ${[
+                    { topic: "Data Visualization", count: 15, color: "var(--primary)" },
+                    { topic: "Python Programming", count: 12, color: "var(--secondary-dark)" },
+                    { topic: "Statistical Analysis", count: 8, color: "var(--info)" },
+                    { topic: "Machine Learning", count: 6, color: "var(--accent-dark)" }
+                ].map(item => `
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 12px; height: 12px; background: ${item.color}; border-radius: 2px;"></div>
+                        <span style="flex: 1; font-size: 0.875rem; color: var(--gray-700);">${item.topic}</span>
+                        <span style="font-weight: 600; color: var(--gray-800); font-size: 0.875rem;">${item.count}</span>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+
+    setInner("comm-tab-analytics", analyticsHTML);
+}
+
+// Communication action functions
+function markAllMessagesRead() {
+    setInner("unread-messages", "0");
+    UIComponents.showNotification("✅ All messages marked as read", "success");
+}
+
+function composeMessage() {
+    const recipient = prompt("📧 Send message to (student name or 'all'):");
+    if (recipient) {
+        const message = prompt("💬 Enter your message:");
+        if (message) {
+            UIComponents.showNotification(`✅ Message sent to ${recipient}: "${message}"`, "success");
+        }
+    }
+}
+
+function openMessage(messageId) {
+    UIComponents.showNotification(`📖 Opening message ID: ${messageId}`, "info");
+}
+
+function createAnnouncement() {
+    const title = prompt("📢 Announcement title:");
+    if (title) {
+        const content = prompt("📝 Announcement content:");
+        if (content) {
+            UIComponents.showNotification(`✅ Announcement created: "${title}"`, "success");
+        }
+    }
+}
+
+function createDiscussion() {
+    const title = prompt("💭 Discussion topic:");
+    if (title) {
+        UIComponents.showNotification(`✅ Discussion started: "${title}"`, "success");
+    }
+}
+
+function openDiscussion(discussionId) {
+    UIComponents.showNotification(`💬 Opening discussion ID: ${discussionId}`, "info");
+}
+
+function clearAllNotifications() {
+    UIComponents.showNotification("🗑️ All notifications cleared", "success");
+}
+
+// Global functions for onclick handlers
+window.switchCommTab = switchCommTab;
+window.markAllMessagesRead = markAllMessagesRead;
+window.composeMessage = composeMessage;
+window.openMessage = openMessage;
+window.createAnnouncement = createAnnouncement;
+window.createDiscussion = createDiscussion;
+window.openDiscussion = openDiscussion;
+window.clearAllNotifications = clearAllNotifications;
 
 // D1-D6: Weekly Planning Session (30 minutes)
 function startWeeklyPlanning() {
