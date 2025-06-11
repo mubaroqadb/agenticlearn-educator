@@ -3735,7 +3735,443 @@ function setupAIRecommendationsEventListeners() {
 }
 
 function loadReportsPage() {
-    UIComponents.showNotification("📊 Reports & Export page coming soon...", "info");
+    const reportsHTML = `
+        <!-- Advanced Reporting & Export Dashboard -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="width: 40px; height: 40px; background: var(--info); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
+                    📊
+                </div>
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">Advanced Reporting & Export System</h2>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">Generate comprehensive reports and export data in multiple formats</p>
+                </div>
+                <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+                    <button class="btn" id="btn-generate-report" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--primary);">
+                        📈 Generate Report
+                    </button>
+                    <button class="btn" id="btn-schedule-report" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--success);">
+                        ⏰ Schedule Reports
+                    </button>
+                </div>
+            </div>
+
+            <!-- Report Statistics -->
+            <div class="grid" style="margin-bottom: 2rem;">
+                <div class="metric-card" style="background: var(--primary); color: white;">
+                    <div class="metric-value" id="total-reports">47</div>
+                    <div class="metric-label">Total Reports Generated</div>
+                </div>
+                <div class="metric-card" style="background: var(--success); color: white;">
+                    <div class="metric-value" id="scheduled-reports">12</div>
+                    <div class="metric-label">Scheduled Reports</div>
+                </div>
+                <div class="metric-card" style="background: var(--info); color: white;">
+                    <div class="metric-value" id="export-formats">5</div>
+                    <div class="metric-label">Export Formats</div>
+                </div>
+                <div class="metric-card" style="background: var(--warning); color: white;">
+                    <div class="metric-value" id="data-points">2.4K</div>
+                    <div class="metric-label">Data Points Analyzed</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Report Generation -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>⚡</span> Quick Report Generation
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>👥</span> Student Progress Report
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Comprehensive overview of individual and class progress with detailed analytics.</p>
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                        <select style="flex: 1; padding: 0.5rem; border: 1px solid var(--accent-dark); border-radius: 4px; background: var(--white); font-size: 0.75rem;">
+                            <option>All Students</option>
+                            <option>Class A</option>
+                            <option>Class B</option>
+                            <option>At-Risk Students</option>
+                        </select>
+                        <select style="flex: 1; padding: 0.5rem; border: 1px solid var(--accent-dark); border-radius: 4px; background: var(--white); font-size: 0.75rem;">
+                            <option>This Month</option>
+                            <option>This Week</option>
+                            <option>This Semester</option>
+                            <option>Custom Range</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="generateProgressReport()" style="background: var(--primary); width: 100%;">Generate Progress Report</button>
+                </div>
+
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--secondary-dark);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>📝</span> Assessment Analytics Report
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Detailed analysis of assessment performance, difficulty, and effectiveness.</p>
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                        <select style="flex: 1; padding: 0.5rem; border: 1px solid var(--accent-dark); border-radius: 4px; background: var(--white); font-size: 0.75rem;">
+                            <option>All Assessments</option>
+                            <option>Quizzes Only</option>
+                            <option>Assignments Only</option>
+                            <option>Exams Only</option>
+                        </select>
+                        <select style="flex: 1; padding: 0.5rem; border: 1px solid var(--accent-dark); border-radius: 4px; background: var(--white); font-size: 0.75rem;">
+                            <option>Last 30 Days</option>
+                            <option>Last 7 Days</option>
+                            <option>This Semester</option>
+                            <option>All Time</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="generateAssessmentReport()" style="background: var(--secondary-dark); width: 100%;">Generate Assessment Report</button>
+                </div>
+
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--info);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>💬</span> Engagement Analytics Report
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Communication patterns, participation rates, and engagement metrics.</p>
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                        <select style="flex: 1; padding: 0.5rem; border: 1px solid var(--accent-dark); border-radius: 4px; background: var(--white); font-size: 0.75rem;">
+                            <option>All Activities</option>
+                            <option>Discussion Forums</option>
+                            <option>Live Sessions</option>
+                            <option>Assignments</option>
+                        </select>
+                        <select style="flex: 1; padding: 0.5rem; border: 1px solid var(--accent-dark); border-radius: 4px; background: var(--white); font-size: 0.75rem;">
+                            <option>Weekly</option>
+                            <option>Monthly</option>
+                            <option>Quarterly</option>
+                            <option>Custom</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="generateEngagementReport()" style="background: var(--info); width: 100%;">Generate Engagement Report</button>
+                </div>
+
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--success);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🤖</span> AI Insights Report
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">AI-generated insights, recommendations, and predictive analytics summary.</p>
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                        <select style="flex: 1; padding: 0.5rem; border: 1px solid var(--accent-dark); border-radius: 4px; background: var(--white); font-size: 0.75rem;">
+                            <option>All Insights</option>
+                            <option>Learning Patterns</option>
+                            <option>Risk Predictions</option>
+                            <option>Recommendations</option>
+                        </select>
+                        <select style="flex: 1; padding: 0.5rem; border: 1px solid var(--accent-dark); border-radius: 4px; background: var(--white); font-size: 0.75rem;">
+                            <option>Latest</option>
+                            <option>This Week</option>
+                            <option>This Month</option>
+                            <option>Trending</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="generateAIInsightsReport()" style="background: var(--success); width: 100%;">Generate AI Report</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Custom Report Builder -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🛠️</span> Custom Report Builder
+            </h3>
+            <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <label style="display: block; font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem;">Report Type</label>
+                        <select id="custom-report-type" style="width: 100%; padding: 0.75rem; border: 1px solid var(--accent-dark); border-radius: 6px; background: var(--white);">
+                            <option>Comprehensive Dashboard</option>
+                            <option>Student Performance</option>
+                            <option>Assessment Analysis</option>
+                            <option>Engagement Metrics</option>
+                            <option>AI Recommendations</option>
+                            <option>Custom Analytics</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem;">Date Range</label>
+                        <select id="custom-date-range" style="width: 100%; padding: 0.75rem; border: 1px solid var(--accent-dark); border-radius: 6px; background: var(--white);">
+                            <option>Last 7 Days</option>
+                            <option>Last 30 Days</option>
+                            <option>This Semester</option>
+                            <option>This Year</option>
+                            <option>All Time</option>
+                            <option>Custom Range</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem;">Export Format</label>
+                        <select id="custom-export-format" style="width: 100%; padding: 0.75rem; border: 1px solid var(--accent-dark); border-radius: 6px; background: var(--white);">
+                            <option>PDF Report</option>
+                            <option>Excel Spreadsheet</option>
+                            <option>CSV Data</option>
+                            <option>PowerPoint Presentation</option>
+                            <option>Interactive Dashboard</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem;">Include Charts</label>
+                        <select id="custom-include-charts" style="width: 100%; padding: 0.75rem; border: 1px solid var(--accent-dark); border-radius: 6px; background: var(--white);">
+                            <option>All Visualizations</option>
+                            <option>Charts Only</option>
+                            <option>Tables Only</option>
+                            <option>Summary Only</option>
+                            <option>Custom Selection</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn" onclick="previewCustomReport()" style="background: var(--info); flex: 1;">👁️ Preview Report</button>
+                    <button class="btn" onclick="generateCustomReport()" style="background: var(--primary); flex: 1;">📊 Generate Custom Report</button>
+                    <button class="btn" onclick="saveReportTemplate()" style="background: var(--success); flex: 1;">💾 Save as Template</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Reports -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📋</span> Recent Reports
+            </h3>
+            <div id="recent-reports-list">
+                <!-- Recent reports will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Scheduled Reports -->
+        <section class="card">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>⏰</span> Scheduled Reports
+            </h3>
+            <div id="scheduled-reports-list">
+                <!-- Scheduled reports will be loaded here -->
+            </div>
+        </section>
+    `;
+
+    setInner("page-reports", reportsHTML);
+
+    // Load reports data
+    setTimeout(() => {
+        loadRecentReports();
+        loadScheduledReports();
+        setupReportsEventListeners();
+    }, 100);
+
+    UIComponents.showNotification("📊 Reports & Export loaded successfully!", "success");
+}
+
+function loadRecentReports() {
+    const recentReports = [
+        {
+            id: 1,
+            title: "Weekly Student Progress Report",
+            type: "Progress Report",
+            format: "PDF",
+            generated: "2024-12-11 14:30",
+            size: "2.4 MB",
+            status: "Completed",
+            downloads: 3
+        },
+        {
+            id: 2,
+            title: "Module 3 Assessment Analytics",
+            type: "Assessment Report",
+            format: "Excel",
+            generated: "2024-12-10 09:15",
+            size: "1.8 MB",
+            status: "Completed",
+            downloads: 7
+        },
+        {
+            id: 3,
+            title: "AI Insights Summary - December",
+            type: "AI Report",
+            format: "PowerPoint",
+            generated: "2024-12-09 16:45",
+            size: "5.2 MB",
+            status: "Completed",
+            downloads: 12
+        },
+        {
+            id: 4,
+            title: "Engagement Analytics - Q4",
+            type: "Engagement Report",
+            format: "PDF",
+            generated: "2024-12-08 11:20",
+            size: "3.1 MB",
+            status: "Processing",
+            downloads: 0
+        },
+        {
+            id: 5,
+            title: "Custom Dashboard Export",
+            type: "Custom Report",
+            format: "Interactive",
+            generated: "2024-12-07 13:10",
+            size: "890 KB",
+            status: "Completed",
+            downloads: 5
+        }
+    ];
+
+    const reportsHTML = recentReports.map(report => {
+        const statusColors = {
+            'Completed': 'var(--success)',
+            'Processing': 'var(--warning)',
+            'Failed': 'var(--error)'
+        };
+
+        const formatIcons = {
+            'PDF': '📄',
+            'Excel': '📊',
+            'PowerPoint': '📋',
+            'CSV': '📈',
+            'Interactive': '🌐'
+        };
+
+        return `
+            <div style="background: var(--accent); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid ${statusColors[report.status]};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <span style="font-size: 1.5rem;">${formatIcons[report.format]}</span>
+                        <div>
+                            <h4 style="color: var(--gray-800); margin: 0; font-size: 1rem; font-weight: 600;">${report.title}</h4>
+                            <p style="color: var(--gray-600); margin: 0; font-size: 0.75rem;">${report.type} • ${report.format} • ${report.size}</p>
+                        </div>
+                    </div>
+                    <span style="background: ${statusColors[report.status]}; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+                        ${report.status}
+                    </span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 1rem; font-weight: 700; color: var(--primary);">${new Date(report.generated).toLocaleDateString('id-ID')}</div>
+                        <div style="font-size: 0.75rem; color: var(--gray-600);">Generated</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 1rem; font-weight: 700; color: var(--secondary-dark);">${new Date(report.generated).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'})}</div>
+                        <div style="font-size: 0.75rem; color: var(--gray-600);">Time</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 1rem; font-weight: 700; color: var(--info);">${report.downloads}</div>
+                        <div style="font-size: 0.75rem; color: var(--gray-600);">Downloads</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    ${report.status === 'Completed' ? `
+                        <button class="btn" onclick="downloadReport(${report.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--primary);">
+                            📥 Download
+                        </button>
+                        <button class="btn" onclick="shareReport(${report.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--info);">
+                            📤 Share
+                        </button>
+                    ` : ''}
+                    <button class="btn" onclick="viewReportDetails(${report.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--secondary-dark);">
+                        👁️ View Details
+                    </button>
+                    <button class="btn" onclick="duplicateReport(${report.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--success);">
+                        📋 Duplicate
+                    </button>
+                    <button class="btn" onclick="deleteReport(${report.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--error);">
+                        🗑️ Delete
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    setInner("recent-reports-list", reportsHTML);
+}
+
+function loadScheduledReports() {
+    const scheduledReports = [
+        {
+            id: 1,
+            title: "Weekly Progress Summary",
+            type: "Progress Report",
+            schedule: "Every Monday 08:00",
+            nextRun: "2024-12-16 08:00",
+            format: "PDF",
+            recipients: "admin@university.edu, dean@university.edu",
+            status: "Active"
+        },
+        {
+            id: 2,
+            title: "Monthly Assessment Analytics",
+            type: "Assessment Report",
+            schedule: "1st of every month",
+            nextRun: "2025-01-01 09:00",
+            format: "Excel",
+            recipients: "department@university.edu",
+            status: "Active"
+        },
+        {
+            id: 3,
+            title: "Quarterly AI Insights",
+            type: "AI Report",
+            schedule: "Every 3 months",
+            nextRun: "2025-03-01 10:00",
+            format: "PowerPoint",
+            recipients: "research@university.edu",
+            status: "Paused"
+        }
+    ];
+
+    const scheduledHTML = scheduledReports.map(report => {
+        const statusColors = {
+            'Active': 'var(--success)',
+            'Paused': 'var(--warning)',
+            'Disabled': 'var(--error)'
+        };
+
+        return `
+            <div style="background: var(--accent); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid ${statusColors[report.status]};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <h4 style="color: var(--gray-800); margin: 0; font-size: 1rem; font-weight: 600;">${report.title}</h4>
+                        <p style="color: var(--gray-600); margin: 0; font-size: 0.75rem;">${report.type} • ${report.format} • ${report.schedule}</p>
+                    </div>
+                    <span style="background: ${statusColors[report.status]}; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+                        ${report.status}
+                    </span>
+                </div>
+
+                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                    <div style="margin-bottom: 0.5rem;">
+                        <strong style="color: var(--gray-800); font-size: 0.875rem;">Next Run:</strong>
+                        <span style="color: var(--primary); font-size: 0.875rem; font-weight: 600;"> ${new Date(report.nextRun).toLocaleString('id-ID')}</span>
+                    </div>
+                    <div>
+                        <strong style="color: var(--gray-800); font-size: 0.875rem;">Recipients:</strong>
+                        <span style="color: var(--gray-700); font-size: 0.875rem;"> ${report.recipients}</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn" onclick="editScheduledReport(${report.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--info);">
+                        ✏️ Edit
+                    </button>
+                    <button class="btn" onclick="runScheduledReport(${report.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--primary);">
+                        ▶️ Run Now
+                    </button>
+                    <button class="btn" onclick="toggleScheduledReport(${report.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--warning);">
+                        ${report.status === 'Active' ? '⏸️ Pause' : '▶️ Resume'}
+                    </button>
+                    <button class="btn" onclick="deleteScheduledReport(${report.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--error);">
+                        🗑️ Delete
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    setInner("scheduled-reports-list", scheduledHTML);
 }
 
 function loadIntegrationsPage() {
@@ -3801,6 +4237,163 @@ window.implementRecommendation = implementRecommendation;
 window.customizeRecommendation = customizeRecommendation;
 window.dismissRecommendation = dismissRecommendation;
 window.viewRecommendationDetails = viewRecommendationDetails;
+
+function setupReportsEventListeners() {
+    setTimeout(() => {
+        const generateBtn = document.getElementById("btn-generate-report");
+        if (generateBtn) {
+            generateBtn.addEventListener("click", openReportGenerator);
+        }
+
+        const scheduleBtn = document.getElementById("btn-schedule-report");
+        if (scheduleBtn) {
+            scheduleBtn.addEventListener("click", openReportScheduler);
+        }
+    }, 200);
+}
+
+// Quick Report Generation Functions
+function generateProgressReport() {
+    UIComponents.showNotification("📈 Generating student progress report...", "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ Student Progress Report generated successfully! Check Recent Reports.", "success");
+        loadRecentReports();
+    }, 2000);
+}
+
+function generateAssessmentReport() {
+    UIComponents.showNotification("📝 Generating assessment analytics report...", "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ Assessment Analytics Report generated successfully!", "success");
+        loadRecentReports();
+    }, 2000);
+}
+
+function generateEngagementReport() {
+    UIComponents.showNotification("💬 Generating engagement analytics report...", "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ Engagement Analytics Report generated successfully!", "success");
+        loadRecentReports();
+    }, 2000);
+}
+
+function generateAIInsightsReport() {
+    UIComponents.showNotification("🤖 Generating AI insights report...", "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ AI Insights Report generated successfully!", "success");
+        loadRecentReports();
+    }, 2000);
+}
+
+// Custom Report Builder Functions
+function previewCustomReport() {
+    const reportType = document.getElementById("custom-report-type")?.value;
+    const dateRange = document.getElementById("custom-date-range")?.value;
+    const format = document.getElementById("custom-export-format")?.value;
+
+    UIComponents.showNotification(`👁️ Previewing ${reportType} report (${dateRange}, ${format})...`, "info");
+}
+
+function generateCustomReport() {
+    const reportType = document.getElementById("custom-report-type")?.value;
+    const dateRange = document.getElementById("custom-date-range")?.value;
+    const format = document.getElementById("custom-export-format")?.value;
+
+    UIComponents.showNotification(`📊 Generating custom ${reportType} report in ${format} format...`, "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ Custom report generated successfully!", "success");
+        loadRecentReports();
+    }, 3000);
+}
+
+function saveReportTemplate() {
+    UIComponents.showNotification("💾 Saving report configuration as template...", "success");
+}
+
+// Report Management Functions
+function openReportGenerator() {
+    UIComponents.showNotification("📈 Opening advanced report generator...", "info");
+}
+
+function openReportScheduler() {
+    UIComponents.showNotification("⏰ Opening report scheduling interface...", "info");
+}
+
+function downloadReport(id) {
+    UIComponents.showNotification(`📥 Downloading report ID: ${id}...`, "success");
+}
+
+function shareReport(id) {
+    UIComponents.showNotification(`📤 Opening share options for report ID: ${id}`, "info");
+}
+
+function viewReportDetails(id) {
+    UIComponents.showNotification(`👁️ Viewing detailed information for report ID: ${id}`, "info");
+}
+
+function duplicateReport(id) {
+    UIComponents.showNotification(`📋 Creating duplicate of report ID: ${id}`, "success");
+}
+
+function deleteReport(id) {
+    UIComponents.showNotification(`🗑️ Report ID: ${id} deleted successfully`, "warning");
+    setTimeout(() => {
+        loadRecentReports();
+    }, 1000);
+}
+
+// Scheduled Reports Functions
+function editScheduledReport(id) {
+    UIComponents.showNotification(`✏️ Opening editor for scheduled report ID: ${id}`, "info");
+}
+
+function runScheduledReport(id) {
+    UIComponents.showNotification(`▶️ Running scheduled report ID: ${id} now...`, "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ Scheduled report executed successfully!", "success");
+        loadRecentReports();
+    }, 2000);
+}
+
+function toggleScheduledReport(id) {
+    UIComponents.showNotification(`⏸️ Toggling status for scheduled report ID: ${id}`, "info");
+
+    setTimeout(() => {
+        loadScheduledReports();
+    }, 1000);
+}
+
+function deleteScheduledReport(id) {
+    UIComponents.showNotification(`🗑️ Scheduled report ID: ${id} deleted successfully`, "warning");
+
+    setTimeout(() => {
+        loadScheduledReports();
+    }, 1000);
+}
+
+// Global functions for onclick handlers
+window.generateProgressReport = generateProgressReport;
+window.generateAssessmentReport = generateAssessmentReport;
+window.generateEngagementReport = generateEngagementReport;
+window.generateAIInsightsReport = generateAIInsightsReport;
+window.previewCustomReport = previewCustomReport;
+window.generateCustomReport = generateCustomReport;
+window.saveReportTemplate = saveReportTemplate;
+window.downloadReport = downloadReport;
+window.shareReport = shareReport;
+window.viewReportDetails = viewReportDetails;
+window.duplicateReport = duplicateReport;
+window.deleteReport = deleteReport;
+window.editScheduledReport = editScheduledReport;
+window.runScheduledReport = runScheduledReport;
+window.toggleScheduledReport = toggleScheduledReport;
+window.deleteScheduledReport = deleteScheduledReport;
 
 // Global functions
 window.viewStudentDetail = viewStudentDetail;
