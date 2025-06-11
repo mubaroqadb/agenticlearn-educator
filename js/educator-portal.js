@@ -3403,9 +3403,335 @@ function duplicateAssessment(id) {
     UIComponents.showNotification(`📋 Duplicating assessment ID: ${id}`, "success");
 }
 
-// Placeholder functions for other Week 3 pages
 function loadAIRecommendationsPage() {
-    UIComponents.showNotification("🤖 AI Recommendations page coming soon...", "info");
+    const aiRecommendationsHTML = `
+        <!-- AI-Powered Learning Recommendations Dashboard -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
+                    🤖
+                </div>
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">AI-Powered Learning Recommendations</h2>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">Personalized learning recommendations and adaptive content delivery</p>
+                </div>
+                <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+                    <button class="btn" id="btn-generate-recommendations" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--primary);">
+                        🔄 Generate New Recommendations
+                    </button>
+                    <button class="btn" id="btn-ai-settings" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--info);">
+                        ⚙️ AI Settings
+                    </button>
+                </div>
+            </div>
+
+            <!-- AI Recommendation Statistics -->
+            <div class="grid" style="margin-bottom: 2rem;">
+                <div class="metric-card" style="background: var(--primary); color: white;">
+                    <div class="metric-value" id="active-recommendations">156</div>
+                    <div class="metric-label">Active Recommendations</div>
+                </div>
+                <div class="metric-card" style="background: var(--success); color: white;">
+                    <div class="metric-value" id="recommendation-accuracy">94%</div>
+                    <div class="metric-label">Accuracy Rate</div>
+                </div>
+                <div class="metric-card" style="background: var(--info); color: white;">
+                    <div class="metric-value" id="students-helped">38</div>
+                    <div class="metric-label">Students Helped</div>
+                </div>
+                <div class="metric-card" style="background: var(--warning); color: white;">
+                    <div class="metric-value" id="improvement-rate">+23%</div>
+                    <div class="metric-label">Performance Improvement</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Personalized Learning Paths -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🛤️</span> Personalized Learning Paths
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem;">
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🎯</span> Adaptive Difficulty Adjustment
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">AI automatically adjusts content difficulty based on student performance and learning pace.</p>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Students with Adjusted Paths</span>
+                            <span style="font-weight: 600; color: var(--primary);">28</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Average Improvement</span>
+                            <span style="font-weight: 600; color: var(--success);">+31%</span>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="viewAdaptivePaths()" style="background: var(--primary); width: 100%;">View Adaptive Paths</button>
+                </div>
+
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--secondary-dark);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🧠</span> Learning Style Optimization
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Content delivery optimized based on individual learning styles (Visual, Auditory, Kinesthetic).</p>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Visual Learners</span>
+                            <span style="font-weight: 600; color: var(--info);">18 students</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Auditory Learners</span>
+                            <span style="font-weight: 600; color: var(--warning);">12 students</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Kinesthetic Learners</span>
+                            <span style="font-weight: 600; color: var(--success);">15 students</span>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="viewLearningStyles()" style="background: var(--secondary-dark); width: 100%;">Analyze Learning Styles</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Content Recommendation Engine -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📚</span> Content Recommendation Engine
+            </h3>
+            <div id="content-recommendations-list">
+                <!-- Content recommendations will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Predictive Analytics -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🔮</span> Predictive Analytics for Student Success
+            </h3>
+            <div class="grid">
+                <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem;">Success Prediction Model</h4>
+                    <div id="success-prediction-chart" style="height: 200px; background: var(--accent); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--gray-600); font-size: 0.875rem;">
+                        Success prediction visualization will be rendered here
+                    </div>
+                </div>
+                <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem;">Intervention Recommendations</h4>
+                    <div id="intervention-recommendations" style="height: 200px; overflow-y: auto;">
+                        <!-- Intervention recommendations will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Model Performance -->
+        <section class="card">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📊</span> AI Model Performance
+            </h3>
+            <div class="grid">
+                <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem;">Model Accuracy Trends</h4>
+                    <div id="model-accuracy-chart" style="height: 200px; background: var(--accent); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--gray-600); font-size: 0.875rem;">
+                        Model accuracy chart will be rendered here
+                    </div>
+                </div>
+                <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem;">Recommendation Effectiveness</h4>
+                    <div id="recommendation-effectiveness-chart" style="height: 200px; background: var(--accent); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--gray-600); font-size: 0.875rem;">
+                        Recommendation effectiveness chart will be rendered here
+                    </div>
+                </div>
+            </div>
+        </section>
+    `;
+
+    setInner("page-ai-recommendations", aiRecommendationsHTML);
+
+    // Load AI recommendations data
+    setTimeout(() => {
+        loadContentRecommendations();
+        loadInterventionRecommendations();
+        setupAIRecommendationsEventListeners();
+    }, 100);
+
+    UIComponents.showNotification("🤖 AI Recommendations loaded successfully!", "success");
+}
+
+function loadContentRecommendations() {
+    const contentRecommendations = [
+        {
+            id: 1,
+            type: "Video Content",
+            title: "Interactive Data Visualization Tutorial",
+            targetStudents: ["Andi Mahasiswa", "Sari Belajar"],
+            reason: "Students struggling with visual concepts",
+            confidence: 92,
+            expectedImprovement: "+25%",
+            priority: "High"
+        },
+        {
+            id: 2,
+            type: "Practice Exercise",
+            title: "Python Coding Challenges - Beginner Level",
+            targetStudents: ["Maya Rajin", "Budi Cerdas"],
+            reason: "Need more hands-on programming practice",
+            confidence: 88,
+            expectedImprovement: "+18%",
+            priority: "Medium"
+        },
+        {
+            id: 3,
+            type: "Reading Material",
+            title: "Statistics Fundamentals - Visual Guide",
+            targetStudents: ["Andi Mahasiswa"],
+            reason: "Visual learner needing conceptual reinforcement",
+            confidence: 95,
+            expectedImprovement: "+30%",
+            priority: "High"
+        },
+        {
+            id: 4,
+            type: "Interactive Quiz",
+            title: "Data Analysis Concepts - Adaptive Quiz",
+            targetStudents: ["All Students"],
+            reason: "Reinforce learning with adaptive difficulty",
+            confidence: 85,
+            expectedImprovement: "+15%",
+            priority: "Low"
+        }
+    ];
+
+    const recommendationsHTML = contentRecommendations.map(rec => {
+        const priorityColors = {
+            'High': 'var(--error)',
+            'Medium': 'var(--warning)',
+            'Low': 'var(--info)'
+        };
+
+        const typeIcons = {
+            'Video Content': '🎥',
+            'Practice Exercise': '💻',
+            'Reading Material': '📖',
+            'Interactive Quiz': '📋'
+        };
+
+        return `
+            <div style="background: var(--accent); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid ${priorityColors[rec.priority]};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <span style="font-size: 1.5rem;">${typeIcons[rec.type]}</span>
+                        <div>
+                            <h4 style="color: var(--gray-800); margin: 0; font-size: 1rem; font-weight: 600;">${rec.title}</h4>
+                            <p style="color: var(--gray-600); margin: 0; font-size: 0.75rem;">${rec.type} • Confidence: ${rec.confidence}%</p>
+                        </div>
+                    </div>
+                    <span style="background: ${priorityColors[rec.priority]}; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+                        ${rec.priority} Priority
+                    </span>
+                </div>
+
+                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                    <div style="margin-bottom: 0.75rem;">
+                        <strong style="color: var(--gray-800); font-size: 0.875rem;">Target Students:</strong>
+                        <span style="color: var(--gray-700); font-size: 0.875rem;"> ${Array.isArray(rec.targetStudents) ? rec.targetStudents.join(', ') : rec.targetStudents}</span>
+                    </div>
+                    <div style="margin-bottom: 0.75rem;">
+                        <strong style="color: var(--gray-800); font-size: 0.875rem;">Reason:</strong>
+                        <span style="color: var(--gray-700); font-size: 0.875rem;"> ${rec.reason}</span>
+                    </div>
+                    <div>
+                        <strong style="color: var(--gray-800); font-size: 0.875rem;">Expected Improvement:</strong>
+                        <span style="color: var(--success); font-size: 0.875rem; font-weight: 600;"> ${rec.expectedImprovement}</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn" onclick="implementRecommendation(${rec.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--primary);">
+                        ✅ Implement
+                    </button>
+                    <button class="btn" onclick="customizeRecommendation(${rec.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--info);">
+                        ✏️ Customize
+                    </button>
+                    <button class="btn" onclick="dismissRecommendation(${rec.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--gray-500);">
+                        ❌ Dismiss
+                    </button>
+                    <button class="btn" onclick="viewRecommendationDetails(${rec.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--secondary-dark);">
+                        📊 Details
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    setInner("content-recommendations-list", recommendationsHTML);
+}
+
+function loadInterventionRecommendations() {
+    const interventions = [
+        {
+            student: "Andi Mahasiswa",
+            risk: "Medium",
+            intervention: "Schedule 1-on-1 tutoring session",
+            urgency: "This Week",
+            success_probability: 85
+        },
+        {
+            student: "Maya Rajin",
+            risk: "High",
+            intervention: "Provide additional practice materials",
+            urgency: "Immediate",
+            success_probability: 92
+        },
+        {
+            student: "Sari Belajar",
+            risk: "Low",
+            intervention: "Encourage peer mentoring role",
+            urgency: "Next Month",
+            success_probability: 78
+        }
+    ];
+
+    const interventionsHTML = interventions.map(intervention => {
+        const riskColors = {
+            'High': 'var(--error)',
+            'Medium': 'var(--warning)',
+            'Low': 'var(--success)'
+        };
+
+        return `
+            <div style="background: var(--accent); padding: 1rem; border-radius: 6px; margin-bottom: 0.75rem; border-left: 3px solid ${riskColors[intervention.risk]};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <strong style="color: var(--gray-800); font-size: 0.875rem;">${intervention.student}</strong>
+                    <span style="background: ${riskColors[intervention.risk]}; color: white; padding: 0.125rem 0.5rem; border-radius: 8px; font-size: 0.625rem; font-weight: 600;">
+                        ${intervention.risk} Risk
+                    </span>
+                </div>
+                <p style="color: var(--gray-700); font-size: 0.75rem; margin-bottom: 0.5rem;">${intervention.intervention}</p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--gray-600); font-size: 0.625rem;">Urgency: ${intervention.urgency}</span>
+                    <span style="color: var(--success); font-size: 0.625rem; font-weight: 600;">Success: ${intervention.success_probability}%</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    setInner("intervention-recommendations", interventionsHTML);
+}
+
+function setupAIRecommendationsEventListeners() {
+    setTimeout(() => {
+        const generateBtn = document.getElementById("btn-generate-recommendations");
+        if (generateBtn) {
+            generateBtn.addEventListener("click", generateNewRecommendations);
+        }
+
+        const settingsBtn = document.getElementById("btn-ai-settings");
+        if (settingsBtn) {
+            settingsBtn.addEventListener("click", openAISettings);
+        }
+    }, 200);
 }
 
 function loadReportsPage() {
@@ -3425,6 +3751,56 @@ window.viewAssessment = viewAssessment;
 window.editAssessment = editAssessment;
 window.gradeAssessment = gradeAssessment;
 window.duplicateAssessment = duplicateAssessment;
+
+// AI Recommendations action functions
+function generateNewRecommendations() {
+    UIComponents.showNotification("🔄 Generating new AI recommendations based on latest student data...", "info");
+
+    // Simulate AI processing
+    setTimeout(() => {
+        UIComponents.showNotification("✅ New recommendations generated successfully!", "success");
+        loadContentRecommendations();
+        loadInterventionRecommendations();
+    }, 2000);
+}
+
+function openAISettings() {
+    UIComponents.showNotification("⚙️ Opening AI model configuration settings...", "info");
+}
+
+function viewAdaptivePaths() {
+    UIComponents.showNotification("🛤️ Viewing adaptive learning paths for all students...", "info");
+}
+
+function viewLearningStyles() {
+    UIComponents.showNotification("🧠 Analyzing learning styles and optimization strategies...", "info");
+}
+
+function implementRecommendation(id) {
+    UIComponents.showNotification(`✅ Implementing recommendation ID: ${id}. Content will be delivered to target students.`, "success");
+}
+
+function customizeRecommendation(id) {
+    UIComponents.showNotification(`✏️ Opening customization interface for recommendation ID: ${id}`, "info");
+}
+
+function dismissRecommendation(id) {
+    UIComponents.showNotification(`❌ Recommendation ID: ${id} dismissed. AI will learn from this feedback.`, "warning");
+}
+
+function viewRecommendationDetails(id) {
+    UIComponents.showNotification(`📊 Viewing detailed analytics for recommendation ID: ${id}`, "info");
+}
+
+// Global functions for onclick handlers
+window.generateNewRecommendations = generateNewRecommendations;
+window.openAISettings = openAISettings;
+window.viewAdaptivePaths = viewAdaptivePaths;
+window.viewLearningStyles = viewLearningStyles;
+window.implementRecommendation = implementRecommendation;
+window.customizeRecommendation = customizeRecommendation;
+window.dismissRecommendation = dismissRecommendation;
+window.viewRecommendationDetails = viewRecommendationDetails;
 
 // Global functions
 window.viewStudentDetail = viewStudentDetail;
