@@ -2228,23 +2228,494 @@ function loadRecentActivityFeed() {
 }
 
 function loadAnalyticsPage() {
-    // Move existing analytics content here
-    UIComponents.showNotification("📊 Loading Analytics & Insights...", "info");
+    const analyticsHTML = `
+        <!-- AI Analytics Dashboard -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
+                    🤖
+                </div>
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">AI Analytics Dashboard</h2>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">AI-powered insights and learning analytics</p>
+                </div>
+                <div style="margin-left: auto;">
+                    <button class="btn" id="btn-refresh-analytics" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                        🔄 Refresh Analytics
+                    </button>
+                </div>
+            </div>
+
+            <!-- AI Insights Grid -->
+            <div class="grid" style="margin-bottom: 2rem;">
+                <div class="card" style="background: var(--accent);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🕒</span> Learning Patterns
+                    </h4>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--gray-700);">Peak Time</span>
+                        <span style="font-weight: 600; color: var(--primary);" id="peak-time">19:00-21:00 WIB</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--gray-700);">Mobile Access</span>
+                        <span style="font-weight: 600; color: var(--primary);" id="mobile-access">85%</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--gray-700);">Session Duration</span>
+                        <span style="font-weight: 600; color: var(--primary);" id="session-duration">45 min</span>
+                    </div>
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--accent-dark);">
+                        <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;" id="learning-insights">Students are most active in evening hours. Mobile learning is preferred.</p>
+                    </div>
+                </div>
+
+                <div class="card" style="background: var(--secondary-light);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>⚠️</span> At-Risk Students
+                    </h4>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--gray-700);">High Risk</span>
+                        <span style="font-weight: 600; color: var(--error);" id="high-risk-count">3</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--gray-700);">Medium Risk</span>
+                        <span style="font-weight: 600; color: var(--warning);" id="medium-risk-count">7</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--gray-700);">Need Intervention</span>
+                        <span style="font-weight: 600; color: var(--primary);" id="intervention-count">5</span>
+                    </div>
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--accent-dark);">
+                        <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;" id="risk-insights">3 students need immediate intervention.</p>
+                    </div>
+                </div>
+
+                <div class="card" style="background: var(--white);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>📹</span> Content Effectiveness
+                    </h4>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--gray-700);">Top Content</span>
+                        <span style="font-weight: 600; color: var(--primary);" id="top-content">Video Tutorials</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--gray-700);">Engagement Rate</span>
+                        <span style="font-weight: 600; color: var(--primary);" id="engagement-rate">78%</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--gray-700);">Completion Rate</span>
+                        <span style="font-weight: 600; color: var(--primary);" id="completion-rate-content">65%</span>
+                    </div>
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--accent-dark);">
+                        <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;" id="content-insights">Video tutorials show highest engagement.</p>
+                    </div>
+                </div>
+
+                <div class="card" style="background: var(--bg-light);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>💡</span> AI Recommendations
+                    </h4>
+                    <div style="margin-bottom: 1rem;">
+                        <h5 style="color: var(--gray-700); font-size: 0.875rem; margin-bottom: 0.5rem;">Priority Actions:</h5>
+                        <ul style="margin: 0; padding-left: 1rem; color: var(--gray-600); font-size: 0.875rem;" id="priority-actions">
+                            <li>Schedule intervention sessions for 3 high-risk students</li>
+                            <li>Increase video content in Module 2</li>
+                            <li>Implement peer mentoring</li>
+                        </ul>
+                    </div>
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--accent-dark);">
+                        <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;" id="ai-strategy-recommendations">Focus on personalized learning paths and gamification.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Advanced Analytics Visualization -->
+        <section class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 style="color: var(--gray-800); margin: 0; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>📊</span> Advanced Analytics Dashboard
+                </h3>
+                <div style="display: flex; gap: 0.5rem;">
+                    <select id="analytics-timeframe" style="padding: 0.5rem; border: 1px solid var(--accent); border-radius: 6px; background: var(--white); font-size: 0.75rem;">
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                        <option value="semester">This Semester</option>
+                        <option value="all">All Time</option>
+                    </select>
+                    <button class="btn" id="btn-export-analytics" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                        📈 Export Charts
+                    </button>
+                </div>
+            </div>
+
+            <!-- Progress Trend Charts -->
+            <div class="grid" style="margin-bottom: 2rem;">
+                <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>📈</span> Weekly Progress Trend
+                    </h4>
+                    <div id="progress-trend-chart" style="height: 200px; position: relative;">
+                        <!-- Progress trend chart will be rendered here -->
+                    </div>
+                </div>
+                <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🔥</span> Engagement Heatmap
+                    </h4>
+                    <div id="engagement-heatmap" style="height: 200px; position: relative;">
+                        <!-- Engagement heatmap will be rendered here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Analytics -->
+            <div class="grid" style="margin-bottom: 2rem;">
+                <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🎯</span> Performance Distribution
+                    </h4>
+                    <div id="performance-distribution" style="height: 200px; position: relative;">
+                        <!-- Performance distribution chart will be rendered here -->
+                    </div>
+                </div>
+                <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>⏱️</span> Learning Time Analysis
+                    </h4>
+                    <div id="time-analysis-chart" style="height: 200px; position: relative;">
+                        <!-- Time analysis chart will be rendered here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparative Analytics -->
+            <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent); margin-bottom: 2rem;">
+                <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>📊</span> Class Performance Comparison
+                </h4>
+                <div id="class-comparison-chart" style="height: 250px; position: relative;">
+                    <!-- Class comparison chart will be rendered here -->
+                </div>
+            </div>
+
+            <!-- Learning Path Analytics -->
+            <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>🛤️</span> Learning Path Effectiveness
+                </h4>
+                <div id="learning-path-chart" style="height: 200px; position: relative;">
+                    <!-- Learning path effectiveness chart will be rendered here -->
+                </div>
+            </div>
+        </section>
+    `;
+
+    setInner("page-analytics", analyticsHTML);
+
+    // Load analytics data and render charts
+    setTimeout(() => {
+        loadLearningPatterns();
+        loadAtRiskStudents();
+        loadContentEffectiveness();
+        loadAIRecommendations();
+        renderDemoCharts();
+    }, 100);
+
+    UIComponents.showNotification("📊 Analytics & Insights loaded successfully!", "success");
 }
 
 function loadStudentsPage() {
-    // Move existing student management content here
-    UIComponents.showNotification("👥 Loading Student Management...", "info");
+    const studentsHTML = `
+        <!-- Real-time Student Monitoring Dashboard -->
+        <section class="card">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
+                    👥
+                </div>
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">Real-time Student Monitoring</h2>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">Live tracking of student progress and engagement</p>
+                </div>
+                <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+                    <div style="background: var(--accent); padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid var(--accent-dark);">
+                        <span style="font-size: 0.75rem; color: var(--gray-600);">Last Update:</span>
+                        <span style="font-weight: 600; color: var(--primary); font-size: 0.75rem;" id="last-update-time">Loading...</span>
+                    </div>
+                    <button class="btn" id="btn-toggle-realtime" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--success);">
+                        🔴 Live Monitoring
+                    </button>
+                </div>
+            </div>
+
+            <!-- Real-time Statistics -->
+            <div class="grid" style="margin-bottom: 2rem;">
+                <div class="metric-card" style="background: var(--accent);">
+                    <div class="metric-value" id="online-students">12</div>
+                    <div class="metric-label">Students Online Now</div>
+                </div>
+                <div class="metric-card" style="background: var(--secondary-light);">
+                    <div class="metric-value" id="active-sessions">8</div>
+                    <div class="metric-label">Active Learning Sessions</div>
+                </div>
+                <div class="metric-card" style="background: var(--white);">
+                    <div class="metric-value" id="avg-engagement">78%</div>
+                    <div class="metric-label">Avg Engagement Score</div>
+                </div>
+                <div class="metric-card" style="background: var(--bg-light);">
+                    <div class="metric-value" id="completion-today">24</div>
+                    <div class="metric-label">Lessons Completed Today</div>
+                </div>
+            </div>
+
+            <!-- Filter and Action Controls -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <select id="filter-status" style="padding: 0.5rem; border: 1px solid var(--accent); border-radius: 6px; background: var(--white);">
+                        <option value="all">All Students</option>
+                        <option value="online">Online Now</option>
+                        <option value="at-risk">At Risk</option>
+                        <option value="high-performers">High Performers</option>
+                        <option value="needs-attention">Needs Attention</option>
+                    </select>
+                    <select id="filter-module" style="padding: 0.5rem; border: 1px solid var(--accent); border-radius: 6px; background: var(--white);">
+                        <option value="all">All Modules</option>
+                        <option value="module-1">Module 1: Foundations</option>
+                        <option value="module-2">Module 2: Analytics</option>
+                        <option value="module-3">Module 3: Advanced</option>
+                    </select>
+                    <input type="search" id="search-students" placeholder="Search students..." style="padding: 0.5rem; border: 1px solid var(--accent); border-radius: 6px; background: var(--white); min-width: 200px;">
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-success" id="btn-export-progress">📊 Export Progress</button>
+                    <button class="btn btn-warning" id="btn-send-reminder">📧 Send Reminder</button>
+                    <button class="btn" id="btn-refresh-data">🔄 Refresh Data</button>
+                </div>
+            </div>
+
+            <!-- Enhanced Student Table -->
+            <div id="student-list" style="overflow-x: auto;">
+                <p style="text-align: center; color: var(--gray-600); padding: 2rem;">Loading student data...</p>
+            </div>
+
+            <!-- Student Activity Timeline -->
+            <div style="border-top: 1px solid var(--accent); padding-top: 1.5rem; margin-top: 1.5rem;">
+                <h3 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>📈</span> Recent Student Activity
+                </h3>
+                <div id="activity-timeline" style="background: var(--white); border: 1px solid var(--accent); border-radius: 8px; padding: 1rem; max-height: 300px; overflow-y: auto;">
+                    <p style="color: var(--gray-600); text-align: center;">Loading recent activity...</p>
+                </div>
+            </div>
+        </section>
+    `;
+
+    setInner("page-students", studentsHTML);
+
+    // Load student data
+    setTimeout(() => {
+        loadRealTimeStats();
+        loadActivityTimeline();
+        renderDemoStudentTable();
+        updateLastUpdateTime();
+    }, 100);
+
+    UIComponents.showNotification("👥 Student Management loaded successfully!", "success");
 }
 
 function loadCommunicationPage() {
-    // Move existing communication content here
-    UIComponents.showNotification("💬 Loading Communication Center...", "info");
+    const communicationHTML = `
+        <!-- Communication Center -->
+        <section class="card">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="width: 40px; height: 40px; background: var(--info); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
+                    💬
+                </div>
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">Communication Center</h2>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">Manage student communications and announcements</p>
+                </div>
+                <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+                    <div style="background: var(--accent); padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid var(--accent-dark);">
+                        <span style="font-size: 0.75rem; color: var(--gray-600);">Unread:</span>
+                        <span style="font-weight: 600; color: var(--primary); font-size: 0.75rem;" id="unread-messages">3</span>
+                    </div>
+                    <button class="btn" id="btn-mark-all-read" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--success);">
+                        ✅ Mark All Read
+                    </button>
+                </div>
+            </div>
+
+            <!-- Communication Tabs -->
+            <div class="communication-tabs">
+                <button class="comm-tab-button active" onclick="switchCommTab('messages')">📨 Messages</button>
+                <button class="comm-tab-button" onclick="switchCommTab('announcements')">📢 Announcements</button>
+                <button class="comm-tab-button" onclick="switchCommTab('discussions')">💭 Discussions</button>
+                <button class="comm-tab-button" onclick="switchCommTab('notifications')">🔔 Notifications</button>
+                <button class="comm-tab-button" onclick="switchCommTab('analytics')">📊 Comm Analytics</button>
+            </div>
+
+            <!-- Tab Content -->
+            <div id="comm-tab-messages" class="comm-tab-content active">
+                <!-- Messages content will be loaded here -->
+            </div>
+
+            <div id="comm-tab-announcements" class="comm-tab-content">
+                <!-- Announcements content will be loaded here -->
+            </div>
+
+            <div id="comm-tab-discussions" class="comm-tab-content">
+                <!-- Discussions content will be loaded here -->
+            </div>
+
+            <div id="comm-tab-notifications" class="comm-tab-content">
+                <!-- Notifications content will be loaded here -->
+            </div>
+
+            <div id="comm-tab-analytics" class="comm-tab-content">
+                <!-- Communication Analytics content will be loaded here -->
+            </div>
+        </section>
+    `;
+
+    setInner("page-communication", communicationHTML);
+
+    // Load communication data
+    setTimeout(() => {
+        loadDemoCommunicationData();
+    }, 100);
+
+    UIComponents.showNotification("💬 Communication Center loaded successfully!", "success");
 }
 
 function loadWorkflowPage() {
-    // Move existing workflow content here
-    UIComponents.showNotification("⚡ Loading Workflow Tools...", "info");
+    const workflowHTML = `
+        <!-- D1-D24 Educator Workflow -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="width: 40px; height: 40px; background: var(--secondary-dark); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
+                    ⚡
+                </div>
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">D1-D24 Educator Workflow</h2>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">Comprehensive workflow tools for daily educator tasks</p>
+                </div>
+            </div>
+
+            <!-- Workflow Categories -->
+            <div class="grid" style="margin-bottom: 2rem;">
+                <div class="card" style="background: var(--accent);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>📅</span> Weekly Planning (D1-D6)
+                    </h4>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <button class="btn" id="btn-weekly-planning" style="background: var(--primary); padding: 0.5rem;">
+                            📋 Start Weekly Planning
+                        </button>
+                        <button class="btn" id="btn-pre-class-setup" style="background: var(--info); padding: 0.5rem;">
+                            🎯 Pre-Class Setup
+                        </button>
+                        <button class="btn" id="btn-live-class" style="background: var(--success); padding: 0.5rem;">
+                            🎓 Live Class Tools
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" style="background: var(--secondary-light);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>📊</span> Analysis & Monitoring (D7-D18)
+                    </h4>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <button class="btn" id="btn-post-analysis" style="background: var(--warning); padding: 0.5rem;">
+                            📈 Post-Class Analysis
+                        </button>
+                        <button class="btn" id="btn-student-monitoring" style="background: var(--primary); padding: 0.5rem;">
+                            👥 Student Monitoring
+                        </button>
+                        <button class="btn" id="btn-ai-oversight" style="background: var(--secondary-dark); padding: 0.5rem;">
+                            🤖 AI Oversight
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" style="background: var(--white);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🔄</span> Continuous Improvement (D19-D24)
+                    </h4>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <button class="btn" style="background: var(--accent-dark); padding: 0.5rem;">
+                            📝 Content Updates
+                        </button>
+                        <button class="btn" style="background: var(--info); padding: 0.5rem;">
+                            🎯 Strategy Refinement
+                        </button>
+                        <button class="btn" style="background: var(--success); padding: 0.5rem;">
+                            📊 Performance Review
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Class Management Tools -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🎓</span> Class Management Tools
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                <div style="background: var(--accent); padding: 1rem; border-radius: 8px;">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.5rem;">📚 Course Materials</h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Manage course content and resources</p>
+                    <button class="btn" style="background: var(--primary); width: 100%;">Manage Materials</button>
+                </div>
+                <div style="background: var(--accent); padding: 1rem; border-radius: 8px;">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.5rem;">📝 Assignments</h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Create and grade assignments</p>
+                    <button class="btn" style="background: var(--warning); width: 100%;">Manage Assignments</button>
+                </div>
+                <div style="background: var(--accent); padding: 1rem; border-radius: 8px;">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.5rem;">📊 Assessments</h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Create quizzes and exams</p>
+                    <button class="btn" style="background: var(--info); width: 100%;">Manage Assessments</button>
+                </div>
+                <div style="background: var(--accent); padding: 1rem; border-radius: 8px;">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.5rem;">📅 Schedule</h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Manage class schedules</p>
+                    <button class="btn" style="background: var(--success); width: 100%;">View Schedule</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="card">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>⚡</span> Quick Workflow Actions
+            </h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+                <button class="btn" style="background: var(--primary); padding: 0.75rem 1rem;">
+                    📋 Create Lesson Plan
+                </button>
+                <button class="btn" style="background: var(--success); padding: 0.75rem 1rem;">
+                    🎯 Set Learning Objectives
+                </button>
+                <button class="btn" style="background: var(--warning); padding: 0.75rem 1rem;">
+                    📊 Generate Reports
+                </button>
+                <button class="btn" style="background: var(--info); padding: 0.75rem 1rem;">
+                    💬 Send Class Announcement
+                </button>
+                <button class="btn" style="background: var(--secondary-dark); padding: 0.75rem 1rem;">
+                    🔄 Update Course Content
+                </button>
+                <button class="btn" style="background: var(--accent-dark); padding: 0.75rem 1rem;">
+                    📈 Review Analytics
+                </button>
+            </div>
+        </section>
+    `;
+
+    setInner("page-workflow", workflowHTML);
+    UIComponents.showNotification("⚡ Workflow Tools loaded successfully!", "success");
 }
 
 function loadSettingsPage() {
