@@ -148,14 +148,18 @@ async function loadAIInsights() {
 }
 
 function setupEventListeners() {
+    // Original buttons
     onClick("btn-export-progress", exportStudentProgress);
     onClick("btn-send-reminder", sendReminder);
     onClick("btn-refresh-data", refreshData);
-    onClick("btn-create-assignment", createAssignment);
-    onClick("btn-schedule-class", scheduleClass);
-    onClick("btn-view-analytics", viewAnalytics);
-    onClick("btn-manage-content", manageContent);
-    onClick("btn-chat-ai", chatWithAI);
+
+    // New D1-D24 Workflow buttons
+    onClick("btn-weekly-planning", startWeeklyPlanning);
+    onClick("btn-pre-class-setup", startPreClassSetup);
+    onClick("btn-live-class", startLiveClass);
+    onClick("btn-post-analysis", startPostAnalysis);
+    onClick("btn-student-monitoring", openStudentMonitoring);
+    onClick("btn-ai-oversight", openAIOversight);
 }
 
 function exportStudentProgress() {
@@ -230,6 +234,122 @@ function chatWithAI() {
 
 function viewStudentDetail(studentId) {
     UIComponents.showNotification(`👤 Membuka detail mahasiswa ID: ${studentId}`, "info");
+}
+
+// D1-D6: Weekly Planning Session (30 minutes)
+function startWeeklyPlanning() {
+    UIComponents.showNotification("📅 Starting Weekly Planning Session (D1-D6) - 30 minutes", "info");
+
+    const planningSteps = [
+        "D1: Weekly Planning Session",
+        "D2: Review AI Analytics Dashboard",
+        "D3: Identify At-Risk Students",
+        "D4: Analyze Content Effectiveness",
+        "D5: Plan Intervention Strategies",
+        "D6: Create Session Plan"
+    ];
+
+    let currentStep = 0;
+    const interval = setInterval(() => {
+        if (currentStep < planningSteps.length) {
+            UIComponents.showNotification(`✅ ${planningSteps[currentStep]}`, "success");
+            currentStep++;
+        } else {
+            clearInterval(interval);
+            UIComponents.showNotification("🎯 Weekly Planning Session completed! Ready for next week.", "success");
+        }
+    }, 2000);
+}
+
+// D7-D11: Pre-Class Setup (15 minutes)
+function startPreClassSetup() {
+    UIComponents.showNotification("🔧 Starting Pre-Class Setup (D7-D11) - 15 minutes", "info");
+
+    const setupSteps = [
+        "D7: Pre-Class Setup",
+        "D8: Check System Status",
+        "D9: Review Student Readiness",
+        "D10: Prepare Technology Tools",
+        "D11: Brief AI Teaching Assistant"
+    ];
+
+    let currentStep = 0;
+    const interval = setInterval(() => {
+        if (currentStep < setupSteps.length) {
+            UIComponents.showNotification(`✅ ${setupSteps[currentStep]}`, "success");
+            currentStep++;
+        } else {
+            clearInterval(interval);
+            UIComponents.showNotification("🚀 Pre-Class Setup completed! Ready to start class.", "success");
+        }
+    }, 1500);
+}
+
+// D12-D18: In-Class Facilitation (90 minutes)
+function startLiveClass() {
+    UIComponents.showNotification("🎓 Starting In-Class Facilitation (D12-D18) - 90 minutes", "info");
+
+    const classSteps = [
+        "D12: In-Class Facilitation",
+        "D13: Opening & Objectives",
+        "D14: AI-Supported Presentation",
+        "D15: Interactive Activities",
+        "D16: Individual Support Rounds",
+        "D17: Live Assessment Check",
+        "D18: Session Wrap-up"
+    ];
+
+    let currentStep = 0;
+    const interval = setInterval(() => {
+        if (currentStep < classSteps.length) {
+            UIComponents.showNotification(`✅ ${classSteps[currentStep]}`, "success");
+            currentStep++;
+        } else {
+            clearInterval(interval);
+            UIComponents.showNotification("🎉 Class session completed successfully!", "success");
+        }
+    }, 3000);
+}
+
+// D19-D24: Post-Class Analysis (20 minutes)
+function startPostAnalysis() {
+    UIComponents.showNotification("📊 Starting Post-Class Analysis (D19-D24) - 20 minutes", "info");
+
+    const analysisSteps = [
+        "D19: Post-Class Analysis",
+        "D20: Review Session Metrics",
+        "D21: Analyze Student Performance",
+        "D22: Note AI Recommendations",
+        "D23: Plan Individual Follow-ups",
+        "D24: Update Teaching Strategy"
+    ];
+
+    let currentStep = 0;
+    const interval = setInterval(() => {
+        if (currentStep < analysisSteps.length) {
+            UIComponents.showNotification(`✅ ${analysisSteps[currentStep]}`, "success");
+            currentStep++;
+        } else {
+            clearInterval(interval);
+            UIComponents.showNotification("📈 Post-Class Analysis completed! Insights saved for next planning.", "success");
+        }
+    }, 2000);
+}
+
+// Student Monitoring Interface
+function openStudentMonitoring() {
+    UIComponents.showNotification("👥 Opening Student Monitoring Dashboard...", "info");
+    setTimeout(() => {
+        UIComponents.showNotification("📊 Real-time student progress tracking activated", "success");
+    }, 1000);
+}
+
+// AI Oversight Panel
+function openAIOversight() {
+    UIComponents.showNotification("🤖 Opening AI Oversight Panel...", "info");
+    setTimeout(() => {
+        UIComponents.showNotification("🎯 AI decision monitoring and control panel ready", "success");
+    }, 1000);
 }
 
 function updateCarbonIndicator() {

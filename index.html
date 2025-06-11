@@ -9,49 +9,339 @@
     <link rel="stylesheet" href="https://mubaroqadb.github.io/agenticlearn-shared/css/green-components.css">
 
     <style>
-        :root { 
-            --primary: #2563eb; --success: #059669; --warning: #f59e0b; --error: #dc2626;
-            --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-800: #1f2937; 
+        /* AgenticLearn Instructor Portal - Consistent with Student Frontend */
+        :root {
+            /* Natural Palette - Consistent with Student Frontend */
+            --primary: #667b68;           /* Dark sage green */
+            --primary-light: #a3b899;     /* Medium sage green */
+            --primary-dark: #4a5a4c;      /* Darker sage green */
+            --secondary: #f8d3c5;         /* Warm peach */
+            --secondary-light: #fce4d6;   /* Light peach */
+            --secondary-dark: #f5c2a8;    /* Darker peach */
+            --accent: #dde6d5;            /* Light sage green */
+            --accent-dark: #c8d4bb;       /* Darker light sage */
+            --background: #fceee9;        /* Very light peach */
+            --background-alt: #f9f2ee;    /* Alternative background */
+
+            /* Neutrals - using palette colors */
+            --white: #FFFFFF;        /* Pure white for text and outlines */
+            --bg-light: #fceee9;     /* Very light peach for backgrounds */
+            --gray-50: #f8d3c5;      /* Light peach */
+            --gray-100: #dde6d5;     /* Light sage green */
+            --gray-200: #a3b899;     /* Medium sage green */
+            --gray-300: #667b68;     /* Dark sage green */
+            --gray-400: #5c6b5e;     /* Darker sage */
+            --gray-500: #4a5a4c;     /* Even darker sage */
+            --gray-600: #3d4a3f;     /* Very dark sage */
+            --gray-700: #2f3a31;     /* Almost black sage */
+            --gray-800: #242b25;     /* Dark text color */
+            --gray-900: #1a1815;     /* Darkest text */
+
+            /* Status colors - adjusted to match palette */
+            --success: #667b68;           /* Use primary for success */
+            --warning: #f8d3c5;           /* Use secondary for warning */
+            --error: #d4756b;             /* Muted red that fits palette */
+            --info: #a3b899;              /* Use primary-light for info */
+
+            /* Shadows - using new primary color */
+            --shadow-sm: 0 1px 3px rgba(102, 123, 104, 0.1);
+            --shadow-md: 0 4px 12px rgba(102, 123, 104, 0.15);
+            --shadow-lg: 0 8px 25px rgba(102, 123, 104, 0.2);
+
+            /* Transitions - minimal */
+            --transition: all 0.2s ease;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
-            background: var(--gray-50); color: var(--gray-800);
+
+        /* Reset & Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .container { max-width: 1200px; margin: 0 auto; padding: 1rem; }
-        .card { 
-            background: white; border-radius: 8px; padding: 1.5rem; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12); margin-bottom: 1rem; 
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--gray-900);
+            background: var(--bg-light);
+            overflow-x: hidden;
         }
-        .btn { 
-            padding: 0.5rem 1rem; border: none; border-radius: 8px; cursor: pointer; 
-            background: var(--primary); color: white; margin: 0.25rem; transition: all 0.2s;
+        /* Layout */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
         }
-        .btn:hover { background: #3b82f6; }
-        .btn-success { background: var(--success); }
-        .btn-warning { background: var(--warning); }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
-        .metric-card { text-align: center; padding: 1rem; background: var(--gray-50); border-radius: 8px; }
-        .metric-value { font-size: 2rem; font-weight: bold; color: var(--primary); }
-        .metric-label { font-size: 0.875rem; color: #666; }
-        .student-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-        .student-table th, .student-table td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--gray-100); }
-        .student-table th { background: var(--gray-50); font-weight: 600; }
-        .progress-mini { width: 100px; height: 6px; background: var(--gray-100); border-radius: 3px; overflow: hidden; }
-        .progress-mini-fill { height: 100%; background: var(--success); border-radius: 3px; }
-        .status-active { color: var(--success); font-weight: 500; }
-        .status-inactive { color: #666; }
+
+        /* Cards - Consistent with Student Frontend */
+        .card {
+            background: var(--bg-light);
+            border-radius: 12px;
+            border: 1px solid var(--accent);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transition: var(--transition);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Buttons - Consistent with Student Frontend */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: var(--transition);
+            min-height: 44px;
+            background: var(--primary);
+            color: white;
+            margin: 0.25rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: var(--transition);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-success:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-warning {
+            background: var(--secondary-dark);
+            color: var(--gray-800);
+        }
+
+        .btn-warning:hover {
+            background: var(--secondary);
+        }
+        /* Grid - Consistent with Student Frontend */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        /* Metric Cards - Enhanced Design */
+        .metric-card {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--white);
+            border: 1px solid var(--accent);
+            border-radius: 12px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .metric-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        /* Table Styles - Enhanced */
+        .student-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background: var(--white);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .student-table th, .student-table td {
+            padding: 1rem 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--accent);
+        }
+
+        .student-table th {
+            background: var(--accent);
+            font-weight: 600;
+            color: var(--gray-800);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .student-table tr:hover {
+            background: var(--accent);
+        }
+
+        /* Progress Bar - Enhanced */
+        .progress-mini {
+            width: 100px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid var(--accent-dark);
+        }
+
+        .progress-mini-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* Status Styles */
+        .status-active {
+            color: var(--success);
+            font-weight: 600;
+            background: var(--accent);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .status-inactive {
+            color: var(--gray-600);
+            font-weight: 500;
+            background: var(--gray-100);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .container { padding: 0.5rem; }
-            .grid { grid-template-columns: 1fr; }
+            .container {
+                padding: 1rem;
+            }
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .btn {
+                width: 100%;
+                margin: 0.25rem 0;
+            }
+            .student-table {
+                font-size: 0.875rem;
+            }
+            .student-table th, .student-table td {
+                padding: 0.5rem;
+            }
+        }
+
+        /* Carbon Indicator - Consistent with Student Frontend */
+        .carbon-indicator {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+            z-index: 1000;
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Enhanced Header with Consistent Design -->
         <header class="card">
-            <h1>🌱 AgenticLearn - Portal Dosen</h1>
-            <p>Kelola pembelajaran adaptif dengan AI - <span id="educator-name">Memuat...</span></p>
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <div style="width: 48px; height: 48px; background: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; box-shadow: var(--shadow-sm);">
+                    🌱
+                </div>
+                <div>
+                    <h1 style="font-size: 1.875rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.25rem;">
+                        AgenticLearn - Portal Instructor
+                    </h1>
+                    <p style="color: var(--gray-600); font-size: 1rem;">
+                        Kelola pembelajaran adaptif dengan AI - <span id="educator-name" style="font-weight: 600; color: var(--primary);">Memuat...</span>
+                    </p>
+                </div>
+            </div>
+            <div style="background: var(--accent); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--primary);">
+                <p style="color: var(--gray-800); font-size: 0.875rem; margin: 0;">
+                    <strong>Educator Workflow D1-D24:</strong> Weekly Planning → Pre-Class Setup → In-Class Facilitation → Post-Class Analysis
+                </p>
+            </div>
         </header>
 
         <section class="card">
@@ -89,33 +379,71 @@
         </section>
 
         <section class="card">
-            <h2>🤖 AI Analytics & Insights</h2>
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
+                    🤖
+                </div>
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">AI Analytics Dashboard (D2)</h2>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">Weekly Planning Session - Review AI Analytics</p>
+                </div>
+            </div>
             <div id="ai-insights">
                 <div class="grid">
-                    <div class="card" style="background: #eff6ff;">
-                        <h4>📈 Learning Patterns</h4>
-                        <p id="learning-patterns">Menganalisis pola pembelajaran...</p>
+                    <div class="card" style="background: var(--accent); border: 1px solid var(--accent-dark);">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="font-size: 1.5rem;">📈</span>
+                            <h4 style="color: var(--gray-800); margin: 0;">Learning Patterns</h4>
+                        </div>
+                        <p id="learning-patterns" style="color: var(--gray-700); font-size: 0.875rem;">Menganalisis pola pembelajaran mahasiswa...</p>
                     </div>
-                    <div class="card" style="background: #f0fdf4;">
-                        <h4>⚠️ At-Risk Students</h4>
-                        <p id="at-risk-students">Identifikasi mahasiswa berisiko...</p>
+                    <div class="card" style="background: var(--secondary-light); border: 1px solid var(--secondary-dark);">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="font-size: 1.5rem;">⚠️</span>
+                            <h4 style="color: var(--gray-800); margin: 0;">At-Risk Students (D3)</h4>
+                        </div>
+                        <p id="at-risk-students" style="color: var(--gray-700); font-size: 0.875rem;">Identifikasi mahasiswa yang memerlukan intervensi...</p>
                     </div>
-                    <div class="card" style="background: #fefce8;">
-                        <h4>🎯 Recommendations</h4>
-                        <p id="ai-recommendations">Rekomendasi pembelajaran...</p>
+                    <div class="card" style="background: var(--white); border: 1px solid var(--accent);">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                            <span style="font-size: 1.5rem;">🎯</span>
+                            <h4 style="color: var(--gray-800); margin: 0;">AI Recommendations (D22)</h4>
+                        </div>
+                        <p id="ai-recommendations" style="color: var(--gray-700); font-size: 0.875rem;">Rekomendasi strategi pembelajaran dari AI...</p>
                     </div>
                 </div>
             </div>
         </section>
 
         <section class="card">
-            <h2>⚡ Aksi Cepat</h2>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                <button class="btn" id="btn-create-assignment">📝 Buat Assignment</button>
-                <button class="btn" id="btn-schedule-class">📅 Jadwalkan Kelas</button>
-                <button class="btn" id="btn-view-analytics">📊 Lihat Analytics Detail</button>
-                <button class="btn" id="btn-manage-content">📚 Kelola Konten</button>
-                <button class="btn" id="btn-chat-ai">🤖 Konsultasi AI</button>
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="width: 40px; height: 40px; background: var(--secondary-dark); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
+                    ⚡
+                </div>
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">Educator Workflow Actions</h2>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">Quick access to D1-D24 workflow components</p>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                <button class="btn" id="btn-weekly-planning" style="background: var(--primary);">
+                    📅 Weekly Planning (D1-D6)
+                </button>
+                <button class="btn" id="btn-pre-class-setup" style="background: var(--primary-light);">
+                    🔧 Pre-Class Setup (D7-D11)
+                </button>
+                <button class="btn" id="btn-live-class" style="background: var(--secondary-dark); color: var(--gray-800);">
+                    🎓 Live Class Tools (D12-D18)
+                </button>
+                <button class="btn" id="btn-post-analysis" style="background: var(--accent-dark); color: var(--gray-800);">
+                    📊 Post-Class Analysis (D19-D24)
+                </button>
+                <button class="btn" id="btn-student-monitoring" style="background: var(--info);">
+                    👥 Student Monitoring
+                </button>
+                <button class="btn" id="btn-ai-oversight" style="background: var(--primary-dark);">
+                    🤖 AI Oversight Panel
+                </button>
             </div>
         </section>
     </div>
