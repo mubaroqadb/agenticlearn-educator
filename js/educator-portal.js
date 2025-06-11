@@ -681,6 +681,15 @@ function setupEventListeners() {
     // Real-time monitoring controls
     onClick("btn-toggle-realtime", toggleRealTimeMonitoring);
 
+    // Setup analytics event listeners
+    setupAnalyticsEventListeners();
+
+    // Setup student management event listeners
+    setupStudentEventListeners();
+
+    // Setup workflow event listeners
+    setupWorkflowEventListeners();
+
     // Filter controls
     document.getElementById("filter-status")?.addEventListener("change", filterStudents);
     document.getElementById("filter-module")?.addEventListener("change", filterStudents);
@@ -2201,7 +2210,24 @@ function loadBerandaPage() {
     `;
 
     setInner("page-beranda", berandaHTML);
-    loadRecentActivityFeed();
+
+    // Load beranda data
+    setTimeout(() => {
+        loadBerandaData();
+        loadRecentActivityFeed();
+    }, 100);
+}
+
+function loadBerandaData() {
+    // Load summary card data
+    try {
+        setInner("beranda-total-students", "45");
+        setInner("beranda-avg-progress", "73%");
+        setInner("beranda-unread-messages", "3");
+        setInner("beranda-at-risk", "3");
+    } catch (error) {
+        console.error("Failed to load beranda data:", error);
+    }
 }
 
 function loadRecentActivityFeed() {
@@ -2583,6 +2609,7 @@ function loadCommunicationPage() {
     // Load communication data
     setTimeout(() => {
         loadDemoCommunicationData();
+        setupCommunicationEventListeners();
     }, 100);
 
     UIComponents.showNotification("💬 Communication Center loaded successfully!", "success");
@@ -2818,6 +2845,100 @@ window.showPage = showPage;
 window.exportReports = exportReports;
 window.scheduleSession = scheduleSession;
 
+// Setup additional event listeners for each page
+function setupAnalyticsEventListeners() {
+    // Analytics refresh button
+    setTimeout(() => {
+        const refreshBtn = document.getElementById("btn-refresh-analytics");
+        if (refreshBtn) {
+            refreshBtn.addEventListener("click", refreshAnalytics);
+        }
+
+        const timeframeSelect = document.getElementById("analytics-timeframe");
+        if (timeframeSelect) {
+            timeframeSelect.addEventListener("change", updateAnalyticsTimeframe);
+        }
+
+        const exportBtn = document.getElementById("btn-export-analytics");
+        if (exportBtn) {
+            exportBtn.addEventListener("click", exportAnalytics);
+        }
+    }, 200);
+}
+
+function setupStudentEventListeners() {
+    setTimeout(() => {
+        const toggleBtn = document.getElementById("btn-toggle-realtime");
+        if (toggleBtn) {
+            toggleBtn.addEventListener("click", toggleRealTimeMonitoring);
+        }
+
+        const exportBtn = document.getElementById("btn-export-progress");
+        if (exportBtn) {
+            exportBtn.addEventListener("click", exportStudentProgress);
+        }
+
+        const reminderBtn = document.getElementById("btn-send-reminder");
+        if (reminderBtn) {
+            reminderBtn.addEventListener("click", sendReminder);
+        }
+
+        const refreshBtn = document.getElementById("btn-refresh-data");
+        if (refreshBtn) {
+            refreshBtn.addEventListener("click", refreshData);
+        }
+
+        const filterStatus = document.getElementById("filter-status");
+        if (filterStatus) {
+            filterStatus.addEventListener("change", filterStudents);
+        }
+
+        const filterModule = document.getElementById("filter-module");
+        if (filterModule) {
+            filterModule.addEventListener("change", filterStudents);
+        }
+
+        const searchInput = document.getElementById("search-students");
+        if (searchInput) {
+            searchInput.addEventListener("input", searchStudents);
+        }
+    }, 200);
+}
+
+function setupWorkflowEventListeners() {
+    setTimeout(() => {
+        const weeklyBtn = document.getElementById("btn-weekly-planning");
+        if (weeklyBtn) {
+            weeklyBtn.addEventListener("click", startWeeklyPlanning);
+        }
+
+        const preClassBtn = document.getElementById("btn-pre-class-setup");
+        if (preClassBtn) {
+            preClassBtn.addEventListener("click", startPreClassSetup);
+        }
+
+        const liveClassBtn = document.getElementById("btn-live-class");
+        if (liveClassBtn) {
+            liveClassBtn.addEventListener("click", startLiveClass);
+        }
+
+        const postAnalysisBtn = document.getElementById("btn-post-analysis");
+        if (postAnalysisBtn) {
+            postAnalysisBtn.addEventListener("click", startPostAnalysis);
+        }
+
+        const monitoringBtn = document.getElementById("btn-student-monitoring");
+        if (monitoringBtn) {
+            monitoringBtn.addEventListener("click", openStudentMonitoring);
+        }
+
+        const aiOversightBtn = document.getElementById("btn-ai-oversight");
+        if (aiOversightBtn) {
+            aiOversightBtn.addEventListener("click", openAIOversight);
+        }
+    }, 200);
+}
+
 // D1-D6: Weekly Planning Session (30 minutes)
 function startWeeklyPlanning() {
     UIComponents.showNotification("📅 Starting Weekly Planning Session (D1-D6) - 30 minutes", "info");
@@ -2947,6 +3068,15 @@ function updateCarbonIndicator() {
             indicator.textContent = `🌱 0.000125g CO2`;
         }
     }
+}
+
+function setupCommunicationEventListeners() {
+    setTimeout(() => {
+        const markAllReadBtn = document.getElementById("btn-mark-all-read");
+        if (markAllReadBtn) {
+            markAllReadBtn.addEventListener("click", markAllMessagesRead);
+        }
+    }, 200);
 }
 
 // Global functions
