@@ -686,9 +686,537 @@ function chatWithAI() {
     }
 }
 
-function viewStudentDetail(studentId) {
-    UIComponents.showNotification(`👤 Membuka detail mahasiswa ID: ${studentId}`, "info");
+async function viewStudentDetail(studentId) {
+    try {
+        UIComponents.showNotification(`👤 Loading student profile: ${studentId}`, "info");
+
+        // Load student data
+        const student = await loadStudentData(studentId);
+
+        // Open modal and populate data
+        openStudentProfile(student);
+
+    } catch (error) {
+        console.error("Failed to load student detail:", error);
+        UIComponents.showNotification("❌ Failed to load student profile", "error");
+    }
 }
+
+async function loadStudentData(studentId) {
+    try {
+        // Try to load from API
+        const student = await apiClient.request(`/students/${studentId}`);
+        return student;
+    } catch (error) {
+        // Fallback to demo data
+        return getDemoStudentData(studentId);
+    }
+}
+
+function getDemoStudentData(studentId) {
+    const demoStudents = {
+        "student-1": {
+            id: "student-1",
+            name: "Andi Mahasiswa",
+            email: "andi@student.edu",
+            avatar: "AM",
+            progress: 75,
+            status: "online",
+            lastActive: new Date().toISOString(),
+            currentModule: 3,
+            currentLesson: "Data Visualization",
+            completedLessons: 15,
+            totalLessons: 20,
+            engagementScore: 85,
+            timeSpent: 120,
+            joinDate: "2024-01-15",
+            totalTimeSpent: 4500, // minutes
+            assessments: [
+                { name: "Digital Skills Assessment", score: 85, date: "2024-01-16", status: "completed" },
+                { name: "Learning Style Assessment", score: 92, date: "2024-01-17", status: "completed" },
+                { name: "Module 1 Quiz", score: 78, date: "2024-02-01", status: "completed" },
+                { name: "Module 2 Quiz", score: 88, date: "2024-02-15", status: "completed" },
+                { name: "Module 3 Quiz", score: 0, date: null, status: "pending" }
+            ],
+            goals: [
+                { title: "Complete Data Analytics Course", progress: 75, deadline: "2024-06-30", status: "active" },
+                { title: "Master Python Programming", progress: 60, deadline: "2024-05-15", status: "active" },
+                { title: "Build Portfolio Project", progress: 30, deadline: "2024-07-30", status: "active" }
+            ],
+            learningStyle: "Visual",
+            digitalSkillsLevel: "Intermediate",
+            technologyComfort: "High",
+            communicationHistory: [
+                { date: "2024-12-10", type: "message", content: "Great progress on Module 3!", sender: "instructor" },
+                { date: "2024-12-08", type: "message", content: "I need help with data visualization", sender: "student" },
+                { date: "2024-12-05", type: "reminder", content: "Assignment deadline reminder", sender: "system" }
+            ]
+        },
+        "student-2": {
+            id: "student-2",
+            name: "Sari Belajar",
+            email: "sari@student.edu",
+            avatar: "SB",
+            progress: 45,
+            status: "active",
+            lastActive: new Date(Date.now() - 3600000).toISOString(),
+            currentModule: 2,
+            currentLesson: "Analytics Fundamentals",
+            completedLessons: 9,
+            totalLessons: 20,
+            engagementScore: 72,
+            timeSpent: 45,
+            joinDate: "2024-01-20",
+            totalTimeSpent: 2800,
+            assessments: [
+                { name: "Digital Skills Assessment", score: 70, date: "2024-01-21", status: "completed" },
+                { name: "Learning Style Assessment", score: 85, date: "2024-01-22", status: "completed" },
+                { name: "Module 1 Quiz", score: 65, date: "2024-02-05", status: "completed" },
+                { name: "Module 2 Quiz", score: 0, date: null, status: "pending" }
+            ],
+            goals: [
+                { title: "Improve Technical Skills", progress: 45, deadline: "2024-08-30", status: "active" },
+                { title: "Complete Course Successfully", progress: 45, deadline: "2024-09-15", status: "active" }
+            ],
+            learningStyle: "Auditory",
+            digitalSkillsLevel: "Beginner",
+            technologyComfort: "Medium",
+            communicationHistory: [
+                { date: "2024-12-09", type: "message", content: "Keep up the good work!", sender: "instructor" },
+                { date: "2024-12-07", type: "message", content: "Can we schedule a help session?", sender: "student" }
+            ]
+        }
+    };
+
+    return demoStudents[studentId] || demoStudents["student-1"];
+}
+
+function openStudentProfile(student) {
+    // Populate header
+    setInner("profile-name", student.name);
+    setInner("profile-email", student.email);
+    setInner("profile-avatar", student.avatar || student.name.split(' ').map(n => n[0]).join('').substring(0, 2));
+
+    // Load overview tab content
+    loadOverviewTab(student);
+
+    // Show modal
+    document.getElementById("student-profile-modal").style.display = "flex";
+
+    // Set active tab
+    switchTab('overview');
+
+    UIComponents.showNotification(`📊 Student profile loaded: ${student.name}`, "success");
+}
+
+function closeStudentProfile() {
+    document.getElementById("student-profile-modal").style.display = "none";
+}
+
+function switchTab(tabName) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+
+    // Remove active class from all tab buttons
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+    });
+
+    // Show selected tab content
+    document.getElementById(`tab-${tabName}`).classList.add('active');
+
+    // Add active class to selected tab button
+    event.target.classList.add('active');
+
+    // Load tab-specific content
+    loadTabContent(tabName);
+}
+
+let currentStudent = null;
+
+function loadTabContent(tabName) {
+    if (!currentStudent) return;
+
+    switch(tabName) {
+        case 'overview':
+            loadOverviewTab(currentStudent);
+            break;
+        case 'progress':
+            loadProgressTab(currentStudent);
+            break;
+        case 'assessments':
+            loadAssessmentsTab(currentStudent);
+            break;
+        case 'communication':
+            loadCommunicationTab(currentStudent);
+            break;
+        case 'settings':
+            loadSettingsTab(currentStudent);
+            break;
+    }
+}
+
+function loadOverviewTab(student) {
+    currentStudent = student;
+
+    const overviewHTML = `
+        <div class="grid" style="margin-bottom: 2rem;">
+            <div class="card" style="background: var(--accent);">
+                <h4 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>📊</span> Learning Overview
+                </h4>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span style="color: var(--gray-700);">Overall Progress</span>
+                    <span style="font-weight: 600; color: var(--primary);">${student.progress}%</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span style="color: var(--gray-700);">Current Module</span>
+                    <span style="font-weight: 600; color: var(--primary);">Module ${student.currentModule}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span style="color: var(--gray-700);">Lessons Completed</span>
+                    <span style="font-weight: 600; color: var(--primary);">${student.completedLessons}/${student.totalLessons}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--gray-700);">Engagement Score</span>
+                    <span style="font-weight: 600; color: var(--primary);">${student.engagementScore}%</span>
+                </div>
+            </div>
+
+            <div class="card" style="background: var(--secondary-light);">
+                <h4 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>🎯</span> Learning Profile
+                </h4>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span style="color: var(--gray-700);">Learning Style</span>
+                    <span style="font-weight: 600; color: var(--primary);">${student.learningStyle}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span style="color: var(--gray-700);">Digital Skills</span>
+                    <span style="font-weight: 600; color: var(--primary);">${student.digitalSkillsLevel}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span style="color: var(--gray-700);">Tech Comfort</span>
+                    <span style="font-weight: 600; color: var(--primary);">${student.technologyComfort}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--gray-700);">Join Date</span>
+                    <span style="font-weight: 600; color: var(--primary);">${new Date(student.joinDate).toLocaleDateString('id-ID')}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <h4 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🎯</span> Active Goals
+            </h4>
+            ${student.goals.map(goal => `
+                <div style="background: var(--accent); padding: 1rem; border-radius: 8px; margin-bottom: 0.75rem; border-left: 4px solid var(--primary);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600; color: var(--gray-800);">${goal.title}</span>
+                        <span style="font-size: 0.75rem; color: var(--gray-600);">Due: ${new Date(goal.deadline).toLocaleDateString('id-ID')}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div class="progress-mini" style="width: 150px;">
+                            <div class="progress-mini-fill" style="width: ${goal.progress}%"></div>
+                        </div>
+                        <span style="font-weight: 600; color: var(--primary); font-size: 0.875rem;">${goal.progress}%</span>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+
+        <div class="card">
+            <h4 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>⏱️</span> Time Tracking
+            </h4>
+            <div class="grid">
+                <div style="text-align: center; padding: 1rem; background: var(--accent); border-radius: 8px;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">${student.timeSpent}min</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-600);">Today</div>
+                </div>
+                <div style="text-align: center; padding: 1rem; background: var(--accent); border-radius: 8px;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">${Math.round(student.totalTimeSpent / 60)}h</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-600);">Total</div>
+                </div>
+                <div style="text-align: center; padding: 1rem; background: var(--accent); border-radius: 8px;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">${Math.round(student.totalTimeSpent / student.completedLessons)}min</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-600);">Avg per Lesson</div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    setInner("tab-overview", overviewHTML);
+}
+
+function loadProgressTab(student) {
+    const progressHTML = `
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <h4 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📈</span> Progress Visualization
+            </h4>
+            <div style="background: var(--accent); padding: 2rem; border-radius: 8px; text-align: center; margin-bottom: 1rem;">
+                <div style="font-size: 3rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem;">${student.progress}%</div>
+                <div style="color: var(--gray-600);">Overall Course Progress</div>
+            </div>
+            <div style="background: var(--white); padding: 1rem; border-radius: 8px; border: 1px solid var(--accent);">
+                <p style="color: var(--gray-600); text-align: center; margin: 0;">Detailed progress charts will be implemented here</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h4 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📚</span> Module Progress
+            </h4>
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                ${[1, 2, 3, 4].map(moduleNum => {
+                    const isCompleted = moduleNum < student.currentModule;
+                    const isCurrent = moduleNum === student.currentModule;
+                    const progress = isCompleted ? 100 : (isCurrent ? Math.round((student.completedLessons % 5) * 20) : 0);
+
+                    return `
+                        <div style="background: var(--accent); padding: 1rem; border-radius: 8px; border-left: 4px solid ${isCompleted ? 'var(--success)' : (isCurrent ? 'var(--primary)' : 'var(--gray-400)')};">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <span style="font-weight: 600; color: var(--gray-800);">Module ${moduleNum}</span>
+                                <span style="font-size: 0.75rem; color: var(--gray-600);">${isCompleted ? '✅ Completed' : (isCurrent ? '🔄 In Progress' : '⏳ Pending')}</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div class="progress-mini" style="width: 200px;">
+                                    <div class="progress-mini-fill" style="width: ${progress}%"></div>
+                                </div>
+                                <span style="font-weight: 600; color: var(--primary); font-size: 0.875rem;">${progress}%</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        </div>
+    `;
+
+    setInner("tab-progress", progressHTML);
+}
+
+function loadAssessmentsTab(student) {
+    const assessmentsHTML = `
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <h4 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📝</span> Assessment History
+            </h4>
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                ${student.assessments.map(assessment => {
+                    const statusColor = assessment.status === 'completed' ? 'var(--success)' :
+                                      assessment.status === 'pending' ? 'var(--warning)' : 'var(--gray-400)';
+                    const statusIcon = assessment.status === 'completed' ? '✅' :
+                                     assessment.status === 'pending' ? '⏳' : '❌';
+
+                    return `
+                        <div style="background: var(--accent); padding: 1rem; border-radius: 8px; border-left: 4px solid ${statusColor};">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <span style="font-weight: 600; color: var(--gray-800);">${assessment.name}</span>
+                                <span style="font-size: 0.75rem; color: var(--gray-600);">${statusIcon} ${assessment.status}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="color: var(--gray-700);">Score: <strong style="color: var(--primary);">${assessment.score > 0 ? assessment.score + '%' : 'Not taken'}</strong></span>
+                                <span style="font-size: 0.75rem; color: var(--gray-600);">${assessment.date ? new Date(assessment.date).toLocaleDateString('id-ID') : 'No date'}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        </div>
+
+        <div class="card">
+            <h4 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📊</span> Assessment Analytics
+            </h4>
+            <div class="grid">
+                <div style="text-align: center; padding: 1rem; background: var(--accent); border-radius: 8px;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">${Math.round(student.assessments.filter(a => a.status === 'completed').reduce((sum, a) => sum + a.score, 0) / student.assessments.filter(a => a.status === 'completed').length)}%</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-600);">Average Score</div>
+                </div>
+                <div style="text-align: center; padding: 1rem; background: var(--accent); border-radius: 8px;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">${student.assessments.filter(a => a.status === 'completed').length}</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-600);">Completed</div>
+                </div>
+                <div style="text-align: center; padding: 1rem; background: var(--accent); border-radius: 8px;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">${student.assessments.filter(a => a.status === 'pending').length}</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-600);">Pending</div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    setInner("tab-assessments", assessmentsHTML);
+}
+
+function loadCommunicationTab(student) {
+    const communicationHTML = `
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <h4 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>💬</span> Send Message
+            </h4>
+            <div style="background: var(--accent); padding: 1rem; border-radius: 8px;">
+                <textarea id="message-input" placeholder="Type your message to ${student.name}..." style="width: 100%; height: 100px; padding: 0.75rem; border: 1px solid var(--accent-dark); border-radius: 6px; background: var(--white); resize: vertical; font-family: inherit;"></textarea>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn" onclick="sendQuickMessage('reminder')" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--warning);">
+                            📅 Send Reminder
+                        </button>
+                        <button class="btn" onclick="sendQuickMessage('encouragement')" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--success);">
+                            🎉 Send Encouragement
+                        </button>
+                    </div>
+                    <button class="btn" onclick="sendCustomMessage()" style="background: var(--primary);">
+                        📤 Send Message
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h4 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📜</span> Communication History
+            </h4>
+            <div style="max-height: 400px; overflow-y: auto;">
+                ${student.communicationHistory.map(comm => {
+                    const isInstructor = comm.sender === 'instructor';
+                    const isSystem = comm.sender === 'system';
+                    const bgColor = isInstructor ? 'var(--primary)' : isSystem ? 'var(--accent)' : 'var(--secondary-light)';
+                    const textColor = isInstructor ? 'white' : 'var(--gray-800)';
+                    const alignment = isInstructor ? 'flex-end' : 'flex-start';
+
+                    return `
+                        <div style="display: flex; justify-content: ${alignment}; margin-bottom: 1rem;">
+                            <div style="max-width: 70%; background: ${bgColor}; color: ${textColor}; padding: 0.75rem; border-radius: 8px;">
+                                <div style="font-size: 0.875rem; margin-bottom: 0.25rem;">${comm.content}</div>
+                                <div style="font-size: 0.75rem; opacity: 0.8;">${new Date(comm.date).toLocaleDateString('id-ID')} • ${comm.sender}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        </div>
+    `;
+
+    setInner("tab-communication", communicationHTML);
+}
+
+function loadSettingsTab(student) {
+    const settingsHTML = `
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <h4 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>⚙️</span> Learning Settings
+            </h4>
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div style="background: var(--accent); padding: 1rem; border-radius: 8px;">
+                    <label style="display: block; font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem;">Learning Path Customization</label>
+                    <select style="width: 100%; padding: 0.5rem; border: 1px solid var(--accent-dark); border-radius: 6px; background: var(--white);">
+                        <option>Standard Path</option>
+                        <option>Accelerated Path</option>
+                        <option>Extended Path</option>
+                        <option>Custom Path</option>
+                    </select>
+                </div>
+
+                <div style="background: var(--accent); padding: 1rem; border-radius: 8px;">
+                    <label style="display: block; font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem;">Difficulty Level</label>
+                    <select style="width: 100%; padding: 0.5rem; border: 1px solid var(--accent-dark); border-radius: 6px; background: var(--white);">
+                        <option>Beginner</option>
+                        <option selected>Intermediate</option>
+                        <option>Advanced</option>
+                    </select>
+                </div>
+
+                <div style="background: var(--accent); padding: 1rem; border-radius: 8px;">
+                    <label style="display: block; font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem;">Notification Preferences</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; color: var(--gray-700);">
+                            <input type="checkbox" checked> Assignment reminders
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; color: var(--gray-700);">
+                            <input type="checkbox" checked> Progress updates
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; color: var(--gray-700);">
+                            <input type="checkbox"> Weekly reports
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h4 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🎯</span> Intervention Actions
+            </h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                <button class="btn" onclick="scheduleIntervention()" style="background: var(--warning);">
+                    📅 Schedule Intervention
+                </button>
+                <button class="btn" onclick="assignMentor()" style="background: var(--info);">
+                    👥 Assign Mentor
+                </button>
+                <button class="btn" onclick="adjustLearningPath()" style="background: var(--primary);">
+                    🛤️ Adjust Learning Path
+                </button>
+                <button class="btn" onclick="generateReport()" style="background: var(--success);">
+                    📊 Generate Report
+                </button>
+            </div>
+        </div>
+    `;
+
+    setInner("tab-settings", settingsHTML);
+}
+
+// Communication functions
+function sendCustomMessage() {
+    const message = document.getElementById("message-input")?.value;
+    if (message.trim()) {
+        UIComponents.showNotification(`✅ Message sent: "${message}"`, "success");
+        document.getElementById("message-input").value = "";
+    } else {
+        UIComponents.showNotification("❌ Please enter a message", "error");
+    }
+}
+
+function sendQuickMessage(type) {
+    const messages = {
+        reminder: "📅 Reminder: You have pending assignments. Please check your dashboard.",
+        encouragement: "🎉 Great progress! Keep up the excellent work!"
+    };
+
+    UIComponents.showNotification(`✅ ${type} message sent: "${messages[type]}"`, "success");
+}
+
+// Intervention functions
+function scheduleIntervention() {
+    UIComponents.showNotification("📅 Intervention session scheduled for next week", "success");
+}
+
+function assignMentor() {
+    UIComponents.showNotification("👥 Mentor assigned successfully", "success");
+}
+
+function adjustLearningPath() {
+    UIComponents.showNotification("🛤️ Learning path adjusted based on performance", "success");
+}
+
+function generateReport() {
+    UIComponents.showNotification("📊 Detailed student report generated", "success");
+}
+
+// Global functions for onclick handlers
+window.closeStudentProfile = closeStudentProfile;
+window.switchTab = switchTab;
+window.sendCustomMessage = sendCustomMessage;
+window.sendQuickMessage = sendQuickMessage;
+window.scheduleIntervention = scheduleIntervention;
+window.assignMentor = assignMentor;
+window.adjustLearningPath = adjustLearningPath;
+window.generateReport = generateReport;
 
 // D1-D6: Weekly Planning Session (30 minutes)
 function startWeeklyPlanning() {

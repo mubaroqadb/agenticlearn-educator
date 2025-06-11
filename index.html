@@ -318,6 +318,157 @@
             box-shadow: var(--shadow-md);
             z-index: 1000;
         }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: var(--bg-light);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--accent);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--accent);
+            background: var(--white);
+        }
+
+        .profile-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: var(--gray-500);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: var(--accent);
+            color: var(--gray-800);
+        }
+
+        .modal-body {
+            padding: 0;
+            max-height: calc(90vh - 120px);
+            overflow-y: auto;
+        }
+
+        /* Profile Tabs */
+        .profile-tabs {
+            display: flex;
+            background: var(--accent);
+            border-bottom: 1px solid var(--accent-dark);
+            overflow-x: auto;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-600);
+            transition: var(--transition);
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-button:hover {
+            background: var(--accent-dark);
+            color: var(--gray-800);
+        }
+
+        .tab-button.active {
+            background: var(--white);
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            padding: 1.5rem;
+            background: var(--white);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Responsive Modal */
+        @media (max-width: 768px) {
+            .modal-overlay {
+                padding: 0.5rem;
+            }
+
+            .modal-content {
+                max-width: 100%;
+                max-height: 95vh;
+            }
+
+            .modal-header {
+                padding: 1rem;
+            }
+
+            .profile-avatar {
+                width: 48px;
+                height: 48px;
+                font-size: 1.25rem;
+            }
+
+            .tab-button {
+                padding: 0.75rem 1rem;
+                font-size: 0.75rem;
+            }
+
+            .tab-content {
+                padding: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -619,6 +770,56 @@
                 </button>
             </div>
         </section>
+    </div>
+
+    <!-- Student Profile Modal -->
+    <div id="student-profile-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div id="profile-avatar" class="profile-avatar">
+                        AM
+                    </div>
+                    <div>
+                        <h2 id="profile-name" style="margin: 0; color: var(--gray-900);">Student Name</h2>
+                        <p id="profile-email" style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">student@email.com</p>
+                    </div>
+                </div>
+                <button class="modal-close" onclick="closeStudentProfile()">×</button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Profile Navigation Tabs -->
+                <div class="profile-tabs">
+                    <button class="tab-button active" onclick="switchTab('overview')">📊 Overview</button>
+                    <button class="tab-button" onclick="switchTab('progress')">📈 Progress</button>
+                    <button class="tab-button" onclick="switchTab('assessments')">📝 Assessments</button>
+                    <button class="tab-button" onclick="switchTab('communication')">💬 Communication</button>
+                    <button class="tab-button" onclick="switchTab('settings')">⚙️ Settings</button>
+                </div>
+
+                <!-- Tab Content -->
+                <div id="tab-overview" class="tab-content active">
+                    <!-- Overview content will be loaded here -->
+                </div>
+
+                <div id="tab-progress" class="tab-content">
+                    <!-- Progress content will be loaded here -->
+                </div>
+
+                <div id="tab-assessments" class="tab-content">
+                    <!-- Assessments content will be loaded here -->
+                </div>
+
+                <div id="tab-communication" class="tab-content">
+                    <!-- Communication content will be loaded here -->
+                </div>
+
+                <div id="tab-settings" class="tab-content">
+                    <!-- Settings content will be loaded here -->
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Green Computing Indicator -->
