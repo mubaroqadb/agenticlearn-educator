@@ -378,6 +378,7 @@
             </div>
         </section>
 
+        <!-- Enhanced AI Analytics Dashboard (D2) -->
         <section class="card">
             <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
                 <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
@@ -387,29 +388,131 @@
                     <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">AI Analytics Dashboard (D2)</h2>
                     <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">Weekly Planning Session - Review AI Analytics</p>
                 </div>
+                <div style="margin-left: auto;">
+                    <button class="btn" id="btn-refresh-analytics" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                        🔄 Refresh Analytics
+                    </button>
+                </div>
             </div>
-            <div id="ai-insights">
+
+            <!-- Real-time Analytics Grid -->
+            <div class="grid" style="margin-bottom: 2rem;">
+                <!-- Learning Patterns Analysis -->
+                <div class="card" style="background: var(--accent); border: 1px solid var(--accent-dark);">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                        <span style="font-size: 1.5rem;">📈</span>
+                        <h4 style="color: var(--gray-800); margin: 0;">Learning Patterns</h4>
+                    </div>
+                    <div id="learning-patterns-content">
+                        <div style="margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="font-size: 0.875rem; color: var(--gray-700);">Peak Activity Time</span>
+                                <span style="font-weight: 600; color: var(--primary);" id="peak-time">Loading...</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="font-size: 0.875rem; color: var(--gray-700);">Mobile Access</span>
+                                <span style="font-weight: 600; color: var(--primary);" id="mobile-access">Loading...</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="font-size: 0.875rem; color: var(--gray-700);">Avg Session Duration</span>
+                                <span style="font-weight: 600; color: var(--primary);" id="session-duration">Loading...</span>
+                            </div>
+                        </div>
+                        <div style="background: var(--white); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--accent-dark);">
+                            <p style="font-size: 0.75rem; color: var(--gray-600); margin: 0;" id="learning-insights">Analyzing learning patterns...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- At-Risk Students (D3) -->
+                <div class="card" style="background: var(--secondary-light); border: 1px solid var(--secondary-dark);">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                        <span style="font-size: 1.5rem;">⚠️</span>
+                        <h4 style="color: var(--gray-800); margin: 0;">At-Risk Students (D3)</h4>
+                    </div>
+                    <div id="at-risk-content">
+                        <div style="margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="font-size: 0.875rem; color: var(--gray-700);">High Risk</span>
+                                <span style="font-weight: 600; color: var(--error);" id="high-risk-count">Loading...</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="font-size: 0.875rem; color: var(--gray-700);">Medium Risk</span>
+                                <span style="font-weight: 600; color: var(--warning);" id="medium-risk-count">Loading...</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="font-size: 0.875rem; color: var(--gray-700);">Intervention Needed</span>
+                                <span style="font-weight: 600; color: var(--primary);" id="intervention-count">Loading...</span>
+                            </div>
+                        </div>
+                        <div style="background: var(--white); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--secondary-dark);">
+                            <p style="font-size: 0.75rem; color: var(--gray-600); margin: 0;" id="risk-insights">Identifying at-risk students...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Effectiveness (D4) -->
+                <div class="card" style="background: var(--white); border: 1px solid var(--accent);">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                        <span style="font-size: 1.5rem;">📚</span>
+                        <h4 style="color: var(--gray-800); margin: 0;">Content Effectiveness (D4)</h4>
+                    </div>
+                    <div id="content-effectiveness">
+                        <div style="margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="font-size: 0.875rem; color: var(--gray-700);">Top Performing Content</span>
+                                <span style="font-weight: 600; color: var(--success);" id="top-content">Loading...</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="font-size: 0.875rem; color: var(--gray-700);">Avg Engagement Rate</span>
+                                <span style="font-weight: 600; color: var(--primary);" id="engagement-rate">Loading...</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="font-size: 0.875rem; color: var(--gray-700);">Completion Rate</span>
+                                <span style="font-weight: 600; color: var(--primary);" id="completion-rate-content">Loading...</span>
+                            </div>
+                        </div>
+                        <div style="background: var(--accent); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--accent-dark);">
+                            <p style="font-size: 0.75rem; color: var(--gray-600); margin: 0;" id="content-insights">Analyzing content effectiveness...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Recommendations (D22) -->
+                <div class="card" style="background: var(--bg-light); border: 2px solid var(--primary);">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                        <span style="font-size: 1.5rem;">🎯</span>
+                        <h4 style="color: var(--gray-800); margin: 0;">AI Recommendations (D22)</h4>
+                    </div>
+                    <div id="ai-recommendations-content">
+                        <div style="background: var(--primary); color: white; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <h5 style="margin: 0 0 0.5rem 0; font-size: 0.875rem;">Priority Actions</h5>
+                            <ul style="margin: 0; padding-left: 1rem; font-size: 0.75rem;" id="priority-actions">
+                                <li>Loading recommendations...</li>
+                            </ul>
+                        </div>
+                        <div style="background: var(--accent); padding: 0.75rem; border-radius: 6px;">
+                            <p style="font-size: 0.75rem; color: var(--gray-600); margin: 0;" id="ai-strategy-recommendations">Generating AI-powered teaching strategies...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Analytics Charts Section -->
+            <div style="border-top: 1px solid var(--accent); padding-top: 1.5rem;">
+                <h3 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 1rem;">Detailed Analytics</h3>
                 <div class="grid">
-                    <div class="card" style="background: var(--accent); border: 1px solid var(--accent-dark);">
-                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-                            <span style="font-size: 1.5rem;">📈</span>
-                            <h4 style="color: var(--gray-800); margin: 0;">Learning Patterns</h4>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 8px; border: 1px solid var(--accent);">
+                        <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; font-size: 0.875rem;">Weekly Progress Trend</h4>
+                        <div id="progress-chart" style="height: 120px; background: var(--accent); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--gray-600); font-size: 0.75rem;">
+                            Progress chart will be rendered here
                         </div>
-                        <p id="learning-patterns" style="color: var(--gray-700); font-size: 0.875rem;">Menganalisis pola pembelajaran mahasiswa...</p>
                     </div>
-                    <div class="card" style="background: var(--secondary-light); border: 1px solid var(--secondary-dark);">
-                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-                            <span style="font-size: 1.5rem;">⚠️</span>
-                            <h4 style="color: var(--gray-800); margin: 0;">At-Risk Students (D3)</h4>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 8px; border: 1px solid var(--accent);">
+                        <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; font-size: 0.875rem;">Engagement Heatmap</h4>
+                        <div id="engagement-heatmap" style="height: 120px; background: var(--accent); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--gray-600); font-size: 0.75rem;">
+                            Engagement heatmap will be rendered here
                         </div>
-                        <p id="at-risk-students" style="color: var(--gray-700); font-size: 0.875rem;">Identifikasi mahasiswa yang memerlukan intervensi...</p>
-                    </div>
-                    <div class="card" style="background: var(--white); border: 1px solid var(--accent);">
-                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-                            <span style="font-size: 1.5rem;">🎯</span>
-                            <h4 style="color: var(--gray-800); margin: 0;">AI Recommendations (D22)</h4>
-                        </div>
-                        <p id="ai-recommendations" style="color: var(--gray-700); font-size: 0.875rem;">Rekomendasi strategi pembelajaran dari AI...</p>
                     </div>
                 </div>
             </div>
