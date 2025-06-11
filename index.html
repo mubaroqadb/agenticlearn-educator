@@ -304,6 +304,148 @@
             }
         }
 
+        /* Sidebar Navigation */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--white);
+            border-right: 1px solid var(--accent);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-280px);
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 3px;
+            padding: 0.5rem;
+        }
+
+        .sidebar-toggle span {
+            width: 20px;
+            height: 2px;
+            background: var(--gray-600);
+            transition: var(--transition);
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 1rem 0;
+            overflow-y: auto;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1.5rem;
+            color: var(--gray-700);
+            text-decoration: none;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: var(--accent);
+            color: var(--gray-900);
+        }
+
+        .menu-item.active {
+            background: var(--bg-light);
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .menu-icon {
+            font-size: 1.25rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .menu-text {
+            font-size: 0.875rem;
+        }
+
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--accent);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.expanded {
+            margin-left: 0;
+        }
+
+        .header {
+            background: var(--white);
+            border-bottom: 1px solid var(--accent);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 3px;
+            padding: 0.5rem;
+        }
+
+        .mobile-menu-toggle span {
+            width: 20px;
+            height: 2px;
+            background: var(--gray-600);
+            transition: var(--transition);
+        }
+
+        .container {
+            padding: 2rem;
+            max-width: none;
+        }
+
+        /* Page Content */
+        .page-content {
+            display: none;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
         /* Carbon Indicator - Consistent with Student Frontend */
         .carbon-indicator {
             position: fixed;
@@ -550,8 +692,56 @@
             background: #fffbeb;
         }
 
-        /* Responsive Modal */
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 260px;
+            }
+
+            .main-content {
+                margin-left: 260px;
+            }
+
+            .container {
+                padding: 1.5rem;
+            }
+        }
+
         @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-280px);
+                box-shadow: var(--shadow-lg);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+
+            .sidebar-toggle {
+                display: flex;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* Modal Responsive */
             .modal-overlay {
                 padding: 0.5rem;
             }
@@ -593,10 +783,146 @@
                 padding: 1rem;
             }
         }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 100%;
+            }
+
+            .header {
+                padding: 0.75rem;
+            }
+
+            .container {
+                padding: 0.75rem;
+            }
+
+            .sidebar-header {
+                padding: 1rem;
+            }
+
+            .sidebar-footer {
+                padding: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; font-weight: 700;">
+                    🎓
+                </div>
+                <div>
+                    <h2 style="font-size: 1.125rem; font-weight: 700; color: var(--gray-900); margin: 0;">AgenticLearn</h2>
+                    <p style="color: var(--gray-600); font-size: 0.75rem; margin: 0;">Educator Portal</p>
+                </div>
+            </div>
+            <button class="sidebar-toggle" id="sidebar-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+
+        <div class="sidebar-menu">
+            <a href="#" class="menu-item active" onclick="showPage('beranda')">
+                <span class="menu-icon">🏠</span>
+                <span class="menu-text">Beranda</span>
+            </a>
+            <a href="#" class="menu-item" onclick="showPage('analytics')">
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Analytics & Insights</span>
+            </a>
+            <a href="#" class="menu-item" onclick="showPage('students')">
+                <span class="menu-icon">👥</span>
+                <span class="menu-text">Student Management</span>
+            </a>
+            <a href="#" class="menu-item" onclick="showPage('communication')">
+                <span class="menu-icon">💬</span>
+                <span class="menu-text">Communication</span>
+            </a>
+            <a href="#" class="menu-item" onclick="showPage('workflow')">
+                <span class="menu-icon">⚡</span>
+                <span class="menu-text">Workflow Tools</span>
+            </a>
+            <a href="#" class="menu-item" onclick="showPage('settings')">
+                <span class="menu-icon">⚙️</span>
+                <span class="menu-text">Settings</span>
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <div style="background: var(--accent); padding: 0.75rem; border-radius: 8px; text-align: center;">
+                <div style="font-size: 0.75rem; color: var(--gray-600); margin-bottom: 0.25rem;">Welcome back</div>
+                <div style="font-weight: 600; color: var(--primary); font-size: 0.875rem;">Dr. Sarah Johnson</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div>
+                    <h1 id="page-title" style="font-size: 1.5rem; font-weight: 700; color: var(--gray-900); margin: 0;">Dashboard Overview</h1>
+                    <p id="page-subtitle" style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">Welcome to your educator dashboard</p>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="background: var(--accent); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--accent-dark);">
+                    <span style="font-size: 0.75rem; color: var(--gray-600);">Last Login:</span>
+                    <span style="font-weight: 600; color: var(--primary); font-size: 0.75rem;" id="last-login">Today 09:30</span>
+                </div>
+                <button class="btn" style="background: var(--primary); padding: 0.5rem 1rem; font-size: 0.875rem;">
+                    👤 Profile
+                </button>
+            </div>
+        </header>
+
+        <div class="container">
+            <!-- Beranda Page -->
+            <div id="page-beranda" class="page-content active">
+                <!-- Beranda content will be loaded here -->
+            </div>
+
+            <!-- Analytics Page -->
+            <div id="page-analytics" class="page-content">
+                <!-- Analytics content will be moved here -->
+            </div>
+
+            <!-- Students Page -->
+            <div id="page-students" class="page-content">
+                <!-- Student management content will be moved here -->
+            </div>
+
+            <!-- Communication Page -->
+            <div id="page-communication" class="page-content">
+                <!-- Communication content will be moved here -->
+            </div>
+
+            <!-- Workflow Page -->
+            <div id="page-workflow" class="page-content">
+                <!-- Workflow content will be moved here -->
+            </div>
+
+            <!-- Settings Page -->
+            <div id="page-settings" class="page-content">
+                <!-- Settings content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Legacy content (will be moved to appropriate pages) -->
+    <div style="display: none;">
         <!-- Enhanced Header with Consistent Design -->
         <header class="card">
             <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">

@@ -21,12 +21,15 @@ async function initializeEducatorPortal() {
     }
 
     try {
+        // Initialize sidebar navigation
+        initializeSidebar();
+
         // Load educator data
         await loadEducatorData();
         await loadClassData();
         await loadStudentList();
         await loadAIInsights();
-        
+
         // Setup event listeners
         setupEventListeners();
 
@@ -41,6 +44,131 @@ async function initializeEducatorPortal() {
         console.error("Failed to load educator portal:", error);
         setInner("educator-name", "Error loading data");
         UIComponents.showNotification("Failed to load educator portal", "error");
+    }
+}
+
+// Sidebar Navigation Functions
+function initializeSidebar() {
+    setupSidebarEventListeners();
+    loadBerandaPage(); // Load default page
+}
+
+function setupSidebarEventListeners() {
+    // Mobile menu toggle
+    const mobileToggle = document.getElementById('mobile-menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+
+    if (mobileToggle) {
+        mobileToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+    }
+
+    // Sidebar toggle
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            document.querySelector('.main-content').classList.toggle('expanded');
+        });
+    }
+
+    // Close sidebar on mobile when clicking outside
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 768) {
+            if (!sidebar.contains(e.target) && !mobileToggle.contains(e.target)) {
+                sidebar.classList.remove('open');
+            }
+        }
+    });
+}
+
+function showPage(pageName) {
+    // Hide all pages
+    document.querySelectorAll('.page-content').forEach(page => {
+        page.classList.remove('active');
+    });
+
+    // Remove active class from all menu items
+    document.querySelectorAll('.menu-item').forEach(item => {
+        item.classList.remove('active');
+    });
+
+    // Show selected page
+    document.getElementById(`page-${pageName}`).classList.add('active');
+
+    // Add active class to selected menu item
+    event.target.closest('.menu-item').classList.add('active');
+
+    // Update page title and subtitle
+    updatePageHeader(pageName);
+
+    // Load page content
+    loadPageContent(pageName);
+
+    // Close mobile sidebar
+    if (window.innerWidth <= 768) {
+        document.getElementById('sidebar').classList.remove('open');
+    }
+}
+
+function updatePageHeader(pageName) {
+    const pageTitle = document.getElementById('page-title');
+    const pageSubtitle = document.getElementById('page-subtitle');
+
+    const pageInfo = {
+        beranda: {
+            title: 'Dashboard Overview',
+            subtitle: 'Welcome to your educator dashboard'
+        },
+        analytics: {
+            title: 'Analytics & Insights',
+            subtitle: 'AI-powered learning analytics and performance insights'
+        },
+        students: {
+            title: 'Student Management',
+            subtitle: 'Monitor and manage student progress and engagement'
+        },
+        communication: {
+            title: 'Communication Center',
+            subtitle: 'Manage student communications and announcements'
+        },
+        workflow: {
+            title: 'Workflow Tools',
+            subtitle: 'D1-D24 educator workflow and class management tools'
+        },
+        settings: {
+            title: 'Settings',
+            subtitle: 'Configure your preferences and system settings'
+        }
+    };
+
+    if (pageInfo[pageName]) {
+        pageTitle.textContent = pageInfo[pageName].title;
+        pageSubtitle.textContent = pageInfo[pageName].subtitle;
+    }
+}
+
+function loadPageContent(pageName) {
+    switch(pageName) {
+        case 'beranda':
+            loadBerandaPage();
+            break;
+        case 'analytics':
+            loadAnalyticsPage();
+            break;
+        case 'students':
+            loadStudentsPage();
+            break;
+        case 'communication':
+            loadCommunicationPage();
+            break;
+        case 'workflow':
+            loadWorkflowPage();
+            break;
+        case 'settings':
+            loadSettingsPage();
+            break;
     }
 }
 
@@ -1983,6 +2111,241 @@ window.createAnnouncement = createAnnouncement;
 window.createDiscussion = createDiscussion;
 window.openDiscussion = openDiscussion;
 window.clearAllNotifications = clearAllNotifications;
+
+// Page Content Loading Functions
+function loadBerandaPage() {
+    const berandaHTML = `
+        <!-- Summary Cards -->
+        <div class="grid" style="margin-bottom: 2rem;">
+            <div class="metric-card" style="background: var(--primary); color: white;">
+                <div class="metric-value" id="beranda-total-students">45</div>
+                <div class="metric-label">Total Students</div>
+            </div>
+            <div class="metric-card" style="background: var(--success); color: white;">
+                <div class="metric-value" id="beranda-avg-progress">73%</div>
+                <div class="metric-label">Average Progress</div>
+            </div>
+            <div class="metric-card" style="background: var(--warning); color: white;">
+                <div class="metric-value" id="beranda-unread-messages">3</div>
+                <div class="metric-label">Unread Messages</div>
+            </div>
+            <div class="metric-card" style="background: var(--error); color: white;">
+                <div class="metric-value" id="beranda-at-risk">3</div>
+                <div class="metric-label">At-Risk Students</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>⚡</span> Quick Actions
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                <button class="btn" onclick="showPage('communication')" style="background: var(--info); padding: 1rem;">
+                    📢 Send Announcement
+                </button>
+                <button class="btn" onclick="showPage('students')" style="background: var(--warning); padding: 1rem;">
+                    ⚠️ View At-Risk Students
+                </button>
+                <button class="btn" onclick="exportReports()" style="background: var(--success); padding: 1rem;">
+                    📊 Export Reports
+                </button>
+                <button class="btn" onclick="scheduleSession()" style="background: var(--primary); padding: 1rem;">
+                    📅 Schedule Session
+                </button>
+            </div>
+        </section>
+
+        <!-- Today's Activities -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📅</span> Today's Activities
+            </h3>
+            <div id="todays-activities">
+                <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: var(--accent); border-radius: 8px; margin-bottom: 0.5rem;">
+                    <span style="font-size: 1.25rem;">🎓</span>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: var(--gray-800);">Live Session: Data Analytics</div>
+                        <div style="font-size: 0.75rem; color: var(--gray-600);">14:00 - 16:00 | 24 students registered</div>
+                    </div>
+                    <span style="background: var(--primary); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Upcoming</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: var(--accent); border-radius: 8px; margin-bottom: 0.5rem;">
+                    <span style="font-size: 1.25rem;">📝</span>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: var(--gray-800);">Assignment Review: Python Basics</div>
+                        <div style="font-size: 0.75rem; color: var(--gray-600);">Due: 23:59 | 18 submissions pending</div>
+                    </div>
+                    <span style="background: var(--warning); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Pending</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: var(--accent); border-radius: 8px;">
+                    <span style="font-size: 1.25rem;">📊</span>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: var(--gray-800);">Weekly Progress Review</div>
+                        <div style="font-size: 0.75rem; color: var(--gray-600);">Generate weekly reports for all classes</div>
+                    </div>
+                    <span style="background: var(--info); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Scheduled</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Activity Feed -->
+        <section class="card">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📈</span> Recent Activity
+            </h3>
+            <div id="recent-activity-feed" style="max-height: 300px; overflow-y: auto;">
+                <!-- Activity feed will be loaded here -->
+            </div>
+        </section>
+    `;
+
+    setInner("page-beranda", berandaHTML);
+    loadRecentActivityFeed();
+}
+
+function loadRecentActivityFeed() {
+    const activities = [
+        { time: "5 minutes ago", icon: "🏆", text: "Andi Mahasiswa achieved 95% on Module 3 Quiz", type: "achievement" },
+        { time: "12 minutes ago", icon: "📝", text: "New assignment submitted by Sari Belajar", type: "submission" },
+        { time: "25 minutes ago", icon: "💬", text: "New message from Maya Rajin about Module 2", type: "message" },
+        { time: "1 hour ago", icon: "👥", text: "3 students joined the study group discussion", type: "social" },
+        { time: "2 hours ago", icon: "📊", text: "Weekly analytics report generated", type: "system" },
+        { time: "3 hours ago", icon: "🎓", text: "Live session completed: 24 students attended", type: "session" }
+    ];
+
+    const feedHTML = activities.map(activity => `
+        <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; border-bottom: 1px solid var(--accent); last-child:border-bottom: none;">
+            <span style="font-size: 1.25rem;">${activity.icon}</span>
+            <div style="flex: 1;">
+                <div style="color: var(--gray-800); font-size: 0.875rem;">${activity.text}</div>
+                <div style="color: var(--gray-600); font-size: 0.75rem;">${activity.time}</div>
+            </div>
+        </div>
+    `).join('');
+
+    setInner("recent-activity-feed", feedHTML);
+}
+
+function loadAnalyticsPage() {
+    // Move existing analytics content here
+    UIComponents.showNotification("📊 Loading Analytics & Insights...", "info");
+}
+
+function loadStudentsPage() {
+    // Move existing student management content here
+    UIComponents.showNotification("👥 Loading Student Management...", "info");
+}
+
+function loadCommunicationPage() {
+    // Move existing communication content here
+    UIComponents.showNotification("💬 Loading Communication Center...", "info");
+}
+
+function loadWorkflowPage() {
+    // Move existing workflow content here
+    UIComponents.showNotification("⚡ Loading Workflow Tools...", "info");
+}
+
+function loadSettingsPage() {
+    const settingsHTML = `
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>👤</span> Profile Settings
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                <div>
+                    <label style="display: block; font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem;">Full Name</label>
+                    <input type="text" value="Dr. Sarah Johnson" style="width: 100%; padding: 0.75rem; border: 1px solid var(--accent); border-radius: 6px; background: var(--white);">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem;">Email</label>
+                    <input type="email" value="sarah.johnson@university.edu" style="width: 100%; padding: 0.75rem; border: 1px solid var(--accent); border-radius: 6px; background: var(--white);">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem;">Department</label>
+                    <input type="text" value="Computer Science" style="width: 100%; padding: 0.75rem; border: 1px solid var(--accent); border-radius: 6px; background: var(--white);">
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem;">Phone</label>
+                    <input type="tel" value="+1 (555) 123-4567" style="width: 100%; padding: 0.75rem; border: 1px solid var(--accent); border-radius: 6px; background: var(--white);">
+                </div>
+            </div>
+        </section>
+
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🔔</span> Notification Preferences
+            </h3>
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; color: var(--gray-700);">
+                    <input type="checkbox" checked> Email notifications for new messages
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.5rem; color: var(--gray-700);">
+                    <input type="checkbox" checked> Weekly progress reports
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.5rem; color: var(--gray-700);">
+                    <input type="checkbox"> Daily activity summaries
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.5rem; color: var(--gray-700);">
+                    <input type="checkbox" checked> At-risk student alerts
+                </label>
+            </div>
+        </section>
+
+        <section class="card">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🎨</span> Interface Preferences
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                <div>
+                    <label style="display: block; font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem;">Theme</label>
+                    <select style="width: 100%; padding: 0.75rem; border: 1px solid var(--accent); border-radius: 6px; background: var(--white);">
+                        <option>Light Theme</option>
+                        <option>Dark Theme</option>
+                        <option>Auto (System)</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem;">Language</label>
+                    <select style="width: 100%; padding: 0.75rem; border: 1px solid var(--accent); border-radius: 6px; background: var(--white);">
+                        <option>English</option>
+                        <option>Bahasa Indonesia</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem;">Timezone</label>
+                    <select style="width: 100%; padding: 0.75rem; border: 1px solid var(--accent); border-radius: 6px; background: var(--white);">
+                        <option>UTC+7 (Jakarta)</option>
+                        <option>UTC+0 (London)</option>
+                        <option>UTC-5 (New York)</option>
+                    </select>
+                </div>
+            </div>
+            <div style="margin-top: 1.5rem;">
+                <button class="btn" style="background: var(--primary); padding: 0.75rem 1.5rem;">
+                    💾 Save Settings
+                </button>
+            </div>
+        </section>
+    `;
+
+    setInner("page-settings", settingsHTML);
+}
+
+// Quick action functions
+function exportReports() {
+    UIComponents.showNotification("📊 Exporting comprehensive reports...", "success");
+}
+
+function scheduleSession() {
+    UIComponents.showNotification("📅 Opening session scheduler...", "info");
+}
+
+// Global functions for onclick handlers
+window.showPage = showPage;
+window.exportReports = exportReports;
+window.scheduleSession = scheduleSession;
 
 // D1-D6: Weekly Planning Session (30 minutes)
 function startWeeklyPlanning() {
