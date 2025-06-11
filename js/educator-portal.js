@@ -137,6 +137,22 @@ function updatePageHeader(pageName) {
             title: 'Workflow Tools',
             subtitle: 'D1-D24 educator workflow and class management tools'
         },
+        assessments: {
+            title: 'Assessment Management',
+            subtitle: 'Create, manage, and analyze student assessments'
+        },
+        'ai-recommendations': {
+            title: 'AI Recommendations',
+            subtitle: 'Personalized learning recommendations and adaptive content'
+        },
+        reports: {
+            title: 'Reports & Export',
+            subtitle: 'Generate comprehensive reports and export data'
+        },
+        integrations: {
+            title: 'Integrations',
+            subtitle: 'Manage external integrations and API connections'
+        },
         settings: {
             title: 'Settings',
             subtitle: 'Configure your preferences and system settings'
@@ -165,6 +181,18 @@ function loadPageContent(pageName) {
             break;
         case 'workflow':
             loadWorkflowPage();
+            break;
+        case 'assessments':
+            loadAssessmentsPage();
+            break;
+        case 'ai-recommendations':
+            loadAIRecommendationsPage();
+            break;
+        case 'reports':
+            loadReportsPage();
+            break;
+        case 'integrations':
+            loadIntegrationsPage();
             break;
         case 'settings':
             loadSettingsPage();
@@ -3078,6 +3106,325 @@ function setupCommunicationEventListeners() {
         }
     }, 200);
 }
+
+// Week 3 Page Loading Functions
+function loadAssessmentsPage() {
+    const assessmentsHTML = `
+        <!-- Assessment Management Dashboard -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="width: 40px; height: 40px; background: var(--secondary-dark); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
+                    📝
+                </div>
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">Assessment Management</h2>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">Create, manage, and analyze student assessments</p>
+                </div>
+                <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+                    <button class="btn" id="btn-create-assessment" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--primary);">
+                        ➕ Create Assessment
+                    </button>
+                    <button class="btn" id="btn-import-questions" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--info);">
+                        📥 Import Questions
+                    </button>
+                </div>
+            </div>
+
+            <!-- Assessment Statistics -->
+            <div class="grid" style="margin-bottom: 2rem;">
+                <div class="metric-card" style="background: var(--primary); color: white;">
+                    <div class="metric-value" id="total-assessments">24</div>
+                    <div class="metric-label">Total Assessments</div>
+                </div>
+                <div class="metric-card" style="background: var(--success); color: white;">
+                    <div class="metric-value" id="active-assessments">8</div>
+                    <div class="metric-label">Active Assessments</div>
+                </div>
+                <div class="metric-card" style="background: var(--warning); color: white;">
+                    <div class="metric-value" id="pending-grading">15</div>
+                    <div class="metric-label">Pending Grading</div>
+                </div>
+                <div class="metric-card" style="background: var(--info); color: white;">
+                    <div class="metric-value" id="avg-score">78%</div>
+                    <div class="metric-label">Average Score</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Assessment Creation Tools -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🛠️</span> Assessment Creation Tools
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>📋</span> Quick Quiz Builder
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Create multiple choice, true/false, and short answer quizzes with automated grading.</p>
+                    <button class="btn" onclick="openQuizBuilder()" style="background: var(--primary); width: 100%;">Start Quiz Builder</button>
+                </div>
+
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--secondary-dark);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>📄</span> Essay Assignment
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Create essay assignments with rubric-based evaluation and plagiarism detection.</p>
+                    <button class="btn" onclick="createEssayAssignment()" style="background: var(--secondary-dark); width: 100%;">Create Essay Assignment</button>
+                </div>
+
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--info);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🧮</span> Math Assessment
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Create mathematical assessments with formula support and step-by-step evaluation.</p>
+                    <button class="btn" onclick="createMathAssessment()" style="background: var(--info); width: 100%;">Create Math Assessment</button>
+                </div>
+
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--success);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>💻</span> Coding Challenge
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Create programming assignments with automated testing and code analysis.</p>
+                    <button class="btn" onclick="createCodingChallenge()" style="background: var(--success); width: 100%;">Create Coding Challenge</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Assessments -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📊</span> Recent Assessments
+            </h3>
+            <div id="recent-assessments-list">
+                <!-- Recent assessments will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Assessment Analytics -->
+        <section class="card">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📈</span> Assessment Analytics
+            </h3>
+            <div class="grid">
+                <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem;">Score Distribution</h4>
+                    <div id="score-distribution-chart" style="height: 200px; background: var(--accent); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--gray-600); font-size: 0.875rem;">
+                        Score distribution chart will be rendered here
+                    </div>
+                </div>
+                <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem;">Question Difficulty Analysis</h4>
+                    <div id="difficulty-analysis-chart" style="height: 200px; background: var(--accent); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--gray-600); font-size: 0.875rem;">
+                        Difficulty analysis chart will be rendered here
+                    </div>
+                </div>
+            </div>
+        </section>
+    `;
+
+    setInner("page-assessments", assessmentsHTML);
+
+    // Load assessment data
+    setTimeout(() => {
+        loadRecentAssessments();
+        setupAssessmentEventListeners();
+    }, 100);
+
+    UIComponents.showNotification("📝 Assessment Management loaded successfully!", "success");
+}
+
+function loadRecentAssessments() {
+    const recentAssessments = [
+        {
+            id: 1,
+            title: "Module 3 Quiz: Data Visualization",
+            type: "Quiz",
+            status: "Active",
+            submissions: 18,
+            totalStudents: 24,
+            avgScore: 85,
+            dueDate: "2024-12-15",
+            created: "2024-12-10"
+        },
+        {
+            id: 2,
+            title: "Python Programming Assignment",
+            type: "Coding",
+            status: "Grading",
+            submissions: 22,
+            totalStudents: 24,
+            avgScore: 78,
+            dueDate: "2024-12-12",
+            created: "2024-12-05"
+        },
+        {
+            id: 3,
+            title: "Data Analysis Essay",
+            type: "Essay",
+            status: "Completed",
+            submissions: 24,
+            totalStudents: 24,
+            avgScore: 82,
+            dueDate: "2024-12-08",
+            created: "2024-12-01"
+        },
+        {
+            id: 4,
+            title: "Statistics Fundamentals Test",
+            type: "Test",
+            status: "Draft",
+            submissions: 0,
+            totalStudents: 24,
+            avgScore: 0,
+            dueDate: "2024-12-20",
+            created: "2024-12-11"
+        }
+    ];
+
+    const assessmentsHTML = recentAssessments.map(assessment => {
+        const statusColors = {
+            'Active': 'var(--success)',
+            'Grading': 'var(--warning)',
+            'Completed': 'var(--info)',
+            'Draft': 'var(--gray-500)'
+        };
+
+        const typeIcons = {
+            'Quiz': '📋',
+            'Coding': '💻',
+            'Essay': '📄',
+            'Test': '📝'
+        };
+
+        return `
+            <div style="background: var(--accent); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid ${statusColors[assessment.status]};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <span style="font-size: 1.5rem;">${typeIcons[assessment.type]}</span>
+                        <div>
+                            <h4 style="color: var(--gray-800); margin: 0; font-size: 1rem; font-weight: 600;">${assessment.title}</h4>
+                            <p style="color: var(--gray-600); margin: 0; font-size: 0.75rem;">${assessment.type} • Created: ${new Date(assessment.created).toLocaleDateString('id-ID')}</p>
+                        </div>
+                    </div>
+                    <span style="background: ${statusColors[assessment.status]}; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+                        ${assessment.status}
+                    </span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary);">${assessment.submissions}/${assessment.totalStudents}</div>
+                        <div style="font-size: 0.75rem; color: var(--gray-600);">Submissions</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.25rem; font-weight: 700; color: var(--secondary-dark);">${assessment.avgScore}%</div>
+                        <div style="font-size: 0.75rem; color: var(--gray-600);">Avg Score</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.25rem; font-weight: 700; color: var(--info);">${new Date(assessment.dueDate).toLocaleDateString('id-ID')}</div>
+                        <div style="font-size: 0.75rem; color: var(--gray-600);">Due Date</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn" onclick="viewAssessment(${assessment.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--primary);">
+                        👁️ View
+                    </button>
+                    <button class="btn" onclick="editAssessment(${assessment.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--info);">
+                        ✏️ Edit
+                    </button>
+                    <button class="btn" onclick="gradeAssessment(${assessment.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--warning);">
+                        📊 Grade
+                    </button>
+                    <button class="btn" onclick="duplicateAssessment(${assessment.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--success);">
+                        📋 Duplicate
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    setInner("recent-assessments-list", assessmentsHTML);
+}
+
+function setupAssessmentEventListeners() {
+    setTimeout(() => {
+        const createBtn = document.getElementById("btn-create-assessment");
+        if (createBtn) {
+            createBtn.addEventListener("click", createNewAssessment);
+        }
+
+        const importBtn = document.getElementById("btn-import-questions");
+        if (importBtn) {
+            importBtn.addEventListener("click", importQuestions);
+        }
+    }, 200);
+}
+
+// Assessment action functions
+function createNewAssessment() {
+    UIComponents.showNotification("📝 Opening assessment creation wizard...", "info");
+}
+
+function importQuestions() {
+    UIComponents.showNotification("📥 Opening question import tool...", "info");
+}
+
+function openQuizBuilder() {
+    UIComponents.showNotification("📋 Opening Quick Quiz Builder...", "info");
+}
+
+function createEssayAssignment() {
+    UIComponents.showNotification("📄 Creating new essay assignment...", "info");
+}
+
+function createMathAssessment() {
+    UIComponents.showNotification("🧮 Opening Math Assessment Creator...", "info");
+}
+
+function createCodingChallenge() {
+    UIComponents.showNotification("💻 Creating new coding challenge...", "info");
+}
+
+function viewAssessment(id) {
+    UIComponents.showNotification(`👁️ Viewing assessment ID: ${id}`, "info");
+}
+
+function editAssessment(id) {
+    UIComponents.showNotification(`✏️ Editing assessment ID: ${id}`, "info");
+}
+
+function gradeAssessment(id) {
+    UIComponents.showNotification(`📊 Opening grading interface for assessment ID: ${id}`, "info");
+}
+
+function duplicateAssessment(id) {
+    UIComponents.showNotification(`📋 Duplicating assessment ID: ${id}`, "success");
+}
+
+// Placeholder functions for other Week 3 pages
+function loadAIRecommendationsPage() {
+    UIComponents.showNotification("🤖 AI Recommendations page coming soon...", "info");
+}
+
+function loadReportsPage() {
+    UIComponents.showNotification("📊 Reports & Export page coming soon...", "info");
+}
+
+function loadIntegrationsPage() {
+    UIComponents.showNotification("🔗 Integrations page coming soon...", "info");
+}
+
+// Global functions for onclick handlers
+window.openQuizBuilder = openQuizBuilder;
+window.createEssayAssignment = createEssayAssignment;
+window.createMathAssessment = createMathAssessment;
+window.createCodingChallenge = createCodingChallenge;
+window.viewAssessment = viewAssessment;
+window.editAssessment = editAssessment;
+window.gradeAssessment = gradeAssessment;
+window.duplicateAssessment = duplicateAssessment;
 
 // Global functions
 window.viewStudentDetail = viewStudentDetail;
