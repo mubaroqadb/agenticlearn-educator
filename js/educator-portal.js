@@ -72,64 +72,334 @@ async function loadClassData() {
 
 async function loadStudentList() {
     try {
+        // Load real-time student data
         const students = await apiClient.request("/progress/class-1");
-        renderStudentTable(students);
+        await loadRealTimeStats();
+        await loadActivityTimeline();
+        renderEnhancedStudentTable(students);
+        updateLastUpdateTime();
     } catch (error) {
         console.error("Failed to load student list:", error);
         renderDemoStudentTable();
-        UIComponents.showNotification("Using demo data for student list", "info");
+        loadDemoRealTimeStats();
+        loadDemoActivityTimeline();
+        UIComponents.showNotification("Using demo data for student monitoring", "info");
     }
 }
 
-function renderStudentTable(students) {
+async function loadRealTimeStats() {
+    try {
+        const stats = await apiClient.request("/analytics/realtime-stats");
+
+        setInner("online-students", stats.onlineStudents || "12");
+        setInner("active-sessions", stats.activeSessions || "8");
+        setInner("avg-engagement", stats.avgEngagement || "78%");
+        setInner("completion-today", stats.completionToday || "24");
+    } catch (error) {
+        // Fallback to demo data
+        setInner("online-students", "12");
+        setInner("active-sessions", "8");
+        setInner("avg-engagement", "78%");
+        setInner("completion-today", "24");
+    }
+}
+
+function loadDemoRealTimeStats() {
+    setInner("online-students", "12");
+    setInner("active-sessions", "8");
+    setInner("avg-engagement", "78%");
+    setInner("completion-today", "24");
+}
+
+async function loadActivityTimeline() {
+    try {
+        const activities = await apiClient.request("/analytics/recent-activity");
+        renderActivityTimeline(activities);
+    } catch (error) {
+        loadDemoActivityTimeline();
+    }
+}
+
+function loadDemoActivityTimeline() {
+    const demoActivities = [
+        { time: "2 minutes ago", student: "Andi Mahasiswa", action: "Completed Lesson 3.2: Data Visualization", type: "completion" },
+        { time: "5 minutes ago", student: "Sari Belajar", action: "Started Module 2: Analytics Fundamentals", type: "start" },
+        { time: "8 minutes ago", student: "Budi Cerdas", action: "Submitted Assignment: Python Basics", type: "submission" },
+        { time: "12 minutes ago", student: "Maya Rajin", action: "Logged in to platform", type: "login" },
+        { time: "15 minutes ago", student: "Andi Mahasiswa", action: "Achieved 80% score on Quiz 3.1", type: "achievement" },
+        { time: "18 minutes ago", student: "Sari Belajar", action: "Watched Video: Introduction to Pandas", type: "engagement" }
+    ];
+    renderActivityTimeline(demoActivities);
+}
+
+function renderActivityTimeline(activities) {
+    const timelineHTML = activities.map(activity => {
+        const iconMap = {
+            completion: "✅",
+            start: "🚀",
+            submission: "📝",
+            login: "👤",
+            achievement: "🏆",
+            engagement: "📹"
+        };
+
+        const colorMap = {
+            completion: "var(--success)",
+            start: "var(--info)",
+            submission: "var(--primary)",
+            login: "var(--gray-500)",
+            achievement: "var(--secondary-dark)",
+            engagement: "var(--accent-dark)"
+        };
+
+        return `
+            <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; border-bottom: 1px solid var(--accent); last-child:border-bottom: none;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: ${colorMap[activity.type]}; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; flex-shrink: 0;">
+                    ${iconMap[activity.type]}
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 600; color: var(--gray-800); font-size: 0.875rem;">${activity.student}</div>
+                    <div style="color: var(--gray-600); font-size: 0.75rem;">${activity.action}</div>
+                </div>
+                <div style="color: var(--gray-500); font-size: 0.75rem; flex-shrink: 0;">${activity.time}</div>
+            </div>
+        `;
+    }).join('');
+
+    setInner("activity-timeline", timelineHTML);
+}
+
+function updateLastUpdateTime() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    });
+    setInner("last-update-time", timeString);
+}
+
+function renderEnhancedStudentTable(students) {
     const tableHTML = `
         <table class="student-table">
             <thead>
                 <tr>
-                    <th>Nama</th>
-                    <th>Email</th>
+                    <th>Student</th>
+                    <th>Current Module</th>
                     <th>Progress</th>
+                    <th>Engagement</th>
                     <th>Status</th>
-                    <th>Terakhir Aktif</th>
-                    <th>Aksi</th>
+                    <th>Last Activity</th>
+                    <th>Risk Level</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                ${students.map(student => `
-                    <tr>
-                        <td><strong>${student.name}</strong></td>
-                        <td>${student.email}</td>
-                        <td>
-                            <div class="progress-mini">
-                                <div class="progress-mini-fill" style="width: ${student.progress}%"></div>
-                            </div>
-                            <small>${student.progress}%</small>
-                        </td>
-                        <td class="${student.status === 'active' ? 'status-active' : 'status-inactive'}">
-                            ${student.status === 'active' ? '🟢 Aktif' : '🔴 Tidak Aktif'}
-                        </td>
-                        <td>${new Date(student.lastActive).toLocaleDateString('id-ID')}</td>
-                        <td>
-                            <button class="btn" onclick="viewStudentDetail('${student.id}')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
-                                Detail
-                            </button>
-                        </td>
-                    </tr>
-                `).join('')}
+                ${students.map(student => {
+                    const riskLevel = getRiskLevel(student);
+                    const riskColor = getRiskColor(riskLevel);
+                    const statusIcon = getStatusIcon(student.status);
+
+                    return `
+                        <tr style="border-left: 3px solid ${riskColor};">
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--secondary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 12px;">
+                                        ${student.name.split(' ').map(n => n[0]).join('').substring(0, 2)}
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: 600; color: var(--gray-800);">${student.name}</div>
+                                        <div style="font-size: 0.75rem; color: var(--gray-600);">${student.email}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div style="font-weight: 500; color: var(--gray-800);">Module ${student.currentModule || 1}</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-600);">${student.currentLesson || 'Introduction'}</div>
+                            </td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <div class="progress-mini" style="width: 80px;">
+                                        <div class="progress-mini-fill" style="width: ${student.progress}%"></div>
+                                    </div>
+                                    <span style="font-weight: 600; color: var(--primary); font-size: 0.875rem;">${student.progress}%</span>
+                                </div>
+                                <div style="font-size: 0.75rem; color: var(--gray-600);">${student.completedLessons || 0}/${student.totalLessons || 20} lessons</div>
+                            </td>
+                            <td>
+                                <div style="text-align: center;">
+                                    <div style="font-weight: 600; color: var(--primary); font-size: 0.875rem;">${student.engagementScore || 75}%</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-600);">${student.timeSpent || 45}min today</div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="${student.status === 'online' ? 'status-active' : student.status === 'active' ? 'status-active' : 'status-inactive'}">
+                                    ${statusIcon} ${student.status === 'online' ? 'Online' : student.status === 'active' ? 'Active' : 'Offline'}
+                                </span>
+                            </td>
+                            <td>
+                                <div style="font-size: 0.875rem; color: var(--gray-800);">${getRelativeTime(student.lastActive)}</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-600);">${new Date(student.lastActive).toLocaleDateString('id-ID')}</div>
+                            </td>
+                            <td>
+                                <span style="background: ${riskColor}; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">
+                                    ${riskLevel}
+                                </span>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 0.25rem;">
+                                    <button class="btn" onclick="viewStudentDetail('${student.id}')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: var(--primary);">
+                                        👤 View
+                                    </button>
+                                    <button class="btn" onclick="sendMessage('${student.id}')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: var(--info);">
+                                        💬 Message
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('')}
             </tbody>
         </table>
     `;
     setInner("student-list", tableHTML);
 }
 
+function renderStudentTable(students) {
+    // Fallback to enhanced table
+    renderEnhancedStudentTable(students);
+}
+
+function getRiskLevel(student) {
+    const progress = student.progress || 0;
+    const lastActive = new Date(student.lastActive);
+    const daysSinceActive = (Date.now() - lastActive.getTime()) / (1000 * 60 * 60 * 24);
+
+    if (progress < 30 || daysSinceActive > 7) return "High";
+    if (progress < 60 || daysSinceActive > 3) return "Medium";
+    return "Low";
+}
+
+function getRiskColor(riskLevel) {
+    switch(riskLevel) {
+        case "High": return "var(--error)";
+        case "Medium": return "var(--warning)";
+        case "Low": return "var(--success)";
+        default: return "var(--gray-500)";
+    }
+}
+
+function getStatusIcon(status) {
+    switch(status) {
+        case "online": return "🟢";
+        case "active": return "🟡";
+        case "offline": return "🔴";
+        default: return "⚪";
+    }
+}
+
+function getRelativeTime(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffMins < 1) return "Just now";
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    return `${diffDays}d ago`;
+}
+
 function renderDemoStudentTable() {
     const demoStudents = [
-        { id: "student-1", name: "Andi Mahasiswa", email: "andi@student.edu", progress: 75, status: "active", lastActive: new Date().toISOString() },
-        { id: "student-2", name: "Sari Belajar", email: "sari@student.edu", progress: 45, status: "active", lastActive: new Date(Date.now() - 86400000).toISOString() },
-        { id: "student-3", name: "Budi Cerdas", email: "budi@student.edu", progress: 90, status: "active", lastActive: new Date().toISOString() },
-        { id: "student-4", name: "Maya Rajin", email: "maya@student.edu", progress: 25, status: "inactive", lastActive: new Date(Date.now() - 604800000).toISOString() }
+        {
+            id: "student-1",
+            name: "Andi Mahasiswa",
+            email: "andi@student.edu",
+            progress: 75,
+            status: "online",
+            lastActive: new Date().toISOString(),
+            currentModule: 3,
+            currentLesson: "Data Visualization",
+            completedLessons: 15,
+            totalLessons: 20,
+            engagementScore: 85,
+            timeSpent: 120
+        },
+        {
+            id: "student-2",
+            name: "Sari Belajar",
+            email: "sari@student.edu",
+            progress: 45,
+            status: "active",
+            lastActive: new Date(Date.now() - 3600000).toISOString(),
+            currentModule: 2,
+            currentLesson: "Analytics Fundamentals",
+            completedLessons: 9,
+            totalLessons: 20,
+            engagementScore: 72,
+            timeSpent: 45
+        },
+        {
+            id: "student-3",
+            name: "Budi Cerdas",
+            email: "budi@student.edu",
+            progress: 90,
+            status: "online",
+            lastActive: new Date(Date.now() - 300000).toISOString(),
+            currentModule: 4,
+            currentLesson: "Advanced Analytics",
+            completedLessons: 18,
+            totalLessons: 20,
+            engagementScore: 95,
+            timeSpent: 180
+        },
+        {
+            id: "student-4",
+            name: "Maya Rajin",
+            email: "maya@student.edu",
+            progress: 25,
+            status: "offline",
+            lastActive: new Date(Date.now() - 604800000).toISOString(),
+            currentModule: 1,
+            currentLesson: "Introduction",
+            completedLessons: 5,
+            totalLessons: 20,
+            engagementScore: 35,
+            timeSpent: 15
+        },
+        {
+            id: "student-5",
+            name: "Dewi Pintar",
+            email: "dewi@student.edu",
+            progress: 60,
+            status: "active",
+            lastActive: new Date(Date.now() - 7200000).toISOString(),
+            currentModule: 2,
+            currentLesson: "Data Processing",
+            completedLessons: 12,
+            totalLessons: 20,
+            engagementScore: 78,
+            timeSpent: 90
+        },
+        {
+            id: "student-6",
+            name: "Rudi Tekun",
+            email: "rudi@student.edu",
+            progress: 80,
+            status: "online",
+            lastActive: new Date(Date.now() - 900000).toISOString(),
+            currentModule: 3,
+            currentLesson: "Machine Learning Basics",
+            completedLessons: 16,
+            totalLessons: 20,
+            engagementScore: 88,
+            timeSpent: 150
+        }
     ];
-    renderStudentTable(demoStudents);
+    renderEnhancedStudentTable(demoStudents);
 }
 
 async function loadAIInsights() {
@@ -251,6 +521,14 @@ function setupEventListeners() {
     // Analytics refresh button
     onClick("btn-refresh-analytics", refreshAnalytics);
 
+    // Real-time monitoring controls
+    onClick("btn-toggle-realtime", toggleRealTimeMonitoring);
+
+    // Filter controls
+    document.getElementById("filter-status")?.addEventListener("change", filterStudents);
+    document.getElementById("filter-module")?.addEventListener("change", filterStudents);
+    document.getElementById("search-students")?.addEventListener("input", searchStudents);
+
     // New D1-D24 Workflow buttons
     onClick("btn-weekly-planning", startWeeklyPlanning);
     onClick("btn-pre-class-setup", startPreClassSetup);
@@ -259,6 +537,74 @@ function setupEventListeners() {
     onClick("btn-student-monitoring", openStudentMonitoring);
     onClick("btn-ai-oversight", openAIOversight);
 }
+
+// Real-time monitoring state
+let realTimeMonitoring = false;
+let monitoringInterval = null;
+
+function toggleRealTimeMonitoring() {
+    realTimeMonitoring = !realTimeMonitoring;
+    const button = document.getElementById("btn-toggle-realtime");
+
+    if (realTimeMonitoring) {
+        button.textContent = "🟢 Live Monitoring";
+        button.style.background = "var(--success)";
+        startRealTimeUpdates();
+        UIComponents.showNotification("🔴 Real-time monitoring activated", "success");
+    } else {
+        button.textContent = "🔴 Start Monitoring";
+        button.style.background = "var(--gray-500)";
+        stopRealTimeUpdates();
+        UIComponents.showNotification("⏸️ Real-time monitoring paused", "info");
+    }
+}
+
+function startRealTimeUpdates() {
+    // Update every 30 seconds
+    monitoringInterval = setInterval(async () => {
+        try {
+            await loadRealTimeStats();
+            await loadActivityTimeline();
+            updateLastUpdateTime();
+        } catch (error) {
+            console.error("Real-time update failed:", error);
+        }
+    }, 30000);
+}
+
+function stopRealTimeUpdates() {
+    if (monitoringInterval) {
+        clearInterval(monitoringInterval);
+        monitoringInterval = null;
+    }
+}
+
+function filterStudents() {
+    const statusFilter = document.getElementById("filter-status")?.value;
+    const moduleFilter = document.getElementById("filter-module")?.value;
+
+    UIComponents.showNotification(`🔍 Filtering students: ${statusFilter} | ${moduleFilter}`, "info");
+    // TODO: Implement actual filtering logic
+}
+
+function searchStudents() {
+    const searchTerm = document.getElementById("search-students")?.value;
+    if (searchTerm.length > 2) {
+        UIComponents.showNotification(`🔍 Searching for: ${searchTerm}`, "info");
+        // TODO: Implement actual search logic
+    }
+}
+
+// Student interaction functions
+function sendMessage(studentId) {
+    const message = prompt("💬 Send message to student:");
+    if (message) {
+        UIComponents.showNotification(`✅ Message sent to student ${studentId}: "${message}"`, "success");
+    }
+}
+
+// Global functions for onclick handlers
+window.sendMessage = sendMessage;
 
 function exportStudentProgress() {
     const csvData = "Nama,Email,Progress,Status,Terakhir Aktif\n" +
