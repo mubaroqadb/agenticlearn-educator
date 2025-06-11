@@ -6,7 +6,7 @@ import { setInner, onClick } from "https://cdn.jsdelivr.net/gh/jscroot/lib@0.0.4
 import { redirect } from "https://cdn.jsdelivr.net/gh/jscroot/lib@0.0.4/url.js";
 
 // Dynamic API Configuration
-const API_BASE_URL = window.location.hostname.includes("localhost") ? "https://asia-southeast2-agenticai-462517.cloudfunctions.net/domyid/api/agenticlearn" : "https://asia-southeast2-agenticai-462517.cloudfunctions.net/domyid/api/agenticlearn"; // Will be Google Cloud endpoint
+const API_BASE_URL = window.location.hostname.includes("localhost") ? "http://localhost:8080/api/v1" : "https://api.agenticlearn.com/api/v1"; // Will be Google Cloud endpoint
 
 // Get GitHub username for redirects
 const GITHUB_USERNAME = window.location.hostname.includes('github.io') 
@@ -55,7 +55,7 @@ async function loadEducatorData() {
 
 async function loadClassData() {
     try {
-        const classData = await apiClient.request("/courses");
+        const classData = await apiClient.request("/educator/classes");
         setInner("total-students", classData.totalStudents || 45);
         setInner("active-classes", classData.activeClasses || 3);
         setInner("avg-progress", `${Math.round(classData.avgProgress || 72.5)}%`);
@@ -72,7 +72,7 @@ async function loadClassData() {
 
 async function loadStudentList() {
     try {
-        const students = await apiClient.request("/progress/class-1");
+        const students = await apiClient.request("/educator/students/class-1");
         renderStudentTable(students);
     } catch (error) {
         console.error("Failed to load student list:", error);
