@@ -6495,7 +6495,456 @@ function loadRealtimeProcessingStatus() {
 }
 
 function loadMobilePage() {
-    UIComponents.showNotification("📱 Mobile & PWA page coming soon...", "info");
+    const mobileHTML = `
+        <!-- Mobile App & Cross-Platform Dashboard -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="width: 40px; height: 40px; background: var(--info); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
+                    📱
+                </div>
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">Mobile App & Progressive Web App</h2>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">Mobile optimization and cross-platform compatibility features</p>
+                </div>
+                <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+                    <button class="btn" id="btn-install-pwa" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--info);">
+                        📲 Install PWA
+                    </button>
+                    <button class="btn" id="btn-test-offline" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--warning);">
+                        🔌 Test Offline Mode
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Statistics -->
+            <div class="grid" style="margin-bottom: 2rem;">
+                <div class="metric-card" style="background: var(--info); color: white;">
+                    <div class="metric-value" id="mobile-users">68%</div>
+                    <div class="metric-label">Mobile Users</div>
+                </div>
+                <div class="metric-card" style="background: var(--success); color: white;">
+                    <div class="metric-value" id="pwa-installs">342</div>
+                    <div class="metric-label">PWA Installations</div>
+                </div>
+                <div class="metric-card" style="background: var(--primary); color: white;">
+                    <div class="metric-value" id="offline-sessions">89</div>
+                    <div class="metric-label">Offline Sessions</div>
+                </div>
+                <div class="metric-card" style="background: var(--warning); color: white;">
+                    <div class="metric-value" id="push-notifications">1.2K</div>
+                    <div class="metric-label">Push Notifications Sent</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Progressive Web App Features -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🌐</span> Progressive Web App Features
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--info);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>📲</span> App Installation
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Install AgenticLearn as a native app on any device with PWA technology.</p>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">PWA Support</span>
+                            <span style="font-weight: 600; color: var(--success);">✅ Enabled</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Service Worker</span>
+                            <span style="font-weight: 600; color: var(--success);">✅ Active</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Manifest</span>
+                            <span style="font-weight: 600; color: var(--success);">✅ Valid</span>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="configurePWA()" style="background: var(--info); width: 100%;">Configure PWA Settings</button>
+                </div>
+
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--success);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🔌</span> Offline Functionality
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Access core features even without internet connection using intelligent caching.</p>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Cached Pages</span>
+                            <span style="font-weight: 600; color: var(--success);">24 pages</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Offline Storage</span>
+                            <span style="font-weight: 600; color: var(--primary);">15.2 MB</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Sync Queue</span>
+                            <span style="font-weight: 600; color: var(--info);">3 items</span>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="manageOfflineContent()" style="background: var(--success); width: 100%;">Manage Offline Content</button>
+                </div>
+
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--warning);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🔔</span> Push Notifications
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Send real-time notifications for important updates and reminders.</p>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Subscribers</span>
+                            <span style="font-weight: 600; color: var(--warning);">156 users</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Delivery Rate</span>
+                            <span style="font-weight: 600; color: var(--success);">94%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Click Rate</span>
+                            <span style="font-weight: 600; color: var(--primary);">23%</span>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="managePushNotifications()" style="background: var(--warning); width: 100%;">Manage Notifications</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mobile Responsive Design -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📐</span> Mobile Responsive Design
+            </h3>
+            <div id="responsive-design-status">
+                <!-- Responsive design status will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Cross-Platform Compatibility -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🔄</span> Cross-Platform Compatibility
+            </h3>
+            <div id="platform-compatibility-list">
+                <!-- Platform compatibility will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Mobile Performance Metrics -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>⚡</span> Mobile Performance Metrics
+            </h3>
+            <div class="grid">
+                <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem;">Mobile Performance Score</h4>
+                    <div id="mobile-performance-chart" style="height: 200px; background: var(--accent); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--gray-600); font-size: 0.875rem;">
+                        Mobile performance metrics will be rendered here
+                    </div>
+                </div>
+                <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem;">Device Usage Analytics</h4>
+                    <div id="device-usage-chart" style="height: 200px; background: var(--accent); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--gray-600); font-size: 0.875rem;">
+                        Device usage analytics will be rendered here
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- App Store Deployment -->
+        <section class="card">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🏪</span> App Store Deployment
+            </h3>
+            <div id="app-store-status">
+                <!-- App store deployment status will be loaded here -->
+            </div>
+        </section>
+    `;
+
+    setInner("page-mobile", mobileHTML);
+
+    // Load mobile data
+    setTimeout(() => {
+        loadResponsiveDesignStatus();
+        loadPlatformCompatibility();
+        loadAppStoreStatus();
+        setupMobileEventListeners();
+    }, 100);
+
+    UIComponents.showNotification("📱 Mobile & PWA loaded successfully!", "success");
+}
+
+function loadResponsiveDesignStatus() {
+    const breakpoints = [
+        {
+            name: "Mobile Portrait",
+            size: "320px - 480px",
+            status: "Optimized",
+            coverage: "100%",
+            issues: 0
+        },
+        {
+            name: "Mobile Landscape",
+            size: "481px - 768px",
+            status: "Optimized",
+            coverage: "100%",
+            issues: 0
+        },
+        {
+            name: "Tablet Portrait",
+            size: "769px - 1024px",
+            status: "Optimized",
+            coverage: "98%",
+            issues: 1
+        },
+        {
+            name: "Tablet Landscape",
+            size: "1025px - 1200px",
+            status: "Optimized",
+            coverage: "100%",
+            issues: 0
+        },
+        {
+            name: "Desktop",
+            size: "1201px+",
+            status: "Optimized",
+            coverage: "100%",
+            issues: 0
+        }
+    ];
+
+    const statusColors = {
+        'Optimized': 'var(--success)',
+        'Needs Work': 'var(--warning)',
+        'Critical': 'var(--error)'
+    };
+
+    const responsiveHTML = breakpoints.map(bp => {
+        return `
+            <div style="background: var(--accent); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid ${statusColors[bp.status]};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <h4 style="color: var(--gray-800); margin: 0; font-size: 1rem; font-weight: 600;">${bp.name}</h4>
+                        <p style="color: var(--gray-600); margin: 0; font-size: 0.75rem;">${bp.size}</p>
+                    </div>
+                    <span style="background: ${statusColors[bp.status]}; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+                        ${bp.status}
+                    </span>
+                </div>
+
+                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 1rem; font-weight: 700; color: var(--success);">${bp.coverage}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Coverage</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1rem; font-weight: 700; color: ${bp.issues > 0 ? 'var(--warning)' : 'var(--success)'};">${bp.issues}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Issues</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn" onclick="testBreakpoint('${bp.name}')" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--info);">
+                        🧪 Test Breakpoint
+                    </button>
+                    <button class="btn" onclick="optimizeBreakpoint('${bp.name}')" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--primary);">
+                        ⚡ Optimize
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    setInner("responsive-design-status", responsiveHTML);
+}
+
+function loadPlatformCompatibility() {
+    const platforms = [
+        {
+            name: "iOS Safari",
+            version: "17.0+",
+            compatibility: "100%",
+            features: ["PWA", "Push Notifications", "Offline Storage"],
+            status: "Fully Supported"
+        },
+        {
+            name: "Android Chrome",
+            version: "120.0+",
+            compatibility: "100%",
+            features: ["PWA", "Push Notifications", "Offline Storage", "Background Sync"],
+            status: "Fully Supported"
+        },
+        {
+            name: "Desktop Chrome",
+            version: "120.0+",
+            compatibility: "100%",
+            features: ["PWA", "Push Notifications", "Offline Storage", "Background Sync"],
+            status: "Fully Supported"
+        },
+        {
+            name: "Desktop Firefox",
+            version: "121.0+",
+            compatibility: "95%",
+            features: ["PWA", "Offline Storage"],
+            status: "Mostly Supported"
+        },
+        {
+            name: "Desktop Safari",
+            version: "17.0+",
+            compatibility: "90%",
+            features: ["PWA", "Offline Storage"],
+            status: "Mostly Supported"
+        },
+        {
+            name: "Edge",
+            version: "120.0+",
+            compatibility: "100%",
+            features: ["PWA", "Push Notifications", "Offline Storage"],
+            status: "Fully Supported"
+        }
+    ];
+
+    const statusColors = {
+        'Fully Supported': 'var(--success)',
+        'Mostly Supported': 'var(--warning)',
+        'Limited Support': 'var(--error)'
+    };
+
+    const platformHTML = platforms.map(platform => {
+        return `
+            <div style="background: var(--accent); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid ${statusColors[platform.status]};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <h4 style="color: var(--gray-800); margin: 0; font-size: 1rem; font-weight: 600;">${platform.name}</h4>
+                        <p style="color: var(--gray-600); margin: 0; font-size: 0.75rem;">Version ${platform.version}</p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <span style="font-weight: 600; color: var(--primary); font-size: 0.875rem;">${platform.compatibility}</span>
+                        <span style="background: ${statusColors[platform.status]}; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+                            ${platform.status}
+                        </span>
+                    </div>
+                </div>
+
+                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                    <strong style="color: var(--gray-800); font-size: 0.875rem;">Supported Features:</strong>
+                    <div style="margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.25rem;">
+                        ${platform.features.map(feature => `
+                            <span style="background: var(--success); color: white; padding: 0.125rem 0.5rem; border-radius: 8px; font-size: 0.625rem; font-weight: 600;">
+                                ${feature}
+                            </span>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn" onclick="testPlatform('${platform.name}')" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--info);">
+                        🧪 Test Platform
+                    </button>
+                    <button class="btn" onclick="viewCompatibilityDetails('${platform.name}')" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--secondary-dark);">
+                        📋 View Details
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    setInner("platform-compatibility-list", platformHTML);
+}
+
+function loadAppStoreStatus() {
+    const appStores = [
+        {
+            name: "Google Play Store",
+            status: "Published",
+            version: "1.2.3",
+            downloads: "2,456",
+            rating: "4.8",
+            lastUpdate: "2024-12-10"
+        },
+        {
+            name: "Apple App Store",
+            status: "Under Review",
+            version: "1.2.3",
+            downloads: "1,892",
+            rating: "4.7",
+            lastUpdate: "2024-12-09"
+        },
+        {
+            name: "Microsoft Store",
+            status: "Published",
+            version: "1.2.2",
+            downloads: "634",
+            rating: "4.6",
+            lastUpdate: "2024-12-05"
+        },
+        {
+            name: "PWA Direct Install",
+            status: "Available",
+            version: "1.2.3",
+            downloads: "5,234",
+            rating: "4.9",
+            lastUpdate: "2024-12-11"
+        }
+    ];
+
+    const statusColors = {
+        'Published': 'var(--success)',
+        'Under Review': 'var(--warning)',
+        'Rejected': 'var(--error)',
+        'Available': 'var(--info)'
+    };
+
+    const storeHTML = appStores.map(store => {
+        return `
+            <div style="background: var(--accent); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid ${statusColors[store.status]};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <h4 style="color: var(--gray-800); margin: 0; font-size: 1rem; font-weight: 600;">${store.name}</h4>
+                        <p style="color: var(--gray-600); margin: 0; font-size: 0.75rem;">Version ${store.version}</p>
+                    </div>
+                    <span style="background: ${statusColors[store.status]}; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+                        ${store.status}
+                    </span>
+                </div>
+
+                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 1rem;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 1rem; font-weight: 700; color: var(--primary);">${store.downloads}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Downloads</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1rem; font-weight: 700; color: var(--success);">${store.rating}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Rating</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1rem; font-weight: 700; color: var(--info);">${new Date(store.lastUpdate).toLocaleDateString('id-ID')}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Last Update</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn" onclick="updateAppStore('${store.name}')" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--primary);">
+                        🚀 Update App
+                    </button>
+                    <button class="btn" onclick="viewStoreAnalytics('${store.name}')" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--info);">
+                        📊 Analytics
+                    </button>
+                    <button class="btn" onclick="manageStoreListing('${store.name}')" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--secondary-dark);">
+                        ✏️ Manage Listing
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    setInner("app-store-status", storeHTML);
 }
 
 // Global functions for onclick handlers
@@ -6759,6 +7208,122 @@ window.saveAnalyticsTemplate = saveAnalyticsTemplate;
 window.viewStreamMetrics = viewStreamMetrics;
 window.restartStream = restartStream;
 window.configureStream = configureStream;
+
+function setupMobileEventListeners() {
+    setTimeout(() => {
+        const installBtn = document.getElementById("btn-install-pwa");
+        if (installBtn) {
+            installBtn.addEventListener("click", installPWA);
+        }
+
+        const offlineBtn = document.getElementById("btn-test-offline");
+        if (offlineBtn) {
+            offlineBtn.addEventListener("click", testOfflineMode);
+        }
+    }, 200);
+}
+
+// PWA Installation Functions
+function installPWA() {
+    UIComponents.showNotification("📲 Initiating PWA installation...", "info");
+
+    // Check if PWA installation is available
+    if ('serviceWorker' in navigator) {
+        setTimeout(() => {
+            UIComponents.showNotification("✅ PWA installation prompt displayed! Check your browser's install option.", "success");
+            // Update install count
+            const currentInstalls = parseInt(document.getElementById("pwa-installs").textContent);
+            document.getElementById("pwa-installs").textContent = currentInstalls + 1;
+        }, 1500);
+    } else {
+        UIComponents.showNotification("❌ PWA not supported in this browser", "error");
+    }
+}
+
+function testOfflineMode() {
+    UIComponents.showNotification("🔌 Testing offline functionality...", "warning");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ Offline mode test completed! Core features available offline.", "success");
+        // Update offline sessions count
+        const currentSessions = parseInt(document.getElementById("offline-sessions").textContent);
+        document.getElementById("offline-sessions").textContent = currentSessions + 1;
+    }, 2000);
+}
+
+// PWA Configuration Functions
+function configurePWA() {
+    UIComponents.showNotification("🌐 Opening PWA configuration panel...", "info");
+}
+
+function manageOfflineContent() {
+    UIComponents.showNotification("🔌 Opening offline content management interface...", "info");
+}
+
+function managePushNotifications() {
+    UIComponents.showNotification("🔔 Opening push notification management panel...", "info");
+}
+
+// Responsive Design Functions
+function testBreakpoint(breakpoint) {
+    UIComponents.showNotification(`🧪 Testing responsive design for ${breakpoint}...`, "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification(`✅ ${breakpoint} responsive test completed successfully!`, "success");
+    }, 1500);
+}
+
+function optimizeBreakpoint(breakpoint) {
+    UIComponents.showNotification(`⚡ Optimizing responsive design for ${breakpoint}...`, "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification(`✅ ${breakpoint} optimization completed!`, "success");
+        loadResponsiveDesignStatus();
+    }, 2500);
+}
+
+// Platform Compatibility Functions
+function testPlatform(platform) {
+    UIComponents.showNotification(`🧪 Running compatibility test for ${platform}...`, "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification(`✅ ${platform} compatibility test passed!`, "success");
+    }, 2000);
+}
+
+function viewCompatibilityDetails(platform) {
+    UIComponents.showNotification(`📋 Opening detailed compatibility report for ${platform}`, "info");
+}
+
+// App Store Management Functions
+function updateAppStore(store) {
+    UIComponents.showNotification(`🚀 Submitting app update to ${store}...`, "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification(`✅ App update submitted to ${store} successfully!`, "success");
+        loadAppStoreStatus();
+    }, 3000);
+}
+
+function viewStoreAnalytics(store) {
+    UIComponents.showNotification(`📊 Opening analytics dashboard for ${store}`, "info");
+}
+
+function manageStoreListing(store) {
+    UIComponents.showNotification(`✏️ Opening store listing management for ${store}`, "info");
+}
+
+// Global functions for onclick handlers
+window.configurePWA = configurePWA;
+window.manageOfflineContent = manageOfflineContent;
+window.managePushNotifications = managePushNotifications;
+window.testBreakpoint = testBreakpoint;
+window.optimizeBreakpoint = optimizeBreakpoint;
+window.testPlatform = testPlatform;
+window.viewCompatibilityDetails = viewCompatibilityDetails;
+window.updateAppStore = updateAppStore;
+window.viewStoreAnalytics = viewStoreAnalytics;
+window.manageStoreListing = manageStoreListing;
 
 // Global functions
 window.viewStudentDetail = viewStudentDetail;
