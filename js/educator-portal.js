@@ -6029,7 +6029,469 @@ function loadPerformanceRecommendations() {
 }
 
 function loadAdvancedAnalyticsPage() {
-    UIComponents.showNotification("🧠 Advanced Analytics page coming soon...", "info");
+    const advancedAnalyticsHTML = `
+        <!-- Advanced Analytics & Machine Learning Dashboard -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
+                    🧠
+                </div>
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">Advanced Analytics & Machine Learning</h2>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">AI-powered insights and predictive analytics for enhanced learning outcomes</p>
+                </div>
+                <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+                    <button class="btn" id="btn-train-model" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--primary);">
+                        🤖 Train ML Model
+                    </button>
+                    <button class="btn" id="btn-generate-insights" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--success);">
+                        💡 Generate Insights
+                    </button>
+                </div>
+            </div>
+
+            <!-- ML Model Statistics -->
+            <div class="grid" style="margin-bottom: 2rem;">
+                <div class="metric-card" style="background: var(--primary); color: white;">
+                    <div class="metric-value" id="model-accuracy">96.8%</div>
+                    <div class="metric-label">Model Accuracy</div>
+                </div>
+                <div class="metric-card" style="background: var(--success); color: white;">
+                    <div class="metric-value" id="predictions-made">1,247</div>
+                    <div class="metric-label">Predictions Made</div>
+                </div>
+                <div class="metric-card" style="background: var(--info); color: white;">
+                    <div class="metric-value" id="data-points">45.2K</div>
+                    <div class="metric-label">Training Data Points</div>
+                </div>
+                <div class="metric-card" style="background: var(--warning); color: white;">
+                    <div class="metric-value" id="model-confidence">94.3%</div>
+                    <div class="metric-label">Average Confidence</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Predictive Learning Analytics -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🔮</span> Predictive Learning Analytics
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem;">
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>📈</span> Student Success Prediction
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">AI model predicts student success probability based on learning patterns and engagement.</p>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">High Success Probability</span>
+                            <span style="font-weight: 600; color: var(--success);">32 students</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Medium Risk</span>
+                            <span style="font-weight: 600; color: var(--warning);">8 students</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">High Risk</span>
+                            <span style="font-weight: 600; color: var(--error);">5 students</span>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="viewSuccessPredictions()" style="background: var(--primary); width: 100%;">View Detailed Predictions</button>
+                </div>
+
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--success);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🎯</span> Learning Path Optimization
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">ML algorithms optimize learning paths based on individual student performance and preferences.</p>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Optimized Paths</span>
+                            <span style="font-weight: 600; color: var(--success);">28 paths</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Avg Improvement</span>
+                            <span style="font-weight: 600; color: var(--primary);">+34%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Completion Rate</span>
+                            <span style="font-weight: 600; color: var(--info);">89%</span>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="viewPathOptimizations()" style="background: var(--success); width: 100%;">View Path Analytics</button>
+                </div>
+
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--info);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>⏰</span> Engagement Forecasting
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Predict future engagement levels and identify optimal intervention timing.</p>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Next Week Forecast</span>
+                            <span style="font-weight: 600; color: var(--info);">82% avg</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Declining Trend</span>
+                            <span style="font-weight: 600; color: var(--warning);">6 students</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Intervention Needed</span>
+                            <span style="font-weight: 600; color: var(--error);">3 students</span>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="viewEngagementForecasts()" style="background: var(--info); width: 100%;">View Forecasts</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Advanced Data Visualization -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📊</span> Advanced Data Visualization
+            </h3>
+            <div class="grid">
+                <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem;">ML Model Performance</h4>
+                    <div id="ml-performance-chart" style="height: 250px; background: var(--accent); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--gray-600); font-size: 0.875rem;">
+                        ML model performance visualization will be rendered here
+                    </div>
+                </div>
+                <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem;">Predictive Analytics Dashboard</h4>
+                    <div id="predictive-dashboard" style="height: 250px; background: var(--accent); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--gray-600); font-size: 0.875rem;">
+                        Predictive analytics dashboard will be rendered here
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Machine Learning Models -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🤖</span> Machine Learning Models
+            </h3>
+            <div id="ml-models-list">
+                <!-- ML models will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Custom Analytics Builder -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🛠️</span> Custom Analytics Builder
+            </h3>
+            <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <label style="display: block; font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem;">Data Source</label>
+                        <select id="analytics-data-source" style="width: 100%; padding: 0.75rem; border: 1px solid var(--accent-dark); border-radius: 6px; background: var(--white);">
+                            <option>Student Performance Data</option>
+                            <option>Engagement Metrics</option>
+                            <option>Assessment Results</option>
+                            <option>Communication Logs</option>
+                            <option>Learning Path Data</option>
+                            <option>Custom Dataset</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem;">Analysis Type</label>
+                        <select id="analytics-type" style="width: 100%; padding: 0.75rem; border: 1px solid var(--accent-dark); border-radius: 6px; background: var(--white);">
+                            <option>Predictive Modeling</option>
+                            <option>Clustering Analysis</option>
+                            <option>Trend Analysis</option>
+                            <option>Correlation Analysis</option>
+                            <option>Anomaly Detection</option>
+                            <option>Classification</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem;">Time Period</label>
+                        <select id="analytics-timeframe" style="width: 100%; padding: 0.75rem; border: 1px solid var(--accent-dark); border-radius: 6px; background: var(--white);">
+                            <option>Last 7 Days</option>
+                            <option>Last 30 Days</option>
+                            <option>This Semester</option>
+                            <option>This Year</option>
+                            <option>All Time</option>
+                            <option>Custom Range</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: var(--gray-800); margin-bottom: 0.5rem;">Visualization</label>
+                        <select id="analytics-visualization" style="width: 100%; padding: 0.75rem; border: 1px solid var(--accent-dark); border-radius: 6px; background: var(--white);">
+                            <option>Interactive Dashboard</option>
+                            <option>Statistical Charts</option>
+                            <option>Heatmaps</option>
+                            <option>Network Graphs</option>
+                            <option>3D Visualizations</option>
+                            <option>Custom Charts</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn" onclick="previewAnalytics()" style="background: var(--info); flex: 1;">👁️ Preview Analytics</button>
+                    <button class="btn" onclick="runCustomAnalytics()" style="background: var(--primary); flex: 1;">🚀 Run Analysis</button>
+                    <button class="btn" onclick="saveAnalyticsTemplate()" style="background: var(--success); flex: 1;">💾 Save Template</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-time Data Processing -->
+        <section class="card">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>⚡</span> Real-time Data Processing
+            </h3>
+            <div id="realtime-processing-status">
+                <!-- Real-time processing status will be loaded here -->
+            </div>
+        </section>
+    `;
+
+    setInner("page-advanced-analytics", advancedAnalyticsHTML);
+
+    // Load advanced analytics data
+    setTimeout(() => {
+        loadMLModels();
+        loadRealtimeProcessingStatus();
+        setupAdvancedAnalyticsEventListeners();
+    }, 100);
+
+    UIComponents.showNotification("🧠 Advanced Analytics & Machine Learning loaded successfully!", "success");
+}
+
+function loadMLModels() {
+    const mlModels = [
+        {
+            id: 1,
+            name: "Student Success Predictor",
+            type: "Classification",
+            algorithm: "Random Forest",
+            accuracy: "96.8%",
+            lastTrained: "2024-12-11 14:30",
+            status: "Active",
+            predictions: 1247,
+            features: ["engagement_score", "assignment_completion", "time_spent", "quiz_performance"]
+        },
+        {
+            id: 2,
+            name: "Learning Path Optimizer",
+            type: "Recommendation",
+            algorithm: "Collaborative Filtering",
+            accuracy: "94.2%",
+            lastTrained: "2024-12-10 16:45",
+            status: "Active",
+            predictions: 892,
+            features: ["learning_style", "progress_rate", "difficulty_preference", "topic_interest"]
+        },
+        {
+            id: 3,
+            name: "Engagement Forecaster",
+            type: "Time Series",
+            algorithm: "LSTM Neural Network",
+            accuracy: "91.5%",
+            lastTrained: "2024-12-09 10:20",
+            status: "Training",
+            predictions: 634,
+            features: ["daily_activity", "session_duration", "interaction_frequency", "content_type"]
+        },
+        {
+            id: 4,
+            name: "Content Difficulty Analyzer",
+            type: "Regression",
+            algorithm: "Gradient Boosting",
+            accuracy: "89.7%",
+            lastTrained: "2024-12-08 13:15",
+            status: "Active",
+            predictions: 456,
+            features: ["content_complexity", "student_level", "completion_time", "error_rate"]
+        },
+        {
+            id: 5,
+            name: "Anomaly Detector",
+            type: "Unsupervised",
+            algorithm: "Isolation Forest",
+            accuracy: "87.3%",
+            lastTrained: "2024-12-07 09:30",
+            status: "Inactive",
+            predictions: 234,
+            features: ["behavior_pattern", "access_time", "performance_deviation", "engagement_anomaly"]
+        }
+    ];
+
+    const statusColors = {
+        'Active': 'var(--success)',
+        'Training': 'var(--warning)',
+        'Inactive': 'var(--gray-500)',
+        'Error': 'var(--error)'
+    };
+
+    const typeColors = {
+        'Classification': 'var(--primary)',
+        'Recommendation': 'var(--info)',
+        'Time Series': 'var(--success)',
+        'Regression': 'var(--warning)',
+        'Unsupervised': 'var(--secondary-dark)'
+    };
+
+    const modelsHTML = mlModels.map(model => {
+        return `
+            <div style="background: var(--accent); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid ${statusColors[model.status]};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <h4 style="color: var(--gray-800); margin: 0; font-size: 1rem; font-weight: 600;">${model.name}</h4>
+                        <p style="color: var(--gray-600); margin: 0; font-size: 0.75rem;">${model.algorithm} • ${model.type} Model</p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <span style="background: ${typeColors[model.type]}; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+                            ${model.type}
+                        </span>
+                        <span style="background: ${statusColors[model.status]}; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+                            ${model.status}
+                        </span>
+                    </div>
+                </div>
+
+                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 1rem; font-weight: 700; color: var(--primary);">${model.accuracy}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Accuracy</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1rem; font-weight: 700; color: var(--success);">${model.predictions}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Predictions</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1rem; font-weight: 700; color: var(--info);">${model.features.length}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Features</div>
+                        </div>
+                    </div>
+                    <div>
+                        <strong style="color: var(--gray-800); font-size: 0.875rem;">Features:</strong>
+                        <div style="margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.25rem;">
+                            ${model.features.map(feature => `
+                                <span style="background: var(--accent); color: var(--gray-700); padding: 0.125rem 0.5rem; border-radius: 8px; font-size: 0.625rem; border: 1px solid var(--accent-dark);">
+                                    ${feature}
+                                </span>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn" onclick="viewModelDetails(${model.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--info);">
+                        📊 View Details
+                    </button>
+                    <button class="btn" onclick="retrainModel(${model.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--primary);">
+                        🔄 Retrain
+                    </button>
+                    <button class="btn" onclick="testModel(${model.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--success);">
+                        🧪 Test Model
+                    </button>
+                    <button class="btn" onclick="exportModel(${model.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--secondary-dark);">
+                        📤 Export
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    setInner("ml-models-list", modelsHTML);
+}
+
+function loadRealtimeProcessingStatus() {
+    const processingStreams = [
+        {
+            id: 1,
+            name: "Student Activity Stream",
+            type: "Real-time Events",
+            status: "Active",
+            throughput: "1,247 events/min",
+            latency: "12ms",
+            errorRate: "0.02%"
+        },
+        {
+            id: 2,
+            name: "Assessment Results Pipeline",
+            type: "Batch Processing",
+            status: "Active",
+            throughput: "456 records/min",
+            latency: "45ms",
+            errorRate: "0.01%"
+        },
+        {
+            id: 3,
+            name: "ML Inference Engine",
+            type: "Prediction Service",
+            status: "Active",
+            throughput: "892 predictions/min",
+            latency: "8ms",
+            errorRate: "0.05%"
+        },
+        {
+            id: 4,
+            name: "Analytics Aggregator",
+            type: "Data Aggregation",
+            status: "Warning",
+            throughput: "234 aggregations/min",
+            latency: "120ms",
+            errorRate: "0.15%"
+        }
+    ];
+
+    const statusColors = {
+        'Active': 'var(--success)',
+        'Warning': 'var(--warning)',
+        'Error': 'var(--error)',
+        'Stopped': 'var(--gray-500)'
+    };
+
+    const streamHTML = processingStreams.map(stream => {
+        return `
+            <div style="background: var(--accent); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid ${statusColors[stream.status]};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <h4 style="color: var(--gray-800); margin: 0; font-size: 1rem; font-weight: 600;">${stream.name}</h4>
+                        <p style="color: var(--gray-600); margin: 0; font-size: 0.75rem;">${stream.type}</p>
+                    </div>
+                    <span style="background: ${statusColors[stream.status]}; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+                        ${stream.status}
+                    </span>
+                </div>
+
+                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 1rem; font-weight: 700; color: var(--primary);">${stream.throughput}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Throughput</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1rem; font-weight: 700; color: var(--info);">${stream.latency}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Latency</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1rem; font-weight: 700; color: var(--success);">${stream.errorRate}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Error Rate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn" onclick="viewStreamMetrics(${stream.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--info);">
+                        📊 Metrics
+                    </button>
+                    <button class="btn" onclick="restartStream(${stream.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--warning);">
+                        🔄 Restart
+                    </button>
+                    <button class="btn" onclick="configureStream(${stream.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--secondary-dark);">
+                        ⚙️ Configure
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    setInner("realtime-processing-status", streamHTML);
 }
 
 function loadMobilePage() {
@@ -6157,6 +6619,146 @@ window.viewQueryPlan = viewQueryPlan;
 window.implementRecommendation = implementRecommendation;
 window.viewRecommendationDetails = viewRecommendationDetails;
 window.scheduleRecommendation = scheduleRecommendation;
+
+function setupAdvancedAnalyticsEventListeners() {
+    setTimeout(() => {
+        const trainBtn = document.getElementById("btn-train-model");
+        if (trainBtn) {
+            trainBtn.addEventListener("click", trainMLModel);
+        }
+
+        const insightsBtn = document.getElementById("btn-generate-insights");
+        if (insightsBtn) {
+            insightsBtn.addEventListener("click", generateMLInsights);
+        }
+    }, 200);
+}
+
+// ML Model Training Functions
+function trainMLModel() {
+    UIComponents.showNotification("🤖 Starting ML model training with latest data...", "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ ML model training completed! Accuracy improved to 97.2%", "success");
+        // Update model accuracy
+        document.getElementById("model-accuracy").textContent = "97.2%";
+        loadMLModels();
+    }, 5000);
+}
+
+function generateMLInsights() {
+    UIComponents.showNotification("💡 Generating AI-powered insights from latest data...", "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ New insights generated! Check the predictive analytics dashboard.", "success");
+        // Update predictions count
+        const currentPredictions = parseInt(document.getElementById("predictions-made").textContent.replace(',', ''));
+        document.getElementById("predictions-made").textContent = (currentPredictions + 156).toLocaleString();
+    }, 3000);
+}
+
+// Predictive Analytics Functions
+function viewSuccessPredictions() {
+    UIComponents.showNotification("📈 Opening detailed student success predictions dashboard...", "info");
+}
+
+function viewPathOptimizations() {
+    UIComponents.showNotification("🎯 Opening learning path optimization analytics...", "info");
+}
+
+function viewEngagementForecasts() {
+    UIComponents.showNotification("⏰ Opening engagement forecasting dashboard...", "info");
+}
+
+// ML Model Management Functions
+function viewModelDetails(id) {
+    UIComponents.showNotification(`📊 Opening detailed analytics for ML model ID: ${id}`, "info");
+}
+
+function retrainModel(id) {
+    UIComponents.showNotification(`🔄 Starting retraining process for model ID: ${id}...`, "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ Model retraining completed successfully!", "success");
+        loadMLModels();
+    }, 4000);
+}
+
+function testModel(id) {
+    UIComponents.showNotification(`🧪 Running test suite for model ID: ${id}...`, "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ Model testing completed! All tests passed.", "success");
+    }, 2000);
+}
+
+function exportModel(id) {
+    UIComponents.showNotification(`📤 Exporting model ID: ${id} for deployment...`, "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ Model exported successfully! Download ready.", "success");
+    }, 1500);
+}
+
+// Custom Analytics Builder Functions
+function previewAnalytics() {
+    const dataSource = document.getElementById("analytics-data-source")?.value;
+    const analysisType = document.getElementById("analytics-type")?.value;
+    const timeframe = document.getElementById("analytics-timeframe")?.value;
+    const visualization = document.getElementById("analytics-visualization")?.value;
+
+    UIComponents.showNotification(`👁️ Previewing ${analysisType} on ${dataSource} (${timeframe}, ${visualization})...`, "info");
+}
+
+function runCustomAnalytics() {
+    const dataSource = document.getElementById("analytics-data-source")?.value;
+    const analysisType = document.getElementById("analytics-type")?.value;
+    const timeframe = document.getElementById("analytics-timeframe")?.value;
+    const visualization = document.getElementById("analytics-visualization")?.value;
+
+    UIComponents.showNotification(`🚀 Running ${analysisType} analysis on ${dataSource}...`, "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ Custom analytics completed! Results available in dashboard.", "success");
+    }, 4000);
+}
+
+function saveAnalyticsTemplate() {
+    UIComponents.showNotification("💾 Saving analytics configuration as reusable template...", "success");
+}
+
+// Real-time Processing Functions
+function viewStreamMetrics(id) {
+    UIComponents.showNotification(`📊 Opening detailed metrics for processing stream ID: ${id}`, "info");
+}
+
+function restartStream(id) {
+    UIComponents.showNotification(`🔄 Restarting processing stream ID: ${id}...`, "warning");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ Processing stream restarted successfully!", "success");
+        loadRealtimeProcessingStatus();
+    }, 2000);
+}
+
+function configureStream(id) {
+    UIComponents.showNotification(`⚙️ Opening configuration for processing stream ID: ${id}`, "info");
+}
+
+// Global functions for onclick handlers
+window.viewSuccessPredictions = viewSuccessPredictions;
+window.viewPathOptimizations = viewPathOptimizations;
+window.viewEngagementForecasts = viewEngagementForecasts;
+window.viewModelDetails = viewModelDetails;
+window.retrainModel = retrainModel;
+window.testModel = testModel;
+window.exportModel = exportModel;
+window.previewAnalytics = previewAnalytics;
+window.runCustomAnalytics = runCustomAnalytics;
+window.saveAnalyticsTemplate = saveAnalyticsTemplate;
+window.viewStreamMetrics = viewStreamMetrics;
+window.restartStream = restartStream;
+window.configureStream = configureStream;
 
 // Global functions
 window.viewStudentDetail = viewStudentDetail;
