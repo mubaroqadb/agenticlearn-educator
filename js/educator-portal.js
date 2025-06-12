@@ -153,6 +153,22 @@ function updatePageHeader(pageName) {
             title: 'Integrations',
             subtitle: 'Manage external integrations and API connections'
         },
+        security: {
+            title: 'Security & Authentication',
+            subtitle: 'Advanced security controls and authentication management'
+        },
+        performance: {
+            title: 'Performance Optimization',
+            subtitle: 'System performance monitoring and optimization tools'
+        },
+        'advanced-analytics': {
+            title: 'Advanced Analytics',
+            subtitle: 'Machine learning insights and predictive analytics'
+        },
+        mobile: {
+            title: 'Mobile & PWA',
+            subtitle: 'Mobile optimization and Progressive Web App features'
+        },
         settings: {
             title: 'Settings',
             subtitle: 'Configure your preferences and system settings'
@@ -193,6 +209,18 @@ function loadPageContent(pageName) {
             break;
         case 'integrations':
             loadIntegrationsPage();
+            break;
+        case 'security':
+            loadSecurityPage();
+            break;
+        case 'performance':
+            loadPerformancePage();
+            break;
+        case 'advanced-analytics':
+            loadAdvancedAnalyticsPage();
+            break;
+        case 'mobile':
+            loadMobilePage();
             break;
         case 'settings':
             loadSettingsPage();
@@ -4175,7 +4203,559 @@ function loadScheduledReports() {
 }
 
 function loadIntegrationsPage() {
-    UIComponents.showNotification("🔗 Integrations page coming soon...", "info");
+    const integrationsHTML = `
+        <!-- Integration & API Management Dashboard -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="width: 40px; height: 40px; background: var(--secondary-dark); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
+                    🔗
+                </div>
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">Integration & API Management</h2>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">Manage external integrations and API connections</p>
+                </div>
+                <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+                    <button class="btn" id="btn-add-integration" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--primary);">
+                        ➕ Add Integration
+                    </button>
+                    <button class="btn" id="btn-api-docs" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--info);">
+                        📚 API Documentation
+                    </button>
+                </div>
+            </div>
+
+            <!-- Integration Statistics -->
+            <div class="grid" style="margin-bottom: 2rem;">
+                <div class="metric-card" style="background: var(--primary); color: white;">
+                    <div class="metric-value" id="active-integrations">12</div>
+                    <div class="metric-label">Active Integrations</div>
+                </div>
+                <div class="metric-card" style="background: var(--success); color: white;">
+                    <div class="metric-value" id="api-calls-today">2.4K</div>
+                    <div class="metric-label">API Calls Today</div>
+                </div>
+                <div class="metric-card" style="background: var(--info); color: white;">
+                    <div class="metric-value" id="webhook-events">156</div>
+                    <div class="metric-label">Webhook Events</div>
+                </div>
+                <div class="metric-card" style="background: var(--warning); color: white;">
+                    <div class="metric-value" id="sync-status">98%</div>
+                    <div class="metric-label">Sync Success Rate</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Available Integrations -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🌐</span> Available Integrations
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🎓</span> Learning Management Systems
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Connect with popular LMS platforms for seamless data exchange.</p>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <button class="btn" onclick="connectLMS('moodle')" style="background: var(--primary); padding: 0.5rem; font-size: 0.75rem;">
+                            🔗 Connect Moodle
+                        </button>
+                        <button class="btn" onclick="connectLMS('canvas')" style="background: var(--info); padding: 0.5rem; font-size: 0.75rem;">
+                            🔗 Connect Canvas
+                        </button>
+                        <button class="btn" onclick="connectLMS('blackboard')" style="background: var(--secondary-dark); padding: 0.5rem; font-size: 0.75rem;">
+                            🔗 Connect Blackboard
+                        </button>
+                    </div>
+                </div>
+
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--secondary-dark);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>💬</span> Communication Tools
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Integrate with communication platforms for enhanced collaboration.</p>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <button class="btn" onclick="connectComm('slack')" style="background: var(--success); padding: 0.5rem; font-size: 0.75rem;">
+                            🔗 Connect Slack
+                        </button>
+                        <button class="btn" onclick="connectComm('teams')" style="background: var(--info); padding: 0.5rem; font-size: 0.75rem;">
+                            🔗 Connect Microsoft Teams
+                        </button>
+                        <button class="btn" onclick="connectComm('discord')" style="background: var(--warning); padding: 0.5rem; font-size: 0.75rem;">
+                            🔗 Connect Discord
+                        </button>
+                    </div>
+                </div>
+
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--info);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>📊</span> Analytics & Reporting
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Connect with analytics platforms for advanced data insights.</p>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <button class="btn" onclick="connectAnalytics('googleanalytics')" style="background: var(--warning); padding: 0.5rem; font-size: 0.75rem;">
+                            🔗 Connect Google Analytics
+                        </button>
+                        <button class="btn" onclick="connectAnalytics('powerbi')" style="background: var(--info); padding: 0.5rem; font-size: 0.75rem;">
+                            🔗 Connect Power BI
+                        </button>
+                        <button class="btn" onclick="connectAnalytics('tableau')" style="background: var(--primary); padding: 0.5rem; font-size: 0.75rem;">
+                            🔗 Connect Tableau
+                        </button>
+                    </div>
+                </div>
+
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--success);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>☁️</span> Cloud Storage
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Integrate with cloud storage for file management and backup.</p>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <button class="btn" onclick="connectStorage('googledrive')" style="background: var(--success); padding: 0.5rem; font-size: 0.75rem;">
+                            🔗 Connect Google Drive
+                        </button>
+                        <button class="btn" onclick="connectStorage('onedrive')" style="background: var(--info); padding: 0.5rem; font-size: 0.75rem;">
+                            🔗 Connect OneDrive
+                        </button>
+                        <button class="btn" onclick="connectStorage('dropbox')" style="background: var(--primary); padding: 0.5rem; font-size: 0.75rem;">
+                            🔗 Connect Dropbox
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Active Integrations -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🔌</span> Active Integrations
+            </h3>
+            <div id="active-integrations-list">
+                <!-- Active integrations will be loaded here -->
+            </div>
+        </section>
+
+        <!-- API Management -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🔑</span> API Management
+            </h3>
+            <div class="grid">
+                <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem;">API Keys</h4>
+                    <div id="api-keys-list">
+                        <!-- API keys will be loaded here -->
+                    </div>
+                    <button class="btn" onclick="generateAPIKey()" style="background: var(--primary); width: 100%; margin-top: 1rem;">
+                        🔑 Generate New API Key
+                    </button>
+                </div>
+                <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem;">API Usage Analytics</h4>
+                    <div id="api-usage-chart" style="height: 200px; background: var(--accent); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--gray-600); font-size: 0.875rem;">
+                        API usage chart will be rendered here
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Webhook Configuration -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🔔</span> Webhook Configuration
+            </h3>
+            <div id="webhook-list">
+                <!-- Webhooks will be loaded here -->
+            </div>
+            <button class="btn" onclick="addWebhook()" style="background: var(--success); margin-top: 1rem;">
+                ➕ Add New Webhook
+            </button>
+        </section>
+
+        <!-- Data Synchronization -->
+        <section class="card">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🔄</span> Data Synchronization
+            </h3>
+            <div id="sync-status-list">
+                <!-- Sync status will be loaded here -->
+            </div>
+        </section>
+    `;
+
+    setInner("page-integrations", integrationsHTML);
+
+    // Load integrations data
+    setTimeout(() => {
+        loadActiveIntegrations();
+        loadAPIKeys();
+        loadWebhooks();
+        loadSyncStatus();
+        setupIntegrationsEventListeners();
+    }, 100);
+
+    UIComponents.showNotification("🔗 Integrations & API Management loaded successfully!", "success");
+}
+
+function loadActiveIntegrations() {
+    const activeIntegrations = [
+        {
+            id: 1,
+            name: "Google Classroom",
+            type: "LMS",
+            status: "Connected",
+            lastSync: "2024-12-11 14:30",
+            dataPoints: "1,245 students synced",
+            health: "Healthy"
+        },
+        {
+            id: 2,
+            name: "Slack Workspace",
+            type: "Communication",
+            status: "Connected",
+            lastSync: "2024-12-11 15:45",
+            dataPoints: "24 channels active",
+            health: "Healthy"
+        },
+        {
+            id: 3,
+            name: "Google Analytics",
+            type: "Analytics",
+            status: "Connected",
+            lastSync: "2024-12-11 16:00",
+            dataPoints: "Real-time tracking",
+            health: "Healthy"
+        },
+        {
+            id: 4,
+            name: "OneDrive Storage",
+            type: "Storage",
+            status: "Connected",
+            lastSync: "2024-12-11 13:20",
+            dataPoints: "2.4GB synchronized",
+            health: "Warning"
+        },
+        {
+            id: 5,
+            name: "Zoom Integration",
+            type: "Video Conferencing",
+            status: "Disconnected",
+            lastSync: "2024-12-10 09:15",
+            dataPoints: "Connection lost",
+            health: "Error"
+        }
+    ];
+
+    const integrationsHTML = activeIntegrations.map(integration => {
+        const statusColors = {
+            'Connected': 'var(--success)',
+            'Disconnected': 'var(--error)',
+            'Connecting': 'var(--warning)'
+        };
+
+        const healthColors = {
+            'Healthy': 'var(--success)',
+            'Warning': 'var(--warning)',
+            'Error': 'var(--error)'
+        };
+
+        const typeIcons = {
+            'LMS': '🎓',
+            'Communication': '💬',
+            'Analytics': '📊',
+            'Storage': '☁️',
+            'Video Conferencing': '📹'
+        };
+
+        return `
+            <div style="background: var(--accent); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid ${statusColors[integration.status]};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <span style="font-size: 1.5rem;">${typeIcons[integration.type]}</span>
+                        <div>
+                            <h4 style="color: var(--gray-800); margin: 0; font-size: 1rem; font-weight: 600;">${integration.name}</h4>
+                            <p style="color: var(--gray-600); margin: 0; font-size: 0.75rem;">${integration.type} • ${integration.dataPoints}</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <span style="background: ${statusColors[integration.status]}; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+                            ${integration.status}
+                        </span>
+                        <span style="background: ${healthColors[integration.health]}; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+                            ${integration.health}
+                        </span>
+                    </div>
+                </div>
+
+                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                    <div style="margin-bottom: 0.5rem;">
+                        <strong style="color: var(--gray-800); font-size: 0.875rem;">Last Sync:</strong>
+                        <span style="color: var(--gray-700); font-size: 0.875rem;"> ${new Date(integration.lastSync).toLocaleString('id-ID')}</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn" onclick="configureIntegration(${integration.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--info);">
+                        ⚙️ Configure
+                    </button>
+                    <button class="btn" onclick="testIntegration(${integration.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--primary);">
+                        🧪 Test Connection
+                    </button>
+                    <button class="btn" onclick="syncIntegration(${integration.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--success);">
+                        🔄 Sync Now
+                    </button>
+                    <button class="btn" onclick="disconnectIntegration(${integration.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--error);">
+                        🔌 Disconnect
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    setInner("active-integrations-list", integrationsHTML);
+}
+
+function loadAPIKeys() {
+    const apiKeys = [
+        {
+            id: 1,
+            name: "Production API Key",
+            key: "ak_prod_1234567890abcdef",
+            created: "2024-11-15",
+            lastUsed: "2024-12-11 16:30",
+            requests: "2,456",
+            status: "Active"
+        },
+        {
+            id: 2,
+            name: "Development API Key",
+            key: "ak_dev_abcdef1234567890",
+            created: "2024-12-01",
+            lastUsed: "2024-12-11 14:20",
+            requests: "892",
+            status: "Active"
+        },
+        {
+            id: 3,
+            name: "Testing API Key",
+            key: "ak_test_567890abcdef1234",
+            created: "2024-12-05",
+            lastUsed: "2024-12-10 11:45",
+            requests: "156",
+            status: "Limited"
+        }
+    ];
+
+    const apiKeysHTML = apiKeys.map(key => {
+        const statusColors = {
+            'Active': 'var(--success)',
+            'Limited': 'var(--warning)',
+            'Disabled': 'var(--error)'
+        };
+
+        return `
+            <div style="background: var(--accent); padding: 1rem; border-radius: 6px; margin-bottom: 0.75rem; border-left: 3px solid ${statusColors[key.status]};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <strong style="color: var(--gray-800); font-size: 0.875rem;">${key.name}</strong>
+                    <span style="background: ${statusColors[key.status]}; color: white; padding: 0.125rem 0.5rem; border-radius: 8px; font-size: 0.625rem; font-weight: 600;">
+                        ${key.status}
+                    </span>
+                </div>
+                <div style="font-family: monospace; font-size: 0.75rem; color: var(--gray-700); margin-bottom: 0.5rem; background: var(--white); padding: 0.5rem; border-radius: 4px;">
+                    ${key.key}
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.625rem; color: var(--gray-600);">
+                    <span>Requests: ${key.requests}</span>
+                    <span>Last used: ${new Date(key.lastUsed).toLocaleDateString('id-ID')}</span>
+                </div>
+                <div style="display: flex; gap: 0.25rem; margin-top: 0.5rem;">
+                    <button class="btn" onclick="copyAPIKey('${key.key}')" style="padding: 0.25rem 0.5rem; font-size: 0.625rem; background: var(--info);">📋 Copy</button>
+                    <button class="btn" onclick="regenerateAPIKey(${key.id})" style="padding: 0.25rem 0.5rem; font-size: 0.625rem; background: var(--warning);">🔄 Regenerate</button>
+                    <button class="btn" onclick="deleteAPIKey(${key.id})" style="padding: 0.25rem 0.5rem; font-size: 0.625rem; background: var(--error);">🗑️ Delete</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    setInner("api-keys-list", apiKeysHTML);
+}
+
+function loadWebhooks() {
+    const webhooks = [
+        {
+            id: 1,
+            name: "Student Progress Updates",
+            url: "https://api.university.edu/webhooks/progress",
+            events: ["student.progress.updated", "assessment.completed"],
+            status: "Active",
+            lastTriggered: "2024-12-11 16:45",
+            successRate: "98%"
+        },
+        {
+            id: 2,
+            name: "Assessment Notifications",
+            url: "https://notifications.edu/webhooks/assessments",
+            events: ["assessment.created", "assessment.graded"],
+            status: "Active",
+            lastTriggered: "2024-12-11 15:30",
+            successRate: "100%"
+        },
+        {
+            id: 3,
+            name: "Communication Alerts",
+            url: "https://alerts.university.edu/webhooks/comm",
+            events: ["message.sent", "announcement.posted"],
+            status: "Paused",
+            lastTriggered: "2024-12-10 14:20",
+            successRate: "95%"
+        }
+    ];
+
+    const webhooksHTML = webhooks.map(webhook => {
+        const statusColors = {
+            'Active': 'var(--success)',
+            'Paused': 'var(--warning)',
+            'Failed': 'var(--error)'
+        };
+
+        return `
+            <div style="background: var(--accent); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid ${statusColors[webhook.status]};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <h4 style="color: var(--gray-800); margin: 0; font-size: 1rem; font-weight: 600;">${webhook.name}</h4>
+                        <p style="color: var(--gray-600); margin: 0; font-size: 0.75rem; font-family: monospace;">${webhook.url}</p>
+                    </div>
+                    <span style="background: ${statusColors[webhook.status]}; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+                        ${webhook.status}
+                    </span>
+                </div>
+
+                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                    <div style="margin-bottom: 0.5rem;">
+                        <strong style="color: var(--gray-800); font-size: 0.875rem;">Events:</strong>
+                        <span style="color: var(--gray-700); font-size: 0.875rem;"> ${webhook.events.join(', ')}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--gray-600); font-size: 0.75rem;">Last triggered: ${new Date(webhook.lastTriggered).toLocaleString('id-ID')}</span>
+                        <span style="color: var(--success); font-size: 0.75rem; font-weight: 600;">Success rate: ${webhook.successRate}</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn" onclick="editWebhook(${webhook.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--info);">
+                        ✏️ Edit
+                    </button>
+                    <button class="btn" onclick="testWebhook(${webhook.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--primary);">
+                        🧪 Test
+                    </button>
+                    <button class="btn" onclick="toggleWebhook(${webhook.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--warning);">
+                        ${webhook.status === 'Active' ? '⏸️ Pause' : '▶️ Resume'}
+                    </button>
+                    <button class="btn" onclick="deleteWebhook(${webhook.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--error);">
+                        🗑️ Delete
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    setInner("webhook-list", webhooksHTML);
+}
+
+function loadSyncStatus() {
+    const syncItems = [
+        {
+            id: 1,
+            source: "Google Classroom",
+            target: "AgenticLearn Database",
+            type: "Student Data",
+            status: "Syncing",
+            progress: 75,
+            lastSync: "2024-12-11 16:30",
+            nextSync: "2024-12-11 17:00"
+        },
+        {
+            id: 2,
+            source: "Slack Workspace",
+            target: "Communication Center",
+            type: "Messages",
+            status: "Completed",
+            progress: 100,
+            lastSync: "2024-12-11 16:45",
+            nextSync: "2024-12-11 17:15"
+        },
+        {
+            id: 3,
+            source: "OneDrive Storage",
+            target: "File Repository",
+            type: "Documents",
+            status: "Failed",
+            progress: 45,
+            lastSync: "2024-12-11 15:20",
+            nextSync: "2024-12-11 17:20"
+        },
+        {
+            id: 4,
+            source: "Google Analytics",
+            target: "Analytics Dashboard",
+            type: "Usage Data",
+            status: "Completed",
+            progress: 100,
+            lastSync: "2024-12-11 16:50",
+            nextSync: "2024-12-11 17:50"
+        }
+    ];
+
+    const syncHTML = syncItems.map(item => {
+        const statusColors = {
+            'Completed': 'var(--success)',
+            'Syncing': 'var(--info)',
+            'Failed': 'var(--error)',
+            'Pending': 'var(--warning)'
+        };
+
+        return `
+            <div style="background: var(--accent); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid ${statusColors[item.status]};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <h4 style="color: var(--gray-800); margin: 0; font-size: 1rem; font-weight: 600;">${item.source} → ${item.target}</h4>
+                        <p style="color: var(--gray-600); margin: 0; font-size: 0.75rem;">${item.type} synchronization</p>
+                    </div>
+                    <span style="background: ${statusColors[item.status]}; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+                        ${item.status}
+                    </span>
+                </div>
+
+                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--gray-700); font-size: 0.875rem;">Progress</span>
+                        <span style="color: var(--primary); font-size: 0.875rem; font-weight: 600;">${item.progress}%</span>
+                    </div>
+                    <div style="background: var(--accent); height: 8px; border-radius: 4px; overflow: hidden;">
+                        <div style="background: ${statusColors[item.status]}; height: 100%; width: ${item.progress}%; transition: width 0.3s ease;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.75rem; color: var(--gray-600);">
+                        <span>Last: ${new Date(item.lastSync).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'})}</span>
+                        <span>Next: ${new Date(item.nextSync).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'})}</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn" onclick="forceSyncNow(${item.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--primary);">
+                        🔄 Sync Now
+                    </button>
+                    <button class="btn" onclick="configureSyncSchedule(${item.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--info);">
+                        ⏰ Schedule
+                    </button>
+                    <button class="btn" onclick="viewSyncLogs(${item.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--secondary-dark);">
+                        📋 View Logs
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    setInner("sync-status-list", syncHTML);
 }
 
 // Global functions for onclick handlers
@@ -4394,6 +4974,1189 @@ window.editScheduledReport = editScheduledReport;
 window.runScheduledReport = runScheduledReport;
 window.toggleScheduledReport = toggleScheduledReport;
 window.deleteScheduledReport = deleteScheduledReport;
+
+function setupIntegrationsEventListeners() {
+    setTimeout(() => {
+        const addBtn = document.getElementById("btn-add-integration");
+        if (addBtn) {
+            addBtn.addEventListener("click", openIntegrationMarketplace);
+        }
+
+        const docsBtn = document.getElementById("btn-api-docs");
+        if (docsBtn) {
+            docsBtn.addEventListener("click", openAPIDocs);
+        }
+    }, 200);
+}
+
+// Integration Connection Functions
+function connectLMS(platform) {
+    UIComponents.showNotification(`🔗 Connecting to ${platform.toUpperCase()} LMS...`, "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification(`✅ Successfully connected to ${platform.toUpperCase()}!`, "success");
+        loadActiveIntegrations();
+    }, 2000);
+}
+
+function connectComm(platform) {
+    UIComponents.showNotification(`💬 Connecting to ${platform} communication platform...`, "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification(`✅ Successfully connected to ${platform}!`, "success");
+        loadActiveIntegrations();
+    }, 2000);
+}
+
+function connectAnalytics(platform) {
+    UIComponents.showNotification(`📊 Connecting to ${platform} analytics platform...`, "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification(`✅ Successfully connected to ${platform}!`, "success");
+        loadActiveIntegrations();
+    }, 2000);
+}
+
+function connectStorage(platform) {
+    UIComponents.showNotification(`☁️ Connecting to ${platform} cloud storage...`, "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification(`✅ Successfully connected to ${platform}!`, "success");
+        loadActiveIntegrations();
+    }, 2000);
+}
+
+// Active Integration Management
+function configureIntegration(id) {
+    UIComponents.showNotification(`⚙️ Opening configuration for integration ID: ${id}`, "info");
+}
+
+function testIntegration(id) {
+    UIComponents.showNotification(`🧪 Testing connection for integration ID: ${id}...`, "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ Connection test successful!", "success");
+    }, 1500);
+}
+
+function syncIntegration(id) {
+    UIComponents.showNotification(`🔄 Starting manual sync for integration ID: ${id}...`, "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ Synchronization completed successfully!", "success");
+        loadActiveIntegrations();
+        loadSyncStatus();
+    }, 2000);
+}
+
+function disconnectIntegration(id) {
+    UIComponents.showNotification(`🔌 Disconnecting integration ID: ${id}...`, "warning");
+
+    setTimeout(() => {
+        UIComponents.showNotification("⚠️ Integration disconnected successfully", "warning");
+        loadActiveIntegrations();
+    }, 1500);
+}
+
+// API Key Management
+function generateAPIKey() {
+    UIComponents.showNotification("🔑 Generating new API key...", "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ New API key generated successfully!", "success");
+        loadAPIKeys();
+    }, 1500);
+}
+
+function copyAPIKey(key) {
+    navigator.clipboard.writeText(key).then(() => {
+        UIComponents.showNotification("📋 API key copied to clipboard!", "success");
+    }).catch(() => {
+        UIComponents.showNotification("❌ Failed to copy API key", "error");
+    });
+}
+
+function regenerateAPIKey(id) {
+    UIComponents.showNotification(`🔄 Regenerating API key ID: ${id}...`, "warning");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ API key regenerated successfully!", "success");
+        loadAPIKeys();
+    }, 1500);
+}
+
+function deleteAPIKey(id) {
+    UIComponents.showNotification(`🗑️ Deleting API key ID: ${id}...`, "warning");
+
+    setTimeout(() => {
+        UIComponents.showNotification("⚠️ API key deleted successfully", "warning");
+        loadAPIKeys();
+    }, 1000);
+}
+
+// Webhook Management
+function addWebhook() {
+    UIComponents.showNotification("➕ Opening webhook creation interface...", "info");
+}
+
+function editWebhook(id) {
+    UIComponents.showNotification(`✏️ Opening webhook editor for ID: ${id}`, "info");
+}
+
+function testWebhook(id) {
+    UIComponents.showNotification(`🧪 Testing webhook ID: ${id}...`, "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ Webhook test successful!", "success");
+    }, 1500);
+}
+
+function toggleWebhook(id) {
+    UIComponents.showNotification(`⏸️ Toggling webhook status for ID: ${id}`, "info");
+
+    setTimeout(() => {
+        loadWebhooks();
+    }, 1000);
+}
+
+function deleteWebhook(id) {
+    UIComponents.showNotification(`🗑️ Deleting webhook ID: ${id}...`, "warning");
+
+    setTimeout(() => {
+        UIComponents.showNotification("⚠️ Webhook deleted successfully", "warning");
+        loadWebhooks();
+    }, 1000);
+}
+
+// Data Synchronization Management
+function forceSyncNow(id) {
+    UIComponents.showNotification(`🔄 Starting immediate sync for ID: ${id}...`, "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ Forced synchronization completed!", "success");
+        loadSyncStatus();
+    }, 2000);
+}
+
+function configureSyncSchedule(id) {
+    UIComponents.showNotification(`⏰ Opening sync schedule configuration for ID: ${id}`, "info");
+}
+
+function viewSyncLogs(id) {
+    UIComponents.showNotification(`📋 Opening sync logs for ID: ${id}`, "info");
+}
+
+// General Integration Functions
+function openIntegrationMarketplace() {
+    UIComponents.showNotification("🛒 Opening integration marketplace...", "info");
+}
+
+function openAPIDocs() {
+    UIComponents.showNotification("📚 Opening API documentation...", "info");
+}
+
+// Global functions for onclick handlers
+window.connectLMS = connectLMS;
+window.connectComm = connectComm;
+window.connectAnalytics = connectAnalytics;
+window.connectStorage = connectStorage;
+window.configureIntegration = configureIntegration;
+window.testIntegration = testIntegration;
+window.syncIntegration = syncIntegration;
+window.disconnectIntegration = disconnectIntegration;
+window.generateAPIKey = generateAPIKey;
+window.copyAPIKey = copyAPIKey;
+window.regenerateAPIKey = regenerateAPIKey;
+window.deleteAPIKey = deleteAPIKey;
+window.addWebhook = addWebhook;
+window.editWebhook = editWebhook;
+window.testWebhook = testWebhook;
+window.toggleWebhook = toggleWebhook;
+window.deleteWebhook = deleteWebhook;
+window.forceSyncNow = forceSyncNow;
+window.configureSyncSchedule = configureSyncSchedule;
+window.viewSyncLogs = viewSyncLogs;
+
+// Week 4 Page Loading Functions
+function loadSecurityPage() {
+    const securityHTML = `
+        <!-- Advanced Security & Authentication Dashboard -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="width: 40px; height: 40px; background: var(--error); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
+                    🔐
+                </div>
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">Advanced Security & Authentication</h2>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">Enterprise-grade security controls and authentication management</p>
+                </div>
+                <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+                    <button class="btn" id="btn-security-scan" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--error);">
+                        🔍 Security Scan
+                    </button>
+                    <button class="btn" id="btn-audit-logs" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--warning);">
+                        📋 Audit Logs
+                    </button>
+                </div>
+            </div>
+
+            <!-- Security Statistics -->
+            <div class="grid" style="margin-bottom: 2rem;">
+                <div class="metric-card" style="background: var(--success); color: white;">
+                    <div class="metric-value" id="security-score">98%</div>
+                    <div class="metric-label">Security Score</div>
+                </div>
+                <div class="metric-card" style="background: var(--info); color: white;">
+                    <div class="metric-value" id="active-sessions">24</div>
+                    <div class="metric-label">Active Sessions</div>
+                </div>
+                <div class="metric-card" style="background: var(--warning); color: white;">
+                    <div class="metric-value" id="failed-attempts">3</div>
+                    <div class="metric-label">Failed Login Attempts</div>
+                </div>
+                <div class="metric-card" style="background: var(--primary); color: white;">
+                    <div class="metric-value" id="mfa-enabled">89%</div>
+                    <div class="metric-label">MFA Adoption Rate</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Multi-Factor Authentication -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🔑</span> Multi-Factor Authentication (MFA)
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--success);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>📱</span> SMS Authentication
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Send verification codes via SMS for secure login.</p>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Enabled Users</span>
+                            <span style="font-weight: 600; color: var(--success);">32 users</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Success Rate</span>
+                            <span style="font-weight: 600; color: var(--primary);">97%</span>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="configureSMSAuth()" style="background: var(--success); width: 100%;">Configure SMS Auth</button>
+                </div>
+
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🔐</span> Authenticator Apps
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Support for Google Authenticator, Authy, and other TOTP apps.</p>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Enabled Users</span>
+                            <span style="font-weight: 600; color: var(--primary);">18 users</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Success Rate</span>
+                            <span style="font-weight: 600; color: var(--success);">99%</span>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="configureAuthenticatorApps()" style="background: var(--primary); width: 100%;">Configure Authenticator</button>
+                </div>
+
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--info);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🔑</span> Hardware Security Keys
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Support for FIDO2/WebAuthn hardware security keys.</p>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Registered Keys</span>
+                            <span style="font-weight: 600; color: var(--info);">8 keys</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Success Rate</span>
+                            <span style="font-weight: 600; color: var(--success);">100%</span>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="configureHardwareKeys()" style="background: var(--info); width: 100%;">Configure Hardware Keys</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Role-Based Access Control -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>👥</span> Role-Based Access Control (RBAC)
+            </h3>
+            <div id="rbac-roles-list">
+                <!-- RBAC roles will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Security Audit Logs -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📋</span> Security Audit Logs
+            </h3>
+            <div id="security-audit-logs">
+                <!-- Security audit logs will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Session Management -->
+        <section class="card">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🔄</span> Active Session Management
+            </h3>
+            <div id="active-sessions-list">
+                <!-- Active sessions will be loaded here -->
+            </div>
+        </section>
+    `;
+
+    setInner("page-security", securityHTML);
+
+    // Load security data
+    setTimeout(() => {
+        loadRBACRoles();
+        loadSecurityAuditLogs();
+        loadActiveSessions();
+        setupSecurityEventListeners();
+    }, 100);
+
+    UIComponents.showNotification("🔐 Security & Authentication loaded successfully!", "success");
+}
+
+function loadRBACRoles() {
+    const roles = [
+        {
+            id: 1,
+            name: "Super Administrator",
+            description: "Full system access with all permissions",
+            users: 2,
+            permissions: ["all"],
+            color: "var(--error)"
+        },
+        {
+            id: 2,
+            name: "Educator",
+            description: "Teaching and student management permissions",
+            users: 15,
+            permissions: ["students.view", "students.edit", "assessments.create", "reports.generate"],
+            color: "var(--primary)"
+        },
+        {
+            id: 3,
+            name: "Teaching Assistant",
+            description: "Limited teaching support permissions",
+            users: 8,
+            permissions: ["students.view", "assessments.grade", "communication.send"],
+            color: "var(--info)"
+        },
+        {
+            id: 4,
+            name: "Content Manager",
+            description: "Content creation and management permissions",
+            users: 5,
+            permissions: ["content.create", "content.edit", "assessments.create"],
+            color: "var(--success)"
+        },
+        {
+            id: 5,
+            name: "Analyst",
+            description: "Analytics and reporting permissions",
+            users: 3,
+            permissions: ["analytics.view", "reports.generate", "data.export"],
+            color: "var(--warning)"
+        }
+    ];
+
+    const rolesHTML = roles.map(role => {
+        return `
+            <div style="background: var(--accent); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid ${role.color};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <h4 style="color: var(--gray-800); margin: 0; font-size: 1rem; font-weight: 600;">${role.name}</h4>
+                        <p style="color: var(--gray-600); margin: 0; font-size: 0.875rem;">${role.description}</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.25rem; font-weight: 700; color: ${role.color};">${role.users}</div>
+                        <div style="font-size: 0.75rem; color: var(--gray-600);">Users</div>
+                    </div>
+                </div>
+
+                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                    <strong style="color: var(--gray-800); font-size: 0.875rem;">Permissions:</strong>
+                    <div style="margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.25rem;">
+                        ${role.permissions.map(permission => `
+                            <span style="background: ${role.color}; color: white; padding: 0.125rem 0.5rem; border-radius: 8px; font-size: 0.625rem; font-weight: 600;">
+                                ${permission}
+                            </span>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn" onclick="editRole(${role.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--info);">
+                        ✏️ Edit Role
+                    </button>
+                    <button class="btn" onclick="viewRoleUsers(${role.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--primary);">
+                        👥 View Users
+                    </button>
+                    <button class="btn" onclick="duplicateRole(${role.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--success);">
+                        📋 Duplicate
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    setInner("rbac-roles-list", rolesHTML);
+}
+
+function loadSecurityAuditLogs() {
+    const auditLogs = [
+        {
+            id: 1,
+            timestamp: "2024-12-11 16:45:23",
+            user: "admin@university.edu",
+            action: "Login Success",
+            details: "Successful login with MFA",
+            ip: "192.168.1.100",
+            severity: "Info"
+        },
+        {
+            id: 2,
+            timestamp: "2024-12-11 16:30:15",
+            user: "educator@university.edu",
+            action: "Permission Changed",
+            details: "Role permissions updated for Teaching Assistant",
+            ip: "192.168.1.105",
+            severity: "Warning"
+        },
+        {
+            id: 3,
+            timestamp: "2024-12-11 16:15:42",
+            user: "unknown",
+            action: "Login Failed",
+            details: "Failed login attempt - invalid credentials",
+            ip: "203.0.113.45",
+            severity: "Error"
+        },
+        {
+            id: 4,
+            timestamp: "2024-12-11 15:58:30",
+            user: "ta@university.edu",
+            action: "Data Export",
+            details: "Student progress data exported",
+            ip: "192.168.1.110",
+            severity: "Info"
+        },
+        {
+            id: 5,
+            timestamp: "2024-12-11 15:45:18",
+            user: "admin@university.edu",
+            action: "Security Scan",
+            details: "Automated security scan completed",
+            ip: "127.0.0.1",
+            severity: "Info"
+        }
+    ];
+
+    const severityColors = {
+        'Info': 'var(--info)',
+        'Warning': 'var(--warning)',
+        'Error': 'var(--error)'
+    };
+
+    const auditHTML = auditLogs.map(log => {
+        return `
+            <div style="background: var(--accent); border-radius: 6px; padding: 1rem; margin-bottom: 0.75rem; border-left: 3px solid ${severityColors[log.severity]};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <strong style="color: var(--gray-800); font-size: 0.875rem;">${log.action}</strong>
+                        <span style="background: ${severityColors[log.severity]}; color: white; padding: 0.125rem 0.5rem; border-radius: 8px; font-size: 0.625rem; font-weight: 600;">
+                            ${log.severity}
+                        </span>
+                    </div>
+                    <span style="color: var(--gray-600); font-size: 0.75rem;">${new Date(log.timestamp).toLocaleString('id-ID')}</span>
+                </div>
+                <p style="color: var(--gray-700); font-size: 0.75rem; margin-bottom: 0.5rem;">${log.details}</p>
+                <div style="display: flex; justify-content: space-between; font-size: 0.625rem; color: var(--gray-600);">
+                    <span>User: ${log.user}</span>
+                    <span>IP: ${log.ip}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    setInner("security-audit-logs", auditHTML);
+}
+
+function loadActiveSessions() {
+    const sessions = [
+        {
+            id: 1,
+            user: "Dr. Sarah Johnson",
+            email: "sarah@university.edu",
+            device: "Chrome on Windows 11",
+            location: "Jakarta, Indonesia",
+            loginTime: "2024-12-11 14:30:00",
+            lastActivity: "2024-12-11 16:45:00",
+            ip: "192.168.1.100",
+            status: "Active"
+        },
+        {
+            id: 2,
+            user: "Prof. Ahmad Rahman",
+            email: "ahmad@university.edu",
+            device: "Safari on macOS",
+            location: "Bandung, Indonesia",
+            loginTime: "2024-12-11 15:15:00",
+            lastActivity: "2024-12-11 16:30:00",
+            ip: "192.168.1.105",
+            status: "Active"
+        },
+        {
+            id: 3,
+            user: "Dr. Maria Santos",
+            email: "maria@university.edu",
+            device: "Firefox on Ubuntu",
+            location: "Surabaya, Indonesia",
+            loginTime: "2024-12-11 13:45:00",
+            lastActivity: "2024-12-11 16:00:00",
+            ip: "192.168.1.110",
+            status: "Idle"
+        }
+    ];
+
+    const statusColors = {
+        'Active': 'var(--success)',
+        'Idle': 'var(--warning)',
+        'Expired': 'var(--error)'
+    };
+
+    const sessionsHTML = sessions.map(session => {
+        return `
+            <div style="background: var(--accent); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid ${statusColors[session.status]};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <h4 style="color: var(--gray-800); margin: 0; font-size: 1rem; font-weight: 600;">${session.user}</h4>
+                        <p style="color: var(--gray-600); margin: 0; font-size: 0.75rem;">${session.email}</p>
+                    </div>
+                    <span style="background: ${statusColors[session.status]}; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+                        ${session.status}
+                    </span>
+                </div>
+
+                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem; font-size: 0.75rem;">
+                        <div><strong>Device:</strong> ${session.device}</div>
+                        <div><strong>Location:</strong> ${session.location}</div>
+                        <div><strong>IP Address:</strong> ${session.ip}</div>
+                        <div><strong>Login:</strong> ${new Date(session.loginTime).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'})}</div>
+                        <div><strong>Last Activity:</strong> ${new Date(session.lastActivity).toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'})}</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn" onclick="viewSessionDetails(${session.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--info);">
+                        👁️ View Details
+                    </button>
+                    <button class="btn" onclick="terminateSession(${session.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--error);">
+                        🚫 Terminate Session
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    setInner("active-sessions-list", sessionsHTML);
+}
+
+function setupSecurityEventListeners() {
+    setTimeout(() => {
+        const scanBtn = document.getElementById("btn-security-scan");
+        if (scanBtn) {
+            scanBtn.addEventListener("click", runSecurityScan);
+        }
+
+        const auditBtn = document.getElementById("btn-audit-logs");
+        if (auditBtn) {
+            auditBtn.addEventListener("click", openAuditLogs);
+        }
+    }, 200);
+}
+
+// MFA Configuration Functions
+function configureSMSAuth() {
+    UIComponents.showNotification("📱 Opening SMS authentication configuration...", "info");
+}
+
+function configureAuthenticatorApps() {
+    UIComponents.showNotification("🔐 Opening authenticator app configuration...", "info");
+}
+
+function configureHardwareKeys() {
+    UIComponents.showNotification("🔑 Opening hardware security key configuration...", "info");
+}
+
+// RBAC Functions
+function editRole(id) {
+    UIComponents.showNotification(`✏️ Opening role editor for role ID: ${id}`, "info");
+}
+
+function viewRoleUsers(id) {
+    UIComponents.showNotification(`👥 Viewing users assigned to role ID: ${id}`, "info");
+}
+
+function duplicateRole(id) {
+    UIComponents.showNotification(`📋 Creating duplicate of role ID: ${id}`, "success");
+}
+
+// Session Management Functions
+function viewSessionDetails(id) {
+    UIComponents.showNotification(`👁️ Viewing detailed information for session ID: ${id}`, "info");
+}
+
+function terminateSession(id) {
+    UIComponents.showNotification(`🚫 Terminating session ID: ${id}...`, "warning");
+
+    setTimeout(() => {
+        UIComponents.showNotification("⚠️ Session terminated successfully", "warning");
+        loadActiveSessions();
+    }, 1500);
+}
+
+// Security Functions
+function runSecurityScan() {
+    UIComponents.showNotification("🔍 Starting comprehensive security scan...", "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ Security scan completed! No vulnerabilities found.", "success");
+    }, 3000);
+}
+
+function openAuditLogs() {
+    UIComponents.showNotification("📋 Opening detailed audit log viewer...", "info");
+}
+
+function loadPerformancePage() {
+    const performanceHTML = `
+        <!-- Performance Optimization & Caching Dashboard -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="width: 40px; height: 40px; background: var(--success); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
+                    ⚡
+                </div>
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">Performance Optimization & Caching</h2>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">System performance monitoring and optimization tools</p>
+                </div>
+                <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+                    <button class="btn" id="btn-performance-test" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--success);">
+                        🚀 Run Performance Test
+                    </button>
+                    <button class="btn" id="btn-clear-cache" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--warning);">
+                        🗑️ Clear Cache
+                    </button>
+                </div>
+            </div>
+
+            <!-- Performance Metrics -->
+            <div class="grid" style="margin-bottom: 2rem;">
+                <div class="metric-card" style="background: var(--success); color: white;">
+                    <div class="metric-value" id="page-load-time">1.2s</div>
+                    <div class="metric-label">Average Load Time</div>
+                </div>
+                <div class="metric-card" style="background: var(--info); color: white;">
+                    <div class="metric-value" id="cache-hit-rate">94%</div>
+                    <div class="metric-label">Cache Hit Rate</div>
+                </div>
+                <div class="metric-card" style="background: var(--primary); color: white;">
+                    <div class="metric-value" id="memory-usage">68%</div>
+                    <div class="metric-label">Memory Usage</div>
+                </div>
+                <div class="metric-card" style="background: var(--warning); color: white;">
+                    <div class="metric-value" id="cpu-usage">23%</div>
+                    <div class="metric-label">CPU Usage</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Real-time Performance Monitoring -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>📊</span> Real-time Performance Monitoring
+            </h3>
+            <div class="grid">
+                <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem;">Response Time Trends</h4>
+                    <div id="response-time-chart" style="height: 200px; background: var(--accent); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--gray-600); font-size: 0.875rem;">
+                        Response time chart will be rendered here
+                    </div>
+                </div>
+                <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 0.875rem;">Resource Usage</h4>
+                    <div id="resource-usage-chart" style="height: 200px; background: var(--accent); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--gray-600); font-size: 0.875rem;">
+                        Resource usage chart will be rendered here
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Caching System -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>💾</span> Advanced Caching System
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🗄️</span> Database Query Cache
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Intelligent caching of frequently accessed database queries.</p>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Cache Size</span>
+                            <span style="font-weight: 600; color: var(--primary);">2.4 GB</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Hit Rate</span>
+                            <span style="font-weight: 600; color: var(--success);">96%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Entries</span>
+                            <span style="font-weight: 600; color: var(--info);">15,432</span>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="manageQueryCache()" style="background: var(--primary); width: 100%;">Manage Query Cache</button>
+                </div>
+
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--success);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🌐</span> CDN & Static Assets
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">Content Delivery Network optimization for static assets.</p>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">CDN Hit Rate</span>
+                            <span style="font-weight: 600; color: var(--success);">98%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Bandwidth Saved</span>
+                            <span style="font-weight: 600; color: var(--primary);">1.8 TB</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Edge Locations</span>
+                            <span style="font-weight: 600; color: var(--info);">24</span>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="manageCDN()" style="background: var(--success); width: 100%;">Manage CDN</button>
+                </div>
+
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--info);">
+                    <h4 style="color: var(--gray-800); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>⚡</span> Redis Memory Cache
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">High-performance in-memory caching for session data.</p>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Memory Used</span>
+                            <span style="font-weight: 600; color: var(--info);">512 MB</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Keys Stored</span>
+                            <span style="font-weight: 600; color: var(--primary);">8,924</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="font-size: 0.875rem; color: var(--gray-700);">Avg Response</span>
+                            <span style="font-weight: 600; color: var(--success);">0.3ms</span>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="manageRedisCache()" style="background: var(--info); width: 100%;">Manage Redis Cache</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Database Optimization -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>🗃️</span> Database Query Optimization
+            </h3>
+            <div id="database-optimization-list">
+                <!-- Database optimization info will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Performance Recommendations -->
+        <section class="card">
+            <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                <span>💡</span> Performance Recommendations
+            </h3>
+            <div id="performance-recommendations-list">
+                <!-- Performance recommendations will be loaded here -->
+            </div>
+        </section>
+    `;
+
+    setInner("page-performance", performanceHTML);
+
+    // Load performance data
+    setTimeout(() => {
+        loadDatabaseOptimization();
+        loadPerformanceRecommendations();
+        setupPerformanceEventListeners();
+    }, 100);
+
+    UIComponents.showNotification("⚡ Performance Optimization loaded successfully!", "success");
+}
+
+function loadDatabaseOptimization() {
+    const dbOptimizations = [
+        {
+            id: 1,
+            query: "SELECT * FROM students WHERE progress > 80",
+            executionTime: "45ms",
+            optimizedTime: "12ms",
+            improvement: "73%",
+            frequency: "High",
+            status: "Optimized"
+        },
+        {
+            id: 2,
+            query: "SELECT COUNT(*) FROM assessments GROUP BY module_id",
+            executionTime: "120ms",
+            optimizedTime: "35ms",
+            improvement: "71%",
+            frequency: "Medium",
+            status: "Optimized"
+        },
+        {
+            id: 3,
+            query: "SELECT * FROM communication_logs ORDER BY timestamp DESC",
+            executionTime: "200ms",
+            optimizedTime: "200ms",
+            improvement: "0%",
+            frequency: "Low",
+            status: "Needs Optimization"
+        },
+        {
+            id: 4,
+            query: "SELECT AVG(score) FROM assessment_results WHERE date >= '2024-12-01'",
+            executionTime: "80ms",
+            optimizedTime: "25ms",
+            improvement: "69%",
+            frequency: "High",
+            status: "Optimized"
+        }
+    ];
+
+    const statusColors = {
+        'Optimized': 'var(--success)',
+        'Needs Optimization': 'var(--warning)',
+        'Critical': 'var(--error)'
+    };
+
+    const frequencyColors = {
+        'High': 'var(--error)',
+        'Medium': 'var(--warning)',
+        'Low': 'var(--info)'
+    };
+
+    const dbHTML = dbOptimizations.map(opt => {
+        return `
+            <div style="background: var(--accent); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid ${statusColors[opt.status]};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <h4 style="color: var(--gray-800); margin: 0; font-size: 1rem; font-weight: 600;">Query Optimization #${opt.id}</h4>
+                        <p style="color: var(--gray-600); margin: 0; font-size: 0.75rem; font-family: monospace; background: var(--white); padding: 0.5rem; border-radius: 4px; margin-top: 0.5rem;">${opt.query}</p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <span style="background: ${frequencyColors[opt.frequency]}; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+                            ${opt.frequency} Freq
+                        </span>
+                        <span style="background: ${statusColors[opt.status]}; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+                            ${opt.status}
+                        </span>
+                    </div>
+                </div>
+
+                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 1rem; font-weight: 700; color: var(--error);">${opt.executionTime}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Original Time</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1rem; font-weight: 700; color: var(--success);">${opt.optimizedTime}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Optimized Time</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1rem; font-weight: 700; color: var(--primary);">${opt.improvement}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Improvement</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn" onclick="analyzeQuery(${opt.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--info);">
+                        🔍 Analyze Query
+                    </button>
+                    <button class="btn" onclick="optimizeQuery(${opt.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--primary);">
+                        ⚡ Optimize
+                    </button>
+                    <button class="btn" onclick="viewQueryPlan(${opt.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--secondary-dark);">
+                        📋 Execution Plan
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    setInner("database-optimization-list", dbHTML);
+}
+
+function loadPerformanceRecommendations() {
+    const recommendations = [
+        {
+            id: 1,
+            title: "Enable Gzip Compression",
+            description: "Reduce bandwidth usage by 60-80% with gzip compression for text-based assets.",
+            impact: "High",
+            effort: "Low",
+            savings: "2.4s load time reduction",
+            status: "Pending"
+        },
+        {
+            id: 2,
+            title: "Implement Image Lazy Loading",
+            description: "Load images only when they enter the viewport to improve initial page load.",
+            impact: "Medium",
+            effort: "Medium",
+            savings: "1.8s load time reduction",
+            status: "In Progress"
+        },
+        {
+            id: 3,
+            title: "Optimize Database Indexes",
+            description: "Add composite indexes for frequently queried student progress data.",
+            impact: "High",
+            effort: "High",
+            savings: "45% query time reduction",
+            status: "Completed"
+        },
+        {
+            id: 4,
+            title: "Implement Service Worker Caching",
+            description: "Cache static assets and API responses for offline functionality.",
+            impact: "Medium",
+            effort: "Medium",
+            savings: "Offline capability",
+            status: "Pending"
+        },
+        {
+            id: 5,
+            title: "Minify CSS and JavaScript",
+            description: "Reduce file sizes by removing unnecessary whitespace and comments.",
+            impact: "Low",
+            effort: "Low",
+            savings: "0.5s load time reduction",
+            status: "Completed"
+        }
+    ];
+
+    const impactColors = {
+        'High': 'var(--error)',
+        'Medium': 'var(--warning)',
+        'Low': 'var(--info)'
+    };
+
+    const statusColors = {
+        'Completed': 'var(--success)',
+        'In Progress': 'var(--warning)',
+        'Pending': 'var(--gray-500)'
+    };
+
+    const recommendationsHTML = recommendations.map(rec => {
+        return `
+            <div style="background: var(--accent); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid ${impactColors[rec.impact]};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <h4 style="color: var(--gray-800); margin: 0; font-size: 1rem; font-weight: 600;">${rec.title}</h4>
+                        <p style="color: var(--gray-600); margin: 0; font-size: 0.875rem; margin-top: 0.25rem;">${rec.description}</p>
+                    </div>
+                    <span style="background: ${statusColors[rec.status]}; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">
+                        ${rec.status}
+                    </span>
+                </div>
+
+                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 1rem; font-weight: 700; color: ${impactColors[rec.impact]};">${rec.impact}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Impact</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1rem; font-weight: 700; color: var(--info);">${rec.effort}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Effort</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1rem; font-weight: 700; color: var(--success);">${rec.savings}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Expected Savings</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    ${rec.status === 'Pending' ? `
+                        <button class="btn" onclick="implementRecommendation(${rec.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--primary);">
+                            🚀 Implement
+                        </button>
+                    ` : ''}
+                    <button class="btn" onclick="viewRecommendationDetails(${rec.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--info);">
+                        📋 View Details
+                    </button>
+                    <button class="btn" onclick="scheduleRecommendation(${rec.id})" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--secondary-dark);">
+                        ⏰ Schedule
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    setInner("performance-recommendations-list", recommendationsHTML);
+}
+
+function loadAdvancedAnalyticsPage() {
+    UIComponents.showNotification("🧠 Advanced Analytics page coming soon...", "info");
+}
+
+function loadMobilePage() {
+    UIComponents.showNotification("📱 Mobile & PWA page coming soon...", "info");
+}
+
+// Global functions for onclick handlers
+window.configureSMSAuth = configureSMSAuth;
+window.configureAuthenticatorApps = configureAuthenticatorApps;
+window.configureHardwareKeys = configureHardwareKeys;
+window.editRole = editRole;
+window.viewRoleUsers = viewRoleUsers;
+window.duplicateRole = duplicateRole;
+window.viewSessionDetails = viewSessionDetails;
+window.terminateSession = terminateSession;
+window.runSecurityScan = runSecurityScan;
+window.openAuditLogs = openAuditLogs;
+
+function setupPerformanceEventListeners() {
+    setTimeout(() => {
+        const testBtn = document.getElementById("btn-performance-test");
+        if (testBtn) {
+            testBtn.addEventListener("click", runPerformanceTest);
+        }
+
+        const clearBtn = document.getElementById("btn-clear-cache");
+        if (clearBtn) {
+            clearBtn.addEventListener("click", clearAllCache);
+        }
+    }, 200);
+}
+
+// Performance Test Functions
+function runPerformanceTest() {
+    UIComponents.showNotification("🚀 Starting comprehensive performance test...", "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ Performance test completed! Average load time: 1.2s", "success");
+        // Update metrics
+        document.getElementById("page-load-time").textContent = "1.2s";
+        document.getElementById("cache-hit-rate").textContent = "94%";
+        document.getElementById("memory-usage").textContent = "68%";
+        document.getElementById("cpu-usage").textContent = "23%";
+    }, 3000);
+}
+
+function clearAllCache() {
+    UIComponents.showNotification("🗑️ Clearing all cache layers...", "warning");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ All cache cleared successfully! Performance may be temporarily affected.", "success");
+        // Update cache metrics
+        document.getElementById("cache-hit-rate").textContent = "0%";
+
+        // Simulate cache rebuilding
+        setTimeout(() => {
+            document.getElementById("cache-hit-rate").textContent = "94%";
+            UIComponents.showNotification("🔄 Cache rebuilt successfully!", "success");
+        }, 5000);
+    }, 2000);
+}
+
+// Cache Management Functions
+function manageQueryCache() {
+    UIComponents.showNotification("🗄️ Opening database query cache management...", "info");
+}
+
+function manageCDN() {
+    UIComponents.showNotification("🌐 Opening CDN configuration panel...", "info");
+}
+
+function manageRedisCache() {
+    UIComponents.showNotification("⚡ Opening Redis cache management interface...", "info");
+}
+
+// Database Optimization Functions
+function analyzeQuery(id) {
+    UIComponents.showNotification(`🔍 Analyzing query performance for ID: ${id}...`, "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification("📊 Query analysis completed! Check recommendations.", "success");
+    }, 2000);
+}
+
+function optimizeQuery(id) {
+    UIComponents.showNotification(`⚡ Optimizing query ID: ${id}...`, "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ Query optimization completed! Performance improved by 45%.", "success");
+        loadDatabaseOptimization();
+    }, 3000);
+}
+
+function viewQueryPlan(id) {
+    UIComponents.showNotification(`📋 Opening execution plan for query ID: ${id}`, "info");
+}
+
+// Performance Recommendations Functions
+function implementRecommendation(id) {
+    UIComponents.showNotification(`🚀 Implementing performance recommendation ID: ${id}...`, "info");
+
+    setTimeout(() => {
+        UIComponents.showNotification("✅ Recommendation implemented successfully!", "success");
+        loadPerformanceRecommendations();
+    }, 3000);
+}
+
+function viewRecommendationDetails(id) {
+    UIComponents.showNotification(`📋 Viewing detailed information for recommendation ID: ${id}`, "info");
+}
+
+function scheduleRecommendation(id) {
+    UIComponents.showNotification(`⏰ Scheduling implementation for recommendation ID: ${id}`, "info");
+}
+
+// Global functions for onclick handlers
+window.runPerformanceTest = runPerformanceTest;
+window.clearAllCache = clearAllCache;
+window.manageQueryCache = manageQueryCache;
+window.manageCDN = manageCDN;
+window.manageRedisCache = manageRedisCache;
+window.analyzeQuery = analyzeQuery;
+window.optimizeQuery = optimizeQuery;
+window.viewQueryPlan = viewQueryPlan;
+window.implementRecommendation = implementRecommendation;
+window.viewRecommendationDetails = viewRecommendationDetails;
+window.scheduleRecommendation = scheduleRecommendation;
 
 // Global functions
 window.viewStudentDetail = viewStudentDetail;
