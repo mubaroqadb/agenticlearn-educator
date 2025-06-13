@@ -1,7 +1,7 @@
 // Educator Portal - JSCroot Implementation with Shared Components
 
 // Dynamic API Configuration
-const API_BASE_URL = window.location.hostname.includes("localhost") ? "http://localhost:8080/api/v1" : "https://api.agenticlearn.com/api/v1"; // Will be Google Cloud endpoint
+const API_BASE_URL = window.location.hostname.includes("localhost") ? "http://localhost:8080/api/v1" : "https://asia-southeast2-agenticai-462517.cloudfunctions.net/domyid"; // Will be Google Cloud endpoint
 
 // Get GitHub username for redirects
 const GITHUB_USERNAME = window.location.hostname.includes('github.io') 
