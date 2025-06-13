@@ -1,12 +1,91 @@
 // Educator Portal - JSCroot Implementation with Shared Components
 
-// Dynamic API Configuration
-const API_BASE_URL = window.location.hostname.includes("localhost") ? "http://localhost:8080/api/v1" : "https://asia-southeast2-agenticai-462517.cloudfunctions.net/domyid"; // Will be Google Cloud endpoint
+// Import required dependencies
+import { getCookie } from "https://cdn.jsdelivr.net/gh/jscroot/lib@0.0.4/cookie.js";
+import { setInner, onClick } from "https://cdn.jsdelivr.net/gh/jscroot/lib@0.0.4/element.js";
+import { redirect } from "https://cdn.jsdelivr.net/gh/jscroot/lib@0.0.4/url.js";
+
+// Dynamic API Configuration - Updated to match backend
+const API_BASE_URL = window.location.hostname.includes("localhost")
+    ? "http://localhost:8080/api/agenticlearn"
+    : "https://asia-southeast2-agenticai-462517.cloudfunctions.net/domyid/api/agenticlearn";
 
 // Get GitHub username for redirects
-const GITHUB_USERNAME = window.location.hostname.includes('github.io') 
-    ? window.location.hostname.split('.')[0] 
+const GITHUB_USERNAME = window.location.hostname.includes('github.io')
+    ? window.location.hostname.split('.')[0]
     : 'mubaroqadb';
+
+// API Client with proper authentication
+class EducatorAPIClient {
+    constructor() {
+        this.baseURL = API_BASE_URL;
+        this.token = getCookie("login") || getCookie("access_token");
+    }
+
+    async request(endpoint, options = {}) {
+        const url = `${this.baseURL}${endpoint}`;
+        const headers = {
+            'Content-Type': 'application/json',
+            ...options.headers
+        };
+
+        // Add authentication header if token exists
+        if (this.token) {
+            headers['Authorization'] = `Bearer ${this.token}`;
+        }
+
+        const config = {
+            method: options.method || 'GET',
+            headers,
+            ...options
+        };
+
+        if (options.body && typeof options.body === 'object') {
+            config.body = JSON.stringify(options.body);
+        }
+
+        try {
+            const response = await fetch(url, config);
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                return await response.json();
+            }
+
+            return await response.text();
+        } catch (error) {
+            console.error(`API Request failed for ${endpoint}:`, error);
+            throw error;
+        }
+    }
+
+    getCarbonMetrics() {
+        return { totalCarbon: 0.000125 };
+    }
+}
+
+// Initialize API client
+const apiClient = new EducatorAPIClient();
+
+// Test backend connection
+async function testBackendConnection() {
+    try {
+        showNotification("🔄 Testing backend connection...", "info");
+
+        // Test basic connectivity
+        const response = await apiClient.request("/health");
+        showNotification("✅ Backend connection successful!", "success");
+        return true;
+    } catch (error) {
+        console.warn("Backend connection failed, using demo mode:", error);
+        showNotification("⚠️ Backend unavailable, using demo data", "warning");
+        return false;
+    }
+}
 
 async function initializeEducatorPortal() {
     const token = getCookie("login");
@@ -16,12 +95,15 @@ async function initializeEducatorPortal() {
     }
 
     try {
+        // Test backend connection first
+        const isBackendAvailable = await testBackendConnection();
+
         // Load educator data
         await loadEducatorData();
         await loadClassData();
         await loadStudentList();
         await loadAIInsights();
-        
+
         // Setup event listeners
         setupEventListeners();
 
@@ -29,28 +111,33 @@ async function initializeEducatorPortal() {
         updateCarbonIndicator();
 
         // Show welcome notification
-        UIComponents.showNotification("Educator Portal loaded successfully! 🌱", "success");
+        const message = isBackendAvailable
+            ? "Educator Portal loaded successfully! 🌱"
+            : "Educator Portal loaded in demo mode! 🌱";
+        showNotification(message, "success");
 
         console.log("🌱 Educator Portal loaded with JSCroot and shared components");
     } catch (error) {
         console.error("Failed to load educator portal:", error);
         setInner("educator-name", "Error loading data");
-        UIComponents.showNotification("Failed to load educator portal", "error");
+        showNotification("Failed to load educator portal", "error");
     }
 }
 
 async function loadEducatorData() {
     try {
-        setInner("educator-name", "Dr. Sarah Educator");
+        const educatorData = await apiClient.request("/instructor/profile");
+        setInner("educator-name", educatorData.name || "Dr. Sarah Educator");
     } catch (error) {
         console.error("Failed to load educator data:", error);
         setInner("educator-name", "Demo Educator");
+        showNotification("Using demo educator data", "info");
     }
 }
 
 async function loadClassData() {
     try {
-        const classData = await apiClient.request("/educator/classes");
+        const classData = await apiClient.request("/courses");
         setInner("total-students", classData.totalStudents || 45);
         setInner("active-classes", classData.activeClasses || 3);
         setInner("avg-progress", `${Math.round(classData.avgProgress || 72.5)}%`);
@@ -61,18 +148,18 @@ async function loadClassData() {
         setInner("active-classes", "3");
         setInner("avg-progress", "73%");
         setInner("completion-rate", "68%");
-        UIComponents.showNotification("Using demo data for class statistics", "info");
+        showNotification("Using demo data for class statistics", "info");
     }
 }
 
 async function loadStudentList() {
     try {
-        const students = await apiClient.request("/educator/students/class-1");
+        const students = await apiClient.request("/progress/class-1");
         renderStudentTable(students);
     } catch (error) {
         console.error("Failed to load student list:", error);
         renderDemoStudentTable();
-        UIComponents.showNotification("Using demo data for student list", "info");
+        showNotification("Using demo data for student list", "info");
     }
 }
 
@@ -129,16 +216,72 @@ function renderDemoStudentTable() {
 
 async function loadAIInsights() {
     try {
-        const insights = {
-            learningPatterns: "🕒 Puncak aktivitas: 19:00-21:00 WIB. 📱 85% akses via mobile. 📊 Konten video paling engaging.",
-            atRiskStudents: "⚠️ 3 mahasiswa berisiko: Maya Rajin (25% progress), perlu intervensi segera.",
-            recommendations: "💡 Tingkatkan konten interaktif. �� Focus pada modul Analytics. 📞 Follow-up personal untuk yang tertinggal."
-        };
-        setInner("learning-patterns", insights.learningPatterns);
-        setInner("at-risk-students", insights.atRiskStudents);
-        setInner("ai-recommendations", insights.recommendations);
+        const insights = await apiClient.request("/instructor/insights/ai");
+
+        // Update learning patterns
+        if (insights.learningPatterns) {
+            setInner("learning-patterns", insights.learningPatterns);
+        }
+
+        // Update at-risk students
+        if (insights.atRiskStudents) {
+            setInner("at-risk-students", insights.atRiskStudents);
+        }
+
+        // Update AI recommendations
+        if (insights.recommendations) {
+            setInner("ai-recommendations", insights.recommendations);
+        }
+
+        showNotification("AI insights loaded successfully", "success");
     } catch (error) {
         console.error("Failed to load AI insights:", error);
+
+        // Fallback to demo data
+        const demoInsights = {
+            learningPatterns: "🕒 Puncak aktivitas: 19:00-21:00 WIB. 📱 85% akses via mobile. 📊 Konten video paling engaging.",
+            atRiskStudents: "⚠️ 3 mahasiswa berisiko: Maya Rajin (25% progress), perlu intervensi segera.",
+            recommendations: "💡 Tingkatkan konten interaktif. 🎯 Focus pada modul Analytics. 📞 Follow-up personal untuk yang tertinggal."
+        };
+
+        setInner("learning-patterns", demoInsights.learningPatterns);
+        setInner("at-risk-students", demoInsights.atRiskStudents);
+        setInner("ai-recommendations", demoInsights.recommendations);
+
+        showNotification("Using demo AI insights data", "info");
+    }
+}
+
+// Notification helper function
+function showNotification(message, type = "info") {
+    // Try to use UIComponents if available, otherwise use console
+    if (typeof UIComponents !== 'undefined' && UIComponents.showNotification) {
+        UIComponents.showNotification(message, type);
+    } else {
+        console.log(`[${type.toUpperCase()}] ${message}`);
+
+        // Simple fallback notification
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${type === 'error' ? '#f56565' : type === 'success' ? '#48bb78' : '#4299e1'};
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 10000;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        `;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 5000);
     }
 }
 
@@ -187,26 +330,26 @@ function exportStudentProgress() {
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);
-    UIComponents.showNotification("📊 Progress report berhasil diexport!", "success");
+    showNotification("📊 Progress report berhasil diexport!", "success");
 }
 
 function sendReminder() {
-    UIComponents.showNotification("📧 Mengirim reminder ke mahasiswa yang belum aktif...", "info");
+    showNotification("📧 Mengirim reminder ke mahasiswa yang belum aktif...", "info");
     setTimeout(() => {
-        UIComponents.showNotification("✅ Reminder berhasil dikirim ke 3 mahasiswa!", "success");
+        showNotification("✅ Reminder berhasil dikirim ke 3 mahasiswa!", "success");
     }, 2000);
 }
 
 async function refreshData() {
-    UIComponents.showNotification("🔄 Merefresh data...", "info");
+    showNotification("🔄 Merefresh data...", "info");
     try {
         await loadClassData();
         await loadStudentList();
         await loadAIInsights();
         updateCarbonIndicator();
-        UIComponents.showNotification("✅ Data berhasil direfresh!", "success");
+        showNotification("✅ Data berhasil direfresh!", "success");
     } catch (error) {
-        UIComponents.showNotification("❌ Gagal refresh data. Silakan coba lagi.", "error");
+        showNotification("❌ Gagal refresh data. Silakan coba lagi.", "error");
     }
 }
 
@@ -214,7 +357,7 @@ function createAssignment() {
     const title = prompt("📝 Judul Assignment:");
     const dueDate = prompt("📅 Tanggal Deadline (YYYY-MM-DD):");
     if (title && dueDate) {
-        UIComponents.showNotification(`✅ Assignment "${title}" berhasil dibuat! Deadline: ${dueDate}`, "success");
+        showNotification(`✅ Assignment "${title}" berhasil dibuat! Deadline: ${dueDate}`, "success");
     }
 }
 
@@ -222,33 +365,33 @@ function scheduleClass() {
     const topic = prompt("📚 Topik Kelas:");
     const date = prompt("📅 Tanggal & Waktu (YYYY-MM-DD HH:MM):");
     if (topic && date) {
-        UIComponents.showNotification(`✅ Kelas "${topic}" berhasil dijadwalkan! Waktu: ${date}`, "success");
+        showNotification(`✅ Kelas "${topic}" berhasil dijadwalkan! Waktu: ${date}`, "success");
     }
 }
 
 function viewAnalytics() {
-    UIComponents.showNotification("📊 Membuka analytics detail...", "info");
+    showNotification("📊 Membuka analytics detail...", "info");
 }
 
 function manageContent() {
-    UIComponents.showNotification("📚 Membuka content management...", "info");
+    showNotification("📚 Membuka content management...", "info");
 }
 
 function chatWithAI() {
     const question = prompt("🤖 Tanyakan sesuatu kepada AI Assistant untuk Educator:");
     if (question) {
-        UIComponents.showNotification(`🤖 AI Response: "Berdasarkan data kelas Anda, saya merekomendasikan untuk focus pada mahasiswa dengan progress <50%. Pertanyaan Anda tentang '${question}' sangat relevan untuk meningkatkan engagement."`, "info");
+        showNotification(`🤖 AI Response: "Berdasarkan data kelas Anda, saya merekomendasikan untuk focus pada mahasiswa dengan progress <50%. Pertanyaan Anda tentang '${question}' sangat relevan untuk meningkatkan engagement."`, "info");
     }
 }
 
 function viewStudentDetail(studentId) {
-    UIComponents.showNotification(`👤 Membuka detail mahasiswa ID: ${studentId}`, "info");
+    showNotification(`👤 Membuka detail mahasiswa ID: ${studentId}`, "info");
 }
 
 function sendMessage(studentId) {
     const message = prompt("💬 Kirim pesan ke mahasiswa:");
     if (message) {
-        UIComponents.showNotification(`✅ Pesan berhasil dikirim ke mahasiswa ID: ${studentId}`, "success");
+        showNotification(`✅ Pesan berhasil dikirim ke mahasiswa ID: ${studentId}`, "success");
     }
 }
 
@@ -256,14 +399,14 @@ function addStudent() {
     const name = prompt("👤 Nama mahasiswa:");
     const email = prompt("📧 Email mahasiswa:");
     if (name && email) {
-        UIComponents.showNotification(`✅ Mahasiswa "${name}" berhasil ditambahkan!`, "success");
+        showNotification(`✅ Mahasiswa "${name}" berhasil ditambahkan!`, "success");
     }
 }
 
 function bulkActions() {
     const selectedStudents = document.querySelectorAll('.student-checkbox:checked');
     if (selectedStudents.length === 0) {
-        UIComponents.showNotification("⚠️ Pilih minimal satu mahasiswa untuk bulk action", "warning");
+        showNotification("⚠️ Pilih minimal satu mahasiswa untuk bulk action", "warning");
         return;
     }
 
@@ -271,16 +414,16 @@ function bulkActions() {
 
     switch(action) {
         case '1':
-            UIComponents.showNotification(`📧 Reminder berhasil dikirim ke ${selectedStudents.length} mahasiswa`, "success");
+            showNotification(`📧 Reminder berhasil dikirim ke ${selectedStudents.length} mahasiswa`, "success");
             break;
         case '2':
-            UIComponents.showNotification(`📊 Data ${selectedStudents.length} mahasiswa berhasil diexport`, "success");
+            showNotification(`📊 Data ${selectedStudents.length} mahasiswa berhasil diexport`, "success");
             break;
         case '3':
-            UIComponents.showNotification(`✅ Status ${selectedStudents.length} mahasiswa berhasil diubah`, "success");
+            showNotification(`✅ Status ${selectedStudents.length} mahasiswa berhasil diubah`, "success");
             break;
         default:
-            UIComponents.showNotification("❌ Aksi tidak valid", "error");
+            showNotification("❌ Aksi tidak valid", "error");
     }
 }
 
@@ -300,17 +443,23 @@ function updateCarbonIndicator() {
 }
 
 function clearFilters() {
-    document.getElementById("filter-class").value = "all";
-    document.getElementById("filter-progress").value = "all";
-    document.getElementById("filter-engagement").value = "all";
-    document.getElementById("search-students-advanced").value = "";
-    UIComponents.showNotification("🗑️ Filter berhasil dibersihkan", "info");
+    const filterClass = document.getElementById("filter-class");
+    const filterProgress = document.getElementById("filter-progress");
+    const filterEngagement = document.getElementById("filter-engagement");
+    const searchInput = document.getElementById("search-students-advanced");
+
+    if (filterClass) filterClass.value = "all";
+    if (filterProgress) filterProgress.value = "all";
+    if (filterEngagement) filterEngagement.value = "all";
+    if (searchInput) searchInput.value = "";
+
+    showNotification("🗑️ Filter berhasil dibersihkan", "info");
 }
 
 function refreshAnalytics() {
-    UIComponents.showNotification("🔄 Merefresh analytics data...", "info");
+    showNotification("🔄 Merefresh analytics data...", "info");
     setTimeout(() => {
-        UIComponents.showNotification("✅ Analytics data berhasil direfresh!", "success");
+        showNotification("✅ Analytics data berhasil direfresh!", "success");
     }, 1500);
 }
 
