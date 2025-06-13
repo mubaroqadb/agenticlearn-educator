@@ -923,17 +923,476 @@
         <div class="container">
             <!-- Beranda Page -->
             <div id="page-beranda" class="page-content active">
-                <!-- Beranda content will be loaded here -->
+                <!-- Enhanced Header with Consistent Design -->
+                <header class="card">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                        <div style="width: 48px; height: 48px; background: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; box-shadow: var(--shadow-sm);">
+                            🌱
+                        </div>
+                        <div>
+                            <h1 style="font-size: 1.875rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.25rem;">
+                                AgenticLearn - Portal Instructor
+                            </h1>
+                            <p style="color: var(--gray-600); font-size: 1rem;">
+                                Kelola pembelajaran adaptif dengan AI - <span id="educator-name" style="font-weight: 600; color: var(--primary);">Memuat...</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div style="background: var(--accent); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--primary);">
+                        <p style="color: var(--gray-800); font-size: 0.875rem; margin: 0;">
+                            <strong>Educator Workflow D1-D24:</strong> Weekly Planning → Pre-Class Setup → In-Class Facilitation → Post-Class Analysis
+                        </p>
+                    </div>
+                </header>
+
+                <section class="card">
+                    <h2>📊 Ringkasan Kelas</h2>
+                    <div class="grid" id="class-stats">
+                        <div class="metric-card">
+                            <div class="metric-value" id="total-students">-</div>
+                            <div class="metric-label">Total Mahasiswa</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="active-classes">-</div>
+                            <div class="metric-label">Kelas Aktif</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="avg-progress">-</div>
+                            <div class="metric-label">Rata-rata Progress</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="completion-rate">-</div>
+                            <div class="metric-label">Tingkat Penyelesaian</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Enhanced Real-time Student Monitoring Dashboard -->
+                <section class="card">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
+                            👥
+                        </div>
+                        <div>
+                            <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">Real-time Student Monitoring</h2>
+                            <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">Live tracking of student progress and engagement</p>
+                        </div>
+                        <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+                            <div style="background: var(--accent); padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid var(--accent-dark);">
+                                <span style="font-size: 0.75rem; color: var(--gray-600);">Last Update:</span>
+                                <span style="font-weight: 600; color: var(--primary); font-size: 0.75rem;" id="last-update-time">Loading...</span>
+                            </div>
+                            <button class="btn" id="btn-toggle-realtime" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--success);">
+                                🔴 Live Monitoring
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Real-time Statistics -->
+                    <div class="grid" style="margin-bottom: 2rem;">
+                        <div class="metric-card" style="background: var(--accent);">
+                            <div class="metric-value" id="online-students">-</div>
+                            <div class="metric-label">Students Online Now</div>
+                        </div>
+                        <div class="metric-card" style="background: var(--secondary-light);">
+                            <div class="metric-value" id="active-sessions">-</div>
+                            <div class="metric-label">Active Learning Sessions</div>
+                        </div>
+                        <div class="metric-card" style="background: var(--white);">
+                            <div class="metric-value" id="avg-engagement">-</div>
+                            <div class="metric-label">Avg Engagement Score</div>
+                        </div>
+                        <div class="metric-card" style="background: var(--bg-light);">
+                            <div class="metric-value" id="completion-today">-</div>
+                            <div class="metric-label">Lessons Completed Today</div>
+                        </div>
+                    </div>
+
+                    <!-- Filter and Action Controls -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <select id="filter-status" style="padding: 0.5rem; border: 1px solid var(--accent); border-radius: 6px; background: var(--white);">
+                                <option value="all">All Students</option>
+                                <option value="online">Online Now</option>
+                                <option value="at-risk">At Risk</option>
+                                <option value="high-performers">High Performers</option>
+                                <option value="needs-attention">Needs Attention</option>
+                            </select>
+                            <select id="filter-module" style="padding: 0.5rem; border: 1px solid var(--accent); border-radius: 6px; background: var(--white);">
+                                <option value="all">All Modules</option>
+                                <option value="module-1">Module 1: Foundations</option>
+                                <option value="module-2">Module 2: Analytics</option>
+                                <option value="module-3">Module 3: Advanced</option>
+                            </select>
+                            <input type="search" id="search-students" placeholder="Search students..." style="padding: 0.5rem; border: 1px solid var(--accent); border-radius: 6px; background: var(--white); min-width: 200px;">
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-success" id="btn-export-progress">📊 Export Progress</button>
+                            <button class="btn btn-warning" id="btn-send-reminder">📧 Send Reminder</button>
+                            <button class="btn" id="btn-refresh-data">🔄 Refresh Data</button>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Student Table -->
+                    <div id="student-list" style="overflow-x: auto;">
+                        <p style="text-align: center; color: var(--gray-600); padding: 2rem;">Loading student data...</p>
+                    </div>
+
+                    <!-- Student Activity Timeline -->
+                    <div style="border-top: 1px solid var(--accent); padding-top: 1.5rem; margin-top: 1.5rem;">
+                        <h3 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>📈</span> Recent Student Activity
+                        </h3>
+                        <div id="activity-timeline" style="background: var(--white); border: 1px solid var(--accent); border-radius: 8px; padding: 1rem; max-height: 300px; overflow-y: auto;">
+                            <p style="color: var(--gray-600); text-align: center;">Loading recent activity...</p>
+                        </div>
+                    </div>
+                </section>
             </div>
 
             <!-- Analytics Page -->
             <div id="page-analytics" class="page-content">
-                <!-- Analytics content will be moved here -->
+                <!-- Enhanced AI Analytics Dashboard (D2) -->
+                <section class="card">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
+                            🤖
+                        </div>
+                        <div>
+                            <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">AI Analytics Dashboard (D2)</h2>
+                            <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">Weekly Planning Session - Review AI Analytics</p>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <button class="btn" id="btn-refresh-analytics" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                                🔄 Refresh Analytics
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Real-time Analytics Grid -->
+                    <div class="grid" style="margin-bottom: 2rem;">
+                        <!-- Learning Patterns Analysis -->
+                        <div class="card" style="background: var(--accent); border: 1px solid var(--accent-dark);">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                                <span style="font-size: 1.5rem;">📈</span>
+                                <h4 style="color: var(--gray-800); margin: 0;">Learning Patterns</h4>
+                            </div>
+                            <div id="learning-patterns-content">
+                                <div style="margin-bottom: 1rem;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                        <span style="font-size: 0.875rem; color: var(--gray-700);">Peak Activity Time</span>
+                                        <span style="font-weight: 600; color: var(--primary);" id="peak-time">19:00-21:00 WIB</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                        <span style="font-size: 0.875rem; color: var(--gray-700);">Mobile Access</span>
+                                        <span style="font-weight: 600; color: var(--primary);" id="mobile-access">85%</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                        <span style="font-size: 0.875rem; color: var(--gray-700);">Avg Session Duration</span>
+                                        <span style="font-weight: 600; color: var(--primary);" id="session-duration">24 min</span>
+                                    </div>
+                                </div>
+                                <div style="background: var(--white); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--accent-dark);">
+                                    <p style="font-size: 0.75rem; color: var(--gray-600); margin: 0;" id="learning-insights">Students are most active in the evening. Video content shows highest engagement rates.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- At-Risk Students (D3) -->
+                        <div class="card" style="background: var(--secondary-light); border: 1px solid var(--secondary-dark);">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                                <span style="font-size: 1.5rem;">⚠️</span>
+                                <h4 style="color: var(--gray-800); margin: 0;">At-Risk Students (D3)</h4>
+                            </div>
+                            <div id="at-risk-content">
+                                <div style="margin-bottom: 1rem;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                        <span style="font-size: 0.875rem; color: var(--gray-700);">High Risk</span>
+                                        <span style="font-weight: 600; color: var(--error);" id="high-risk-count">3</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                        <span style="font-size: 0.875rem; color: var(--gray-700);">Medium Risk</span>
+                                        <span style="font-weight: 600; color: var(--warning);" id="medium-risk-count">7</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                        <span style="font-size: 0.875rem; color: var(--gray-700);">Intervention Needed</span>
+                                        <span style="font-weight: 600; color: var(--primary);" id="intervention-count">5</span>
+                                    </div>
+                                </div>
+                                <div style="background: var(--white); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--secondary-dark);">
+                                    <p style="font-size: 0.75rem; color: var(--gray-600); margin: 0;" id="risk-insights">Maya Rajin and 2 others need immediate attention. Low engagement in Module 2.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Content Effectiveness (D4) -->
+                        <div class="card" style="background: var(--white); border: 1px solid var(--accent);">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                                <span style="font-size: 1.5rem;">📚</span>
+                                <h4 style="color: var(--gray-800); margin: 0;">Content Effectiveness (D4)</h4>
+                            </div>
+                            <div id="content-effectiveness">
+                                <div style="margin-bottom: 1rem;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                        <span style="font-size: 0.875rem; color: var(--gray-700);">Top Performing Content</span>
+                                        <span style="font-weight: 600; color: var(--success);" id="top-content">Video Lectures</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                        <span style="font-size: 0.875rem; color: var(--gray-700);">Avg Engagement Rate</span>
+                                        <span style="font-weight: 600; color: var(--primary);" id="engagement-rate">78%</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                        <span style="font-size: 0.875rem; color: var(--gray-700);">Completion Rate</span>
+                                        <span style="font-weight: 600; color: var(--primary);" id="completion-rate-content">68%</span>
+                                    </div>
+                                </div>
+                                <div style="background: var(--accent); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--accent-dark);">
+                                    <p style="font-size: 0.75rem; color: var(--gray-600); margin: 0;" id="content-insights">Interactive quizzes show 15% higher completion rates than text-based content.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI Recommendations (D22) -->
+                        <div class="card" style="background: var(--bg-light); border: 2px solid var(--primary);">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                                <span style="font-size: 1.5rem;">🎯</span>
+                                <h4 style="color: var(--gray-800); margin: 0;">AI Recommendations (D22)</h4>
+                            </div>
+                            <div id="ai-recommendations-content">
+                                <div style="background: var(--primary); color: white; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                                    <h5 style="margin: 0 0 0.5rem 0; font-size: 0.875rem;">Priority Actions</h5>
+                                    <ul style="margin: 0; padding-left: 1rem; font-size: 0.75rem;" id="priority-actions">
+                                        <li>Schedule 1-on-1 sessions with at-risk students</li>
+                                        <li>Add more interactive elements to Module 2</li>
+                                        <li>Send personalized study reminders</li>
+                                        <li>Create supplementary video content</li>
+                                    </ul>
+                                </div>
+                                <div style="background: var(--accent); padding: 0.75rem; border-radius: 6px;">
+                                    <p style="font-size: 0.75rem; color: var(--gray-600); margin: 0;" id="ai-strategy-recommendations">Focus on evening study sessions and mobile-optimized content for better engagement.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
 
             <!-- Students Page -->
             <div id="page-students" class="page-content">
-                <!-- Student management content will be moved here -->
+                <section class="card">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
+                            👥
+                        </div>
+                        <div>
+                            <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">Student Management</h2>
+                            <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">Comprehensive student progress tracking and management</p>
+                        </div>
+                        <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+                            <button class="btn" id="btn-add-student" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                                ➕ Add Student
+                            </button>
+                            <button class="btn btn-success" id="btn-bulk-actions" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                                📋 Bulk Actions
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Student Statistics -->
+                    <div class="grid" style="margin-bottom: 2rem;">
+                        <div class="metric-card">
+                            <div class="metric-value">45</div>
+                            <div class="metric-label">Total Students</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">38</div>
+                            <div class="metric-label">Active This Week</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">7</div>
+                            <div class="metric-label">Need Attention</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value">73%</div>
+                            <div class="metric-label">Average Progress</div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Filters -->
+                    <div style="background: var(--accent); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <select id="filter-class" style="padding: 0.5rem; border: 1px solid var(--accent-dark); border-radius: 6px; background: var(--white);">
+                                    <option value="all">All Classes</option>
+                                    <option value="class-1">Data Science 101</option>
+                                    <option value="class-2">Machine Learning</option>
+                                    <option value="class-3">AI Ethics</option>
+                                </select>
+                                <select id="filter-progress" style="padding: 0.5rem; border: 1px solid var(--accent-dark); border-radius: 6px; background: var(--white);">
+                                    <option value="all">All Progress Levels</option>
+                                    <option value="high">High (80-100%)</option>
+                                    <option value="medium">Medium (50-79%)</option>
+                                    <option value="low">Low (0-49%)</option>
+                                </select>
+                                <select id="filter-engagement" style="padding: 0.5rem; border: 1px solid var(--accent-dark); border-radius: 6px; background: var(--white);">
+                                    <option value="all">All Engagement Levels</option>
+                                    <option value="high">High Engagement</option>
+                                    <option value="medium">Medium Engagement</option>
+                                    <option value="low">Low Engagement</option>
+                                </select>
+                                <input type="search" id="search-students-advanced" placeholder="Search by name, email, or ID..." style="padding: 0.5rem; border: 1px solid var(--accent-dark); border-radius: 6px; background: var(--white); min-width: 250px;">
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn" id="btn-clear-filters" style="padding: 0.5rem 1rem; font-size: 0.75rem; background: var(--gray-500);">
+                                    🗑️ Clear Filters
+                                </button>
+                                <button class="btn btn-success" id="btn-export-students" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                                    📊 Export List
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Student Table -->
+                    <div id="detailed-student-list" style="overflow-x: auto;">
+                        <table class="student-table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="select-all-students"></th>
+                                    <th>Student</th>
+                                    <th>Class</th>
+                                    <th>Progress</th>
+                                    <th>Engagement</th>
+                                    <th>Last Active</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="checkbox" class="student-checkbox" data-student-id="student-1"></td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                            <div class="profile-avatar" style="width: 32px; height: 32px; font-size: 0.875rem;">AM</div>
+                                            <div>
+                                                <strong>Andi Mahasiswa</strong><br>
+                                                <small style="color: var(--gray-600);">andi@student.edu</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Data Science 101</td>
+                                    <td>
+                                        <div class="progress-mini">
+                                            <div class="progress-mini-fill" style="width: 75%"></div>
+                                        </div>
+                                        <small>75%</small>
+                                    </td>
+                                    <td>
+                                        <span style="background: var(--success); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">High</span>
+                                    </td>
+                                    <td>2 hours ago</td>
+                                    <td class="status-active">🟢 Active</td>
+                                    <td>
+                                        <div style="display: flex; gap: 0.25rem;">
+                                            <button class="btn" onclick="viewStudentDetail('student-1')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">👁️</button>
+                                            <button class="btn btn-warning" onclick="sendMessage('student-1')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">💬</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="student-checkbox" data-student-id="student-2"></td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                            <div class="profile-avatar" style="width: 32px; height: 32px; font-size: 0.875rem;">SB</div>
+                                            <div>
+                                                <strong>Sari Belajar</strong><br>
+                                                <small style="color: var(--gray-600);">sari@student.edu</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Machine Learning</td>
+                                    <td>
+                                        <div class="progress-mini">
+                                            <div class="progress-mini-fill" style="width: 45%"></div>
+                                        </div>
+                                        <small>45%</small>
+                                    </td>
+                                    <td>
+                                        <span style="background: var(--warning); color: var(--gray-800); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Medium</span>
+                                    </td>
+                                    <td>1 day ago</td>
+                                    <td class="status-active">🟢 Active</td>
+                                    <td>
+                                        <div style="display: flex; gap: 0.25rem;">
+                                            <button class="btn" onclick="viewStudentDetail('student-2')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">👁️</button>
+                                            <button class="btn btn-warning" onclick="sendMessage('student-2')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">💬</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="student-checkbox" data-student-id="student-3"></td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                            <div class="profile-avatar" style="width: 32px; height: 32px; font-size: 0.875rem;">BC</div>
+                                            <div>
+                                                <strong>Budi Cerdas</strong><br>
+                                                <small style="color: var(--gray-600);">budi@student.edu</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>AI Ethics</td>
+                                    <td>
+                                        <div class="progress-mini">
+                                            <div class="progress-mini-fill" style="width: 90%"></div>
+                                        </div>
+                                        <small>90%</small>
+                                    </td>
+                                    <td>
+                                        <span style="background: var(--success); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">High</span>
+                                    </td>
+                                    <td>30 minutes ago</td>
+                                    <td class="status-active">🟢 Active</td>
+                                    <td>
+                                        <div style="display: flex; gap: 0.25rem;">
+                                            <button class="btn" onclick="viewStudentDetail('student-3')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">👁️</button>
+                                            <button class="btn btn-warning" onclick="sendMessage('student-3')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">💬</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="student-checkbox" data-student-id="student-4"></td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                            <div class="profile-avatar" style="width: 32px; height: 32px; font-size: 0.875rem; background: var(--error);">MR</div>
+                                            <div>
+                                                <strong>Maya Rajin</strong><br>
+                                                <small style="color: var(--gray-600);">maya@student.edu</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>Data Science 101</td>
+                                    <td>
+                                        <div class="progress-mini">
+                                            <div class="progress-mini-fill" style="width: 25%"></div>
+                                        </div>
+                                        <small>25%</small>
+                                    </td>
+                                    <td>
+                                        <span style="background: var(--error); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Low</span>
+                                    </td>
+                                    <td>1 week ago</td>
+                                    <td class="status-inactive">🔴 At Risk</td>
+                                    <td>
+                                        <div style="display: flex; gap: 0.25rem;">
+                                            <button class="btn" onclick="viewStudentDetail('student-4')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">👁️</button>
+                                            <button class="btn" onclick="sendMessage('student-4')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: var(--error);">🚨</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
             </div>
 
             <!-- Communication Page -->
@@ -1462,6 +1921,108 @@
         🌱 0.000g CO2
     </div>
 
-    <script type="module" src="./js/educator-portal-fixed.js"></script>
+    <!-- Import Shared Components -->
+    <script type="module" src="https://mubaroqadb.github.io/agenticlearn-shared/js/green-components.js"></script>
+
+    <!-- Navigation Script -->
+    <script>
+        // Page Navigation Functions
+        function showPage(pageId) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page-content');
+            pages.forEach(page => page.classList.remove('active'));
+
+            // Show selected page
+            const targetPage = document.getElementById(`page-${pageId}`);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+
+            // Update menu active state
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => item.classList.remove('active'));
+
+            // Find and activate the clicked menu item
+            const activeMenuItem = document.querySelector(`[onclick="showPage('${pageId}')"]`);
+            if (activeMenuItem) {
+                activeMenuItem.classList.add('active');
+            }
+
+            // Update page title
+            updatePageTitle(pageId);
+        }
+
+        function updatePageTitle(pageId) {
+            const titles = {
+                'beranda': 'Dashboard Overview',
+                'analytics': 'Analytics & Insights',
+                'students': 'Student Management',
+                'communication': 'Communication Hub',
+                'workflow': 'Workflow Tools',
+                'assessments': 'Assessment Management',
+                'ai-recommendations': 'AI Recommendations',
+                'reports': 'Reports & Export',
+                'integrations': 'Integrations',
+                'security': 'Security & Authentication',
+                'performance': 'Performance Monitoring',
+                'advanced-analytics': 'Advanced Analytics',
+                'mobile': 'Mobile & PWA',
+                'settings': 'Settings'
+            };
+
+            const subtitles = {
+                'beranda': 'Welcome to your educator dashboard',
+                'analytics': 'Comprehensive learning analytics and insights',
+                'students': 'Manage and monitor student progress',
+                'communication': 'Messages, announcements, and notifications',
+                'workflow': 'Streamline your teaching workflow',
+                'assessments': 'Create and manage assessments',
+                'ai-recommendations': 'AI-powered teaching recommendations',
+                'reports': 'Generate and export detailed reports',
+                'integrations': 'Connect with external tools and platforms',
+                'security': 'Manage security settings and authentication',
+                'performance': 'Monitor system and learning performance',
+                'advanced-analytics': 'Deep dive into learning analytics',
+                'mobile': 'Mobile app and PWA settings',
+                'settings': 'Configure your portal preferences'
+            };
+
+            const titleElement = document.getElementById('page-title');
+            const subtitleElement = document.getElementById('page-subtitle');
+
+            if (titleElement) titleElement.textContent = titles[pageId] || 'Dashboard';
+            if (subtitleElement) subtitleElement.textContent = subtitles[pageId] || 'Welcome to your educator dashboard';
+        }
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.querySelector('.main-content');
+
+            if (sidebar) {
+                sidebar.classList.toggle('open');
+            }
+        }
+
+        // Initialize mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileToggle = document.getElementById('mobile-menu-toggle');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+
+            if (mobileToggle) {
+                mobileToggle.addEventListener('click', toggleMobileMenu);
+            }
+
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', toggleMobileMenu);
+            }
+        });
+
+        // Make functions globally available
+        window.showPage = showPage;
+        window.toggleMobileMenu = toggleMobileMenu;
+    </script>
+
+    <script type="module" src="./js/educator-portal-green.js"></script>
 </body>
 </html>

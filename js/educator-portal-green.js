@@ -151,6 +151,24 @@ function setupEventListeners() {
     onClick("btn-view-analytics", viewAnalytics);
     onClick("btn-manage-content", manageContent);
     onClick("btn-chat-ai", chatWithAI);
+
+    // Student management listeners
+    onClick("btn-add-student", addStudent);
+    onClick("btn-bulk-actions", bulkActions);
+    onClick("btn-export-students", exportStudentProgress);
+    onClick("btn-clear-filters", clearFilters);
+    onClick("btn-refresh-analytics", refreshAnalytics);
+
+    // Select all checkbox
+    const selectAllCheckbox = document.getElementById("select-all-students");
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener("change", function() {
+            const checkboxes = document.querySelectorAll(".student-checkbox");
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+    }
 }
 
 function exportStudentProgress() {
@@ -227,6 +245,45 @@ function viewStudentDetail(studentId) {
     UIComponents.showNotification(`👤 Membuka detail mahasiswa ID: ${studentId}`, "info");
 }
 
+function sendMessage(studentId) {
+    const message = prompt("💬 Kirim pesan ke mahasiswa:");
+    if (message) {
+        UIComponents.showNotification(`✅ Pesan berhasil dikirim ke mahasiswa ID: ${studentId}`, "success");
+    }
+}
+
+function addStudent() {
+    const name = prompt("👤 Nama mahasiswa:");
+    const email = prompt("📧 Email mahasiswa:");
+    if (name && email) {
+        UIComponents.showNotification(`✅ Mahasiswa "${name}" berhasil ditambahkan!`, "success");
+    }
+}
+
+function bulkActions() {
+    const selectedStudents = document.querySelectorAll('.student-checkbox:checked');
+    if (selectedStudents.length === 0) {
+        UIComponents.showNotification("⚠️ Pilih minimal satu mahasiswa untuk bulk action", "warning");
+        return;
+    }
+
+    const action = prompt(`📋 Pilih aksi untuk ${selectedStudents.length} mahasiswa:\n1. Send Reminder\n2. Export Data\n3. Change Status\n\nMasukkan nomor (1-3):`);
+
+    switch(action) {
+        case '1':
+            UIComponents.showNotification(`📧 Reminder berhasil dikirim ke ${selectedStudents.length} mahasiswa`, "success");
+            break;
+        case '2':
+            UIComponents.showNotification(`📊 Data ${selectedStudents.length} mahasiswa berhasil diexport`, "success");
+            break;
+        case '3':
+            UIComponents.showNotification(`✅ Status ${selectedStudents.length} mahasiswa berhasil diubah`, "success");
+            break;
+        default:
+            UIComponents.showNotification("❌ Aksi tidak valid", "error");
+    }
+}
+
 function updateCarbonIndicator() {
     try {
         const metrics = apiClient.getCarbonMetrics ? apiClient.getCarbonMetrics() : { totalCarbon: 0.000125 };
@@ -242,8 +299,26 @@ function updateCarbonIndicator() {
     }
 }
 
+function clearFilters() {
+    document.getElementById("filter-class").value = "all";
+    document.getElementById("filter-progress").value = "all";
+    document.getElementById("filter-engagement").value = "all";
+    document.getElementById("search-students-advanced").value = "";
+    UIComponents.showNotification("🗑️ Filter berhasil dibersihkan", "info");
+}
+
+function refreshAnalytics() {
+    UIComponents.showNotification("🔄 Merefresh analytics data...", "info");
+    setTimeout(() => {
+        UIComponents.showNotification("✅ Analytics data berhasil direfresh!", "success");
+    }, 1500);
+}
+
 // Global functions
 window.viewStudentDetail = viewStudentDetail;
+window.sendMessage = sendMessage;
+window.addStudent = addStudent;
+window.bulkActions = bulkActions;
 
 // Initialize when DOM ready
 document.addEventListener('DOMContentLoaded', initializeEducatorPortal);
