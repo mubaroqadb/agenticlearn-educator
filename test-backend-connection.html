@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend Connection Test - AgenticLearn</title>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #667b68;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #4a5a4c;
+        }
+        .endpoint {
+            font-family: 'Monaco', 'Menlo', monospace;
+            background: #f0f0f0;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        .btn {
+            background: #667b68;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .btn:hover {
+            background: #4a5a4c;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status.online {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .config-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Backend Connection Test</h1>
+        
+        <div class="config-info">
+            <h4>📋 Configuration Info</h4>
+            <p><strong>Frontend URL:</strong> <span id="frontend-url"></span></p>
+            <p><strong>Backend URL:</strong> <span id="backend-url"></span></p>
+            <p><strong>Environment:</strong> <span id="environment"></span></p>
+        </div>
+
+        <div class="test-section">
+            <h3>🏥 Health Check</h3>
+            <p>Test basic backend connectivity</p>
+            <div class="endpoint">GET /health</div>
+            <button class="btn" onclick="testHealth()">Test Health Endpoint</button>
+            <button class="btn" onclick="testSimpleConnectivity()">Test Simple Connectivity</button>
+            <div id="health-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📚 Courses Endpoint</h3>
+            <p>Test courses data retrieval</p>
+            <div class="endpoint">GET /courses</div>
+            <button class="btn" onclick="testCourses()">Test Courses</button>
+            <div id="courses-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📊 Progress Endpoint</h3>
+            <p>Test student progress data</p>
+            <div class="endpoint">GET /progress/class-1</div>
+            <button class="btn" onclick="testProgress()">Test Progress</button>
+            <div id="progress-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🤖 AI Insights Endpoint</h3>
+            <p>Test AI insights and recommendations</p>
+            <div class="endpoint">GET /instructor/insights/ai</div>
+            <button class="btn" onclick="testAIInsights()">Test AI Insights</button>
+            <div id="ai-insights-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>👤 Instructor Profile</h3>
+            <p>Test instructor profile data</p>
+            <div class="endpoint">GET /instructor/profile</div>
+            <button class="btn" onclick="testProfile()">Test Profile</button>
+            <div id="profile-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔄 Test All Endpoints</h3>
+            <p>Run comprehensive test of all endpoints</p>
+            <button class="btn" onclick="testAllEndpoints()">Test All</button>
+            <button class="btn" onclick="clearResults()">Clear Results</button>
+            <div id="all-results"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_BASE_URL = window.location.hostname.includes("localhost")
+            ? "http://localhost:8080/api/agenticlearn"
+            : "https://asia-southeast2-agenticai-462517.cloudfunctions.net/domyid/api/agenticlearn";
+
+        // Fallback URLs to test
+        const FALLBACK_URLS = [
+            "https://asia-southeast2-agenticai-462517.cloudfunctions.net/domyid",
+            "https://agenticai-backend.railway.app/api/agenticlearn",
+            "https://api.agenticlearn.com/api/agenticlearn"
+        ];
+
+        // Update config display
+        document.getElementById('frontend-url').textContent = window.location.origin;
+        document.getElementById('backend-url').textContent = API_BASE_URL;
+        document.getElementById('environment').textContent = window.location.hostname.includes("localhost") ? "Development" : "Production";
+
+        // API Client for testing with fallback URLs
+        class TestAPIClient {
+            constructor() {
+                this.baseURL = API_BASE_URL;
+                this.fallbackURLs = FALLBACK_URLS;
+                this.workingURL = null;
+            }
+
+            async request(endpoint, options = {}) {
+                const urlsToTry = [this.baseURL, ...this.fallbackURLs];
+                let lastError = null;
+
+                for (const baseURL of urlsToTry) {
+                    const result = await this._tryRequest(baseURL, endpoint, options);
+                    if (result.success) {
+                        this.workingURL = baseURL;
+                        return result;
+                    }
+                    lastError = result;
+                }
+
+                // Return the last error if all URLs failed
+                return lastError;
+            }
+
+            async _tryRequest(baseURL, endpoint, options = {}) {
+                const url = `${baseURL}${endpoint}`;
+                const headers = {
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                };
+
+                const config = {
+                    method: options.method || 'GET',
+                    headers,
+                    mode: 'cors',
+                    credentials: 'omit',
+                    ...options
+                };
+
+                const startTime = Date.now();
+                try {
+                    const response = await fetch(url, config);
+                    const endTime = Date.now();
+                    const duration = endTime - startTime;
+
+                    const result = {
+                        success: response.ok,
+                        status: response.status,
+                        statusText: response.statusText,
+                        duration: duration,
+                        url: url,
+                        baseURL: baseURL
+                    };
+
+                    if (response.ok) {
+                        const contentType = response.headers.get('content-type');
+                        if (contentType && contentType.includes('application/json')) {
+                            result.data = await response.json();
+                        } else {
+                            result.data = await response.text();
+                        }
+                    } else {
+                        result.error = `HTTP ${response.status}: ${response.statusText}`;
+                    }
+
+                    return result;
+                } catch (error) {
+                    const endTime = Date.now();
+                    return {
+                        success: false,
+                        error: error.message,
+                        duration: endTime - startTime,
+                        url: url,
+                        baseURL: baseURL
+                    };
+                }
+            }
+        }
+
+        const testClient = new TestAPIClient();
+
+        function displayResult(elementId, result) {
+            const element = document.getElementById(elementId);
+            const className = result.success ? 'success' : 'error';
+
+            let content = `Status: ${result.success ? '✅ SUCCESS' : '❌ FAILED'}\n`;
+            content += `URL: ${result.url}\n`;
+
+            if (result.baseURL) {
+                content += `Base URL: ${result.baseURL}\n`;
+            }
+
+            content += `Duration: ${result.duration}ms\n`;
+
+            if (result.status) {
+                content += `HTTP Status: ${result.status} ${result.statusText}\n`;
+            }
+
+            if (result.error) {
+                content += `Error: ${result.error}\n`;
+            }
+
+            if (result.data) {
+                content += `\nResponse Data:\n${JSON.stringify(result.data, null, 2)}`;
+            }
+
+            element.innerHTML = `<div class="result ${className}">${content}</div>`;
+        }
+
+        async function testHealth() {
+            const result = await testClient.request('/health');
+            displayResult('health-result', result);
+        }
+
+        async function testSimpleConnectivity() {
+            const urlsToTest = [API_BASE_URL, ...FALLBACK_URLS];
+            let results = [];
+
+            for (const url of urlsToTest) {
+                const startTime = Date.now();
+                try {
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        mode: 'cors',
+                        credentials: 'omit'
+                    });
+                    const endTime = Date.now();
+
+                    results.push({
+                        url: url,
+                        success: true,
+                        status: response.status,
+                        statusText: response.statusText,
+                        duration: endTime - startTime
+                    });
+                } catch (error) {
+                    const endTime = Date.now();
+                    results.push({
+                        url: url,
+                        success: false,
+                        error: error.message,
+                        duration: endTime - startTime
+                    });
+                }
+            }
+
+            // Display all results
+            let content = 'SIMPLE CONNECTIVITY TEST RESULTS\n';
+            content += '=' + '='.repeat(40) + '\n\n';
+
+            results.forEach((result, index) => {
+                const status = result.success ? '✅ REACHABLE' : '❌ FAILED';
+                content += `${index + 1}. ${result.url}\n`;
+                content += `   Status: ${status} (${result.duration}ms)\n`;
+                if (result.status) {
+                    content += `   HTTP: ${result.status} ${result.statusText}\n`;
+                }
+                if (result.error) {
+                    content += `   Error: ${result.error}\n`;
+                }
+                content += '\n';
+            });
+
+            const successCount = results.filter(r => r.success).length;
+            content += `Summary: ${successCount}/${results.length} URLs reachable`;
+
+            const className = successCount > 0 ? 'success' : 'error';
+            document.getElementById('health-result').innerHTML = `<div class="result ${className}">${content}</div>`;
+        }
+
+        async function testCourses() {
+            const result = await testClient.request('/courses');
+            displayResult('courses-result', result);
+        }
+
+        async function testProgress() {
+            const result = await testClient.request('/progress/class-1');
+            displayResult('progress-result', result);
+        }
+
+        async function testAIInsights() {
+            const result = await testClient.request('/instructor/insights/ai');
+            displayResult('ai-insights-result', result);
+        }
+
+        async function testProfile() {
+            const result = await testClient.request('/instructor/profile');
+            displayResult('profile-result', result);
+        }
+
+        async function testAllEndpoints() {
+            const allResultsDiv = document.getElementById('all-results');
+            allResultsDiv.innerHTML = '<div class="result info">Running comprehensive test...</div>';
+
+            const endpoints = [
+                { name: 'Health Check', endpoint: '/health' },
+                { name: 'Courses', endpoint: '/courses' },
+                { name: 'Progress', endpoint: '/progress/class-1' },
+                { name: 'AI Insights', endpoint: '/instructor/insights/ai' },
+                { name: 'Profile', endpoint: '/instructor/profile' }
+            ];
+
+            let summary = 'COMPREHENSIVE TEST RESULTS\n';
+            summary += '=' + '='.repeat(50) + '\n\n';
+
+            let successCount = 0;
+            let totalCount = endpoints.length;
+
+            for (const test of endpoints) {
+                const result = await testClient.request(test.endpoint);
+                const status = result.success ? '✅ PASS' : '❌ FAIL';
+                summary += `${test.name}: ${status} (${result.duration}ms)\n`;
+                
+                if (result.success) successCount++;
+                if (result.error) {
+                    summary += `  Error: ${result.error}\n`;
+                }
+                summary += '\n';
+            }
+
+            summary += `\nSUMMARY: ${successCount}/${totalCount} endpoints working\n`;
+            summary += `Success Rate: ${Math.round((successCount/totalCount) * 100)}%\n`;
+
+            const className = successCount === totalCount ? 'success' : 
+                             successCount > 0 ? 'info' : 'error';
+
+            allResultsDiv.innerHTML = `<div class="result ${className}">${summary}</div>`;
+        }
+
+        function clearResults() {
+            const resultDivs = document.querySelectorAll('[id$="-result"]');
+            resultDivs.forEach(div => div.innerHTML = '');
+        }
+
+        // Auto-run health check on page load
+        window.addEventListener('load', () => {
+            setTimeout(testHealth, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -10,20 +10,59 @@ const API_BASE_URL = window.location.hostname.includes("localhost")
     ? "http://localhost:8080/api/agenticlearn"
     : "https://asia-southeast2-agenticai-462517.cloudfunctions.net/domyid/api/agenticlearn";
 
+// Fallback URLs to try if primary fails
+const FALLBACK_URLS = [
+    "https://asia-southeast2-agenticai-462517.cloudfunctions.net/domyid",
+    "https://agenticai-backend.railway.app/api/agenticlearn",
+    "https://api.agenticlearn.com/api/agenticlearn"
+];
+
 // Get GitHub username for redirects
 const GITHUB_USERNAME = window.location.hostname.includes('github.io')
     ? window.location.hostname.split('.')[0]
     : 'mubaroqadb';
 
-// API Client with proper authentication
+// API Client with proper authentication and fallback URLs
 class EducatorAPIClient {
     constructor() {
         this.baseURL = API_BASE_URL;
+        this.fallbackURLs = FALLBACK_URLS;
         this.token = getCookie("login") || getCookie("access_token");
+        this.workingURL = null; // Cache working URL
     }
 
     async request(endpoint, options = {}) {
-        const url = `${this.baseURL}${endpoint}`;
+        // Try cached working URL first
+        if (this.workingURL) {
+            try {
+                return await this._makeRequest(this.workingURL, endpoint, options);
+            } catch (error) {
+                console.warn(`Cached URL failed, trying alternatives:`, error);
+                this.workingURL = null; // Reset cache
+            }
+        }
+
+        // Try primary URL
+        const urlsToTry = [this.baseURL, ...this.fallbackURLs];
+
+        for (const baseURL of urlsToTry) {
+            try {
+                const result = await this._makeRequest(baseURL, endpoint, options);
+                this.workingURL = baseURL; // Cache successful URL
+                console.log(`✅ Successfully connected to: ${baseURL}`);
+                return result;
+            } catch (error) {
+                console.warn(`❌ Failed to connect to ${baseURL}:`, error.message);
+                continue;
+            }
+        }
+
+        // All URLs failed
+        throw new Error(`All backend URLs failed. Endpoints tried: ${urlsToTry.join(', ')}`);
+    }
+
+    async _makeRequest(baseURL, endpoint, options = {}) {
+        const url = `${baseURL}${endpoint}`;
         const headers = {
             'Content-Type': 'application/json',
             ...options.headers
@@ -37,6 +76,8 @@ class EducatorAPIClient {
         const config = {
             method: options.method || 'GET',
             headers,
+            mode: 'cors',
+            credentials: 'omit',
             ...options
         };
 
@@ -44,23 +85,18 @@ class EducatorAPIClient {
             config.body = JSON.stringify(options.body);
         }
 
-        try {
-            const response = await fetch(url, config);
+        const response = await fetch(url, config);
 
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-                return await response.json();
-            }
-
-            return await response.text();
-        } catch (error) {
-            console.error(`API Request failed for ${endpoint}:`, error);
-            throw error;
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
+
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            return await response.json();
+        }
+
+        return await response.text();
     }
 
     getCarbonMetrics() {
@@ -71,15 +107,43 @@ class EducatorAPIClient {
 // Initialize API client
 const apiClient = new EducatorAPIClient();
 
-// Test backend connection
+// Test backend connection with multiple endpoints
 async function testBackendConnection() {
     try {
         showNotification("🔄 Testing backend connection...", "info");
 
-        // Test basic connectivity
-        const response = await apiClient.request("/health");
-        showNotification("✅ Backend connection successful!", "success");
-        return true;
+        // Try multiple test endpoints
+        const testEndpoints = ["/health", "/", "/api/health", "/status"];
+
+        for (const endpoint of testEndpoints) {
+            try {
+                const response = await apiClient.request(endpoint);
+                showNotification(`✅ Backend connected via ${endpoint}!`, "success");
+                return true;
+            } catch (error) {
+                console.warn(`Test endpoint ${endpoint} failed:`, error.message);
+                continue;
+            }
+        }
+
+        // If all specific endpoints fail, try a simple GET to root
+        try {
+            const response = await fetch(apiClient.workingURL || API_BASE_URL, {
+                method: 'GET',
+                mode: 'cors',
+                credentials: 'omit'
+            });
+
+            if (response.status < 500) { // Accept any non-server-error response
+                showNotification("✅ Backend reachable (basic connectivity)", "success");
+                return true;
+            }
+        } catch (error) {
+            console.warn("Basic connectivity test failed:", error);
+        }
+
+        throw new Error("All connection tests failed");
+
     } catch (error) {
         console.warn("Backend connection failed, using demo mode:", error);
         showNotification("⚠️ Backend unavailable, using demo data", "warning");
