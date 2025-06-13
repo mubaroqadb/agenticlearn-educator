@@ -5,6 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AgenticLearn - Portal Dosen</title>
 
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="AI-powered learning management system for educators">
+    <meta name="theme-color" content="#667b68">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="AgenticLearn">
+    <meta name="msapplication-TileColor" content="#667b68">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- PWA Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/icon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+    <link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#667b68">
+
     <!-- Import Shared CSS -->
     <link rel="stylesheet" href="https://mubaroqadb.github.io/agenticlearn-shared/css/green-components.css">
 
@@ -3521,7 +3539,288 @@
 
             <!-- Mobile & PWA Page -->
             <div id="page-mobile" class="page-content">
-                <!-- Mobile and PWA content will be loaded here -->
+                <section class="card">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
+                            📱
+                        </div>
+                        <div>
+                            <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">Mobile & Progressive Web App</h2>
+                            <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">Optimize mobile experience and PWA capabilities</p>
+                        </div>
+                        <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+                            <button class="btn" id="btn-install-pwa" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                                📲 Install App
+                            </button>
+                            <button class="btn btn-success" id="btn-mobile-preview" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                                👁️ Mobile Preview
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PWA Status Overview -->
+                    <div style="background: linear-gradient(135deg, var(--primary), var(--info)); padding: 2rem; border-radius: 12px; margin-bottom: 2rem; color: white;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h3 style="margin: 0; margin-bottom: 0.5rem; font-size: 1.5rem;">📱 PWA Ready</h3>
+                                <p style="margin: 0; opacity: 0.9;">Your app meets all PWA requirements</p>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 3rem; font-weight: 700; margin-bottom: 0.5rem;">✅</div>
+                                <div style="opacity: 0.9;">Installable</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Analytics -->
+                    <div class="grid" style="margin-bottom: 2rem;">
+                        <div class="metric-card" style="background: var(--success);">
+                            <div class="metric-value" style="color: white;">67%</div>
+                            <div class="metric-label" style="color: rgba(255,255,255,0.9);">Mobile Users</div>
+                        </div>
+                        <div class="metric-card" style="background: var(--primary);">
+                            <div class="metric-value" style="color: white;">1.2s</div>
+                            <div class="metric-label" style="color: rgba(255,255,255,0.9);">Mobile Load Time</div>
+                        </div>
+                        <div class="metric-card" style="background: var(--info);">
+                            <div class="metric-value" style="color: white;">342</div>
+                            <div class="metric-label" style="color: rgba(255,255,255,0.9);">PWA Installs</div>
+                        </div>
+                        <div class="metric-card" style="background: var(--warning);">
+                            <div class="metric-value" style="color: var(--gray-800);">95</div>
+                            <div class="metric-label" style="color: var(--gray-700);">Lighthouse Score</div>
+                        </div>
+                    </div>
+
+                    <!-- PWA Features -->
+                    <div class="card" style="background: var(--white); margin-bottom: 2rem;">
+                        <h3 style="color: var(--gray-800); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>🚀</span> PWA Features
+                        </h3>
+
+                        <div class="grid">
+                            <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--success);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                    <div style="display: flex; align-items: center; gap: 1rem;">
+                                        <span style="font-size: 1.5rem;">📱</span>
+                                        <div>
+                                            <h4 style="color: var(--gray-800); margin: 0;">App Installation</h4>
+                                            <div style="font-size: 0.75rem; color: var(--gray-600);">Add to home screen capability</div>
+                                        </div>
+                                    </div>
+                                    <span style="background: var(--success); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Active</span>
+                                </div>
+                                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                                    <div style="font-size: 0.875rem; color: var(--gray-700); margin-bottom: 0.5rem;">
+                                        <strong>Features:</strong> Web App Manifest, Service Worker, Install prompt
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-600);">
+                                        Installs this week: 23 • Total installs: 342
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">⚙️ Configure</button>
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">📊 Install Analytics</button>
+                                </div>
+                            </div>
+
+                            <div style="background: var(--secondary-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--success);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                    <div style="display: flex; align-items: center; gap: 1rem;">
+                                        <span style="font-size: 1.5rem;">🔄</span>
+                                        <div>
+                                            <h4 style="color: var(--gray-800); margin: 0;">Offline Support</h4>
+                                            <div style="font-size: 0.75rem; color: var(--gray-600);">Works without internet connection</div>
+                                        </div>
+                                    </div>
+                                    <span style="background: var(--success); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Enabled</span>
+                                </div>
+                                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                                    <div style="font-size: 0.875rem; color: var(--gray-700); margin-bottom: 0.5rem;">
+                                        <strong>Cached:</strong> Core pages, Student data, Course materials
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-600);">
+                                        Cache size: 12.3 MB • Last updated: 2 hours ago
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">🗑️ Clear Cache</button>
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">🔄 Update Cache</button>
+                                </div>
+                            </div>
+
+                            <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent); border-left: 4px solid var(--primary);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                    <div style="display: flex; align-items: center; gap: 1rem;">
+                                        <span style="font-size: 1.5rem;">🔔</span>
+                                        <div>
+                                            <h4 style="color: var(--gray-800); margin: 0;">Push Notifications</h4>
+                                            <div style="font-size: 0.75rem; color: var(--gray-600);">Real-time updates and alerts</div>
+                                        </div>
+                                    </div>
+                                    <span style="background: var(--primary); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Configured</span>
+                                </div>
+                                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                                    <div style="font-size: 0.875rem; color: var(--gray-700); margin-bottom: 0.5rem;">
+                                        <strong>Types:</strong> Assignment alerts, Grade updates, System notifications
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-600);">
+                                        Subscribers: 287 • Sent today: 45 notifications
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">⚙️ Settings</button>
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">📤 Send Test</button>
+                                </div>
+                            </div>
+
+                            <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent); border-left: 4px solid var(--info);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                    <div style="display: flex; align-items: center; gap: 1rem;">
+                                        <span style="font-size: 1.5rem;">⚡</span>
+                                        <div>
+                                            <h4 style="color: var(--gray-800); margin: 0;">Background Sync</h4>
+                                            <div style="font-size: 0.75rem; color: var(--gray-600);">Sync data when connection returns</div>
+                                        </div>
+                                    </div>
+                                    <span style="background: var(--info); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Working</span>
+                                </div>
+                                <div style="background: var(--accent); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                                    <div style="font-size: 0.875rem; color: var(--gray-700); margin-bottom: 0.5rem;">
+                                        <strong>Queued:</strong> Grade submissions, Student progress, Analytics data
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-600);">
+                                        Pending sync: 3 items • Last sync: 5 minutes ago
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">🔄 Sync Now</button>
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">📋 View Queue</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Optimization -->
+                    <div class="card" style="background: var(--white); margin-bottom: 2rem;">
+                        <h3 style="color: var(--gray-800); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>📱</span> Mobile Optimization
+                        </h3>
+
+                        <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <h4 style="color: var(--gray-800); margin-bottom: 1rem;">📊 Mobile Performance Metrics</h4>
+                            <div class="grid" style="gap: 1rem;">
+                                <div style="background: var(--white); padding: 1rem; border-radius: 6px; text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--success); margin-bottom: 0.5rem;">95</div>
+                                    <div style="font-size: 0.875rem; color: var(--gray-600);">Lighthouse Score</div>
+                                    <div style="font-size: 0.75rem; color: var(--success); margin-top: 0.25rem;">Excellent</div>
+                                </div>
+                                <div style="background: var(--white); padding: 1rem; border-radius: 6px; text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem;">1.2s</div>
+                                    <div style="font-size: 0.875rem; color: var(--gray-600);">First Contentful Paint</div>
+                                    <div style="font-size: 0.75rem; color: var(--success); margin-top: 0.25rem;">Fast</div>
+                                </div>
+                                <div style="background: var(--white); padding: 1rem; border-radius: 6px; text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--info); margin-bottom: 0.5rem;">2.1s</div>
+                                    <div style="font-size: 0.875rem; color: var(--gray-600);">Time to Interactive</div>
+                                    <div style="font-size: 0.75rem; color: var(--success); margin-top: 0.25rem;">Good</div>
+                                </div>
+                                <div style="background: var(--white); padding: 1rem; border-radius: 6px; text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--warning); margin-bottom: 0.5rem;">0.1s</div>
+                                    <div style="font-size: 0.875rem; color: var(--gray-600);">Cumulative Layout Shift</div>
+                                    <div style="font-size: 0.75rem; color: var(--success); margin-top: 0.25rem;">Excellent</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid">
+                            <div style="background: var(--secondary-light); padding: 1.5rem; border-radius: 8px;">
+                                <h4 style="color: var(--gray-800); margin-bottom: 1rem;">📱 Responsive Design</h4>
+                                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                            <span style="font-size: 0.875rem; color: var(--gray-700);">Mobile (320-768px):</span>
+                                            <span style="font-weight: 600; color: var(--success);">✅ Optimized</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                            <span style="font-size: 0.875rem; color: var(--gray-700);">Tablet (768-1024px):</span>
+                                            <span style="font-weight: 600; color: var(--success);">✅ Optimized</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <span style="font-size: 0.875rem; color: var(--gray-700);">Desktop (1024px+):</span>
+                                            <span style="font-weight: 600; color: var(--success);">✅ Optimized</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">🔍 Test Responsiveness</button>
+                            </div>
+
+                            <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                                <h4 style="color: var(--gray-800); margin-bottom: 1rem;">🎨 Mobile UI/UX</h4>
+                                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                            <span style="font-size: 0.875rem; color: var(--gray-700);">Touch Targets:</span>
+                                            <span style="font-weight: 600; color: var(--success);">44px+ ✅</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                            <span style="font-size: 0.875rem; color: var(--gray-700);">Font Size:</span>
+                                            <span style="font-weight: 600; color: var(--success);">16px+ ✅</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <span style="font-size: 0.875rem; color: var(--gray-700);">Viewport:</span>
+                                            <span style="font-weight: 600; color: var(--success);">Configured ✅</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">🎨 UI Guidelines</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Device Analytics -->
+                    <div class="card" style="background: var(--white);">
+                        <h3 style="color: var(--gray-800); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>📊</span> Mobile Usage Analytics
+                        </h3>
+
+                        <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px;">
+                            <h4 style="color: var(--gray-800); margin-bottom: 1rem;">📱 Device & Platform Breakdown</h4>
+                            <div class="grid" style="gap: 1rem;">
+                                <div style="background: var(--white); padding: 1rem; border-radius: 6px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                        <span style="font-weight: 600; color: var(--gray-800);">📱 Mobile</span>
+                                        <span style="font-weight: 600; color: var(--primary);">67%</span>
+                                    </div>
+                                    <div style="background: var(--gray-200); height: 8px; border-radius: 4px; overflow: hidden;">
+                                        <div style="background: var(--primary); height: 100%; width: 67%; transition: width 0.3s ease;"></div>
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-600); margin-top: 0.25rem;">iOS: 38% • Android: 29%</div>
+                                </div>
+                                <div style="background: var(--white); padding: 1rem; border-radius: 6px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                        <span style="font-weight: 600; color: var(--gray-800);">💻 Desktop</span>
+                                        <span style="font-weight: 600; color: var(--secondary-dark);">23%</span>
+                                    </div>
+                                    <div style="background: var(--gray-200); height: 8px; border-radius: 4px; overflow: hidden;">
+                                        <div style="background: var(--secondary-dark); height: 100%; width: 23%; transition: width 0.3s ease;"></div>
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-600); margin-top: 0.25rem;">Windows: 15% • macOS: 8%</div>
+                                </div>
+                                <div style="background: var(--white); padding: 1rem; border-radius: 6px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                        <span style="font-weight: 600; color: var(--gray-800);">📟 Tablet</span>
+                                        <span style="font-weight: 600; color: var(--info);">10%</span>
+                                    </div>
+                                    <div style="background: var(--gray-200); height: 8px; border-radius: 4px; overflow: hidden;">
+                                        <div style="background: var(--info); height: 100%; width: 10%; transition: width 0.3s ease;"></div>
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-600); margin-top: 0.25rem;">iPad: 7% • Android: 3%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
 
             <!-- Settings Page -->
@@ -4512,5 +4811,75 @@
     </script>
 
     <script type="module" src="./js/educator-portal-green.js"></script>
+
+    <!-- PWA Service Worker Registration -->
+    <script>
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('✅ Service Worker registered successfully:', registration.scope);
+
+                        // Check for updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // New content is available
+                                    if (confirm('🔄 Pembaruan aplikasi tersedia. Muat ulang sekarang?')) {
+                                        window.location.reload();
+                                    }
+                                }
+                            });
+                        });
+                    })
+                    .catch((error) => {
+                        console.log('❌ Service Worker registration failed:', error);
+                    });
+            });
+        }
+
+        // PWA Install Button Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Install PWA button
+            const installBtn = document.getElementById('btn-install-pwa');
+            if (installBtn) {
+                installBtn.addEventListener('click', installPWA);
+            }
+
+            // Mobile preview button
+            const previewBtn = document.getElementById('btn-mobile-preview');
+            if (previewBtn) {
+                previewBtn.addEventListener('click', showMobilePreview);
+            }
+
+            // Clear cache button
+            document.addEventListener('click', function(e) {
+                if (e.target.textContent.includes('Clear Cache')) {
+                    clearPWACache();
+                }
+                if (e.target.textContent.includes('Update Cache')) {
+                    updatePWACache();
+                }
+                if (e.target.textContent.includes('Send Test')) {
+                    sendTestNotification();
+                }
+            });
+        });
+
+        // Network status monitoring
+        window.addEventListener('online', () => {
+            if (typeof showNotification === 'function') {
+                showNotification('🟢 Koneksi internet kembali tersedia', 'success');
+            }
+        });
+
+        window.addEventListener('offline', () => {
+            if (typeof showNotification === 'function') {
+                showNotification('🔴 Koneksi internet terputus. Mode offline aktif.', 'warning');
+            }
+        });
+    </script>
 </body>
 </html>

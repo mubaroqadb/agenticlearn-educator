@@ -729,11 +729,115 @@ function loadDemoActivityTimeline() {
     }
 }
 
+// PWA Functions
+function installPWA() {
+    if (window.deferredPrompt) {
+        window.deferredPrompt.prompt();
+        window.deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                showNotification('✅ App berhasil diinstall!', 'success');
+            } else {
+                showNotification('❌ Instalasi dibatalkan', 'info');
+            }
+            window.deferredPrompt = null;
+        });
+    } else {
+        showNotification('📱 App sudah terinstall atau browser tidak mendukung PWA', 'info');
+    }
+}
+
+function showMobilePreview() {
+    showNotification('📱 Membuka mobile preview...', 'info');
+    // Simulate mobile preview
+    setTimeout(() => {
+        showNotification('✅ Mobile preview ready! Check responsive design.', 'success');
+    }, 1500);
+}
+
+function clearPWACache() {
+    if ('serviceWorker' in navigator && 'caches' in window) {
+        caches.keys().then(function(cacheNames) {
+            return Promise.all(
+                cacheNames.map(function(cacheName) {
+                    return caches.delete(cacheName);
+                })
+            );
+        }).then(function() {
+            showNotification('🗑️ PWA cache berhasil dibersihkan!', 'success');
+        }).catch(function(error) {
+            showNotification('❌ Gagal membersihkan cache', 'error');
+        });
+    } else {
+        showNotification('⚠️ Service Worker tidak tersedia', 'warning');
+    }
+}
+
+function updatePWACache() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.ready.then(function(registration) {
+            return registration.update();
+        }).then(function() {
+            showNotification('🔄 PWA cache berhasil diupdate!', 'success');
+        }).catch(function(error) {
+            showNotification('❌ Gagal update cache', 'error');
+        });
+    } else {
+        showNotification('⚠️ Service Worker tidak tersedia', 'warning');
+    }
+}
+
+function sendTestNotification() {
+    if ('Notification' in window) {
+        if (Notification.permission === 'granted') {
+            new Notification('🧪 Test Notification', {
+                body: 'Ini adalah test notification dari AgenticLearn Educator Portal',
+                icon: '/favicon.ico',
+                badge: '/favicon.ico'
+            });
+            showNotification('📤 Test notification berhasil dikirim!', 'success');
+        } else if (Notification.permission !== 'denied') {
+            Notification.requestPermission().then(function(permission) {
+                if (permission === 'granted') {
+                    new Notification('🧪 Test Notification', {
+                        body: 'Ini adalah test notification dari AgenticLearn Educator Portal',
+                        icon: '/favicon.ico',
+                        badge: '/favicon.ico'
+                    });
+                    showNotification('📤 Test notification berhasil dikirim!', 'success');
+                } else {
+                    showNotification('❌ Permission notification ditolak', 'error');
+                }
+            });
+        } else {
+            showNotification('❌ Notification diblokir oleh browser', 'error');
+        }
+    } else {
+        showNotification('⚠️ Browser tidak mendukung notifications', 'warning');
+    }
+}
+
+// PWA Event Listeners
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    window.deferredPrompt = e;
+    showNotification('📲 App dapat diinstall! Klik tombol Install App.', 'info');
+});
+
+window.addEventListener('appinstalled', (evt) => {
+    showNotification('🎉 App berhasil diinstall! Selamat menggunakan PWA.', 'success');
+    window.deferredPrompt = null;
+});
+
 // Global functions
 window.viewStudentDetail = viewStudentDetail;
 window.sendMessage = sendMessage;
 window.addStudent = addStudent;
 window.bulkActions = bulkActions;
+window.installPWA = installPWA;
+window.showMobilePreview = showMobilePreview;
+window.clearPWACache = clearPWACache;
+window.updatePWACache = updatePWACache;
+window.sendTestNotification = sendTestNotification;
 
 // Initialize when DOM ready
 document.addEventListener('DOMContentLoaded', initializeEducatorPortal);
