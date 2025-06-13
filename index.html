@@ -283,6 +283,105 @@
             font-size: 0.75rem;
             text-transform: uppercase;
         }
+
+        /* Communication Tabs */
+        .communication-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 0.5rem;
+        }
+
+        .comm-tab-button {
+            background: var(--white);
+            border: 1px solid var(--accent);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            transition: all 0.2s ease;
+        }
+
+        .comm-tab-button:hover {
+            background: var(--accent);
+            color: var(--gray-800);
+        }
+
+        .comm-tab-button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .comm-tab-content {
+            display: none;
+        }
+
+        .comm-tab-content.active {
+            display: block;
+        }
+
+        /* Message Items */
+        .message-item {
+            background: var(--white);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .message-item:hover {
+            box-shadow: var(--shadow-sm);
+        }
+
+        .message-item.unread {
+            border-left: 4px solid var(--primary);
+            background: var(--accent);
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .message-sender {
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+
+        .message-content {
+            color: var(--gray-700);
+            line-height: 1.5;
+        }
+
+        /* Announcement Items */
+        .announcement-item {
+            background: var(--white);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .announcement-priority-high {
+            border-left: 4px solid var(--error);
+            background: var(--bg-light);
+        }
+
+        .announcement-priority-medium {
+            border-left: 4px solid var(--warning);
+        }
         /* Responsive Design */
         @media (max-width: 768px) {
             .container {
@@ -1400,7 +1499,196 @@
 
             <!-- Communication Page -->
             <div id="page-communication" class="page-content">
-                <!-- Communication content will be moved here -->
+                <section class="card">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
+                            💬
+                        </div>
+                        <div>
+                            <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">Communication Center</h2>
+                            <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">Manage student communications, announcements, and messages</p>
+                        </div>
+                        <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+                            <button class="btn" id="btn-new-announcement" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                                📢 New Announcement
+                            </button>
+                            <button class="btn btn-success" id="btn-compose-message" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                                ✉️ Compose Message
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Communication Tabs -->
+                    <div class="communication-tabs">
+                        <button class="comm-tab-button active" onclick="showCommTab('messages')">📧 Messages</button>
+                        <button class="comm-tab-button" onclick="showCommTab('announcements')">📢 Announcements</button>
+                        <button class="comm-tab-button" onclick="showCommTab('discussions')">💭 Discussions</button>
+                        <button class="comm-tab-button" onclick="showCommTab('notifications')">🔔 Notifications</button>
+                    </div>
+
+                    <!-- Messages Tab -->
+                    <div id="comm-tab-messages" class="comm-tab-content active">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h3 style="color: var(--gray-800); margin: 0;">Recent Messages</h3>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <select style="padding: 0.5rem; border: 1px solid var(--accent); border-radius: 6px; background: var(--white);">
+                                    <option>All Messages</option>
+                                    <option>Unread</option>
+                                    <option>Important</option>
+                                    <option>From Students</option>
+                                </select>
+                                <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">🔄 Refresh</button>
+                            </div>
+                        </div>
+
+                        <div id="messages-list">
+                            <div class="message-item unread">
+                                <div class="message-header">
+                                    <span class="message-sender">Andi Mahasiswa</span>
+                                    <span class="message-time">2 hours ago</span>
+                                </div>
+                                <div class="message-content">
+                                    Pak/Bu, saya mengalami kesulitan dengan Assignment Module 2. Bisakah saya mendapat bantuan tambahan?
+                                </div>
+                                <div style="margin-top: 0.5rem;">
+                                    <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Reply</button>
+                                    <button class="btn btn-warning" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Mark Important</button>
+                                </div>
+                            </div>
+
+                            <div class="message-item">
+                                <div class="message-header">
+                                    <span class="message-sender">Sari Belajar</span>
+                                    <span class="message-time">5 hours ago</span>
+                                </div>
+                                <div class="message-content">
+                                    Terima kasih atas feedback untuk quiz kemarin. Saya akan perbaiki di submission berikutnya.
+                                </div>
+                                <div style="margin-top: 0.5rem;">
+                                    <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Reply</button>
+                                    <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: var(--success);">✓ Replied</button>
+                                </div>
+                            </div>
+
+                            <div class="message-item">
+                                <div class="message-header">
+                                    <span class="message-sender">Budi Cerdas</span>
+                                    <span class="message-time">1 day ago</span>
+                                </div>
+                                <div class="message-content">
+                                    Apakah ada referensi tambahan untuk materi Machine Learning yang dibahas minggu ini?
+                                </div>
+                                <div style="margin-top: 0.5rem;">
+                                    <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Reply</button>
+                                    <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Forward</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Announcements Tab -->
+                    <div id="comm-tab-announcements" class="comm-tab-content">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h3 style="color: var(--gray-800); margin: 0;">Class Announcements</h3>
+                            <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">📝 Create Announcement</button>
+                        </div>
+
+                        <div id="announcements-list">
+                            <div class="announcement-item announcement-priority-high">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <h4 style="color: var(--error); margin: 0; font-size: 1rem;">🚨 Important: Assignment Deadline Extended</h4>
+                                    <span style="font-size: 0.75rem; color: var(--gray-600);">Today, 10:30 AM</span>
+                                </div>
+                                <p style="margin: 0; color: var(--gray-700);">
+                                    Assignment Module 2 deadline diperpanjang hingga Jumat, 15 Desember 2024. Silakan manfaatkan waktu tambahan ini untuk memperbaiki submission Anda.
+                                </p>
+                                <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                                    <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Edit</button>
+                                    <button class="btn btn-warning" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Pin</button>
+                                    <span style="font-size: 0.75rem; color: var(--gray-600); margin-left: auto;">👁️ 45 views</span>
+                                </div>
+                            </div>
+
+                            <div class="announcement-item announcement-priority-medium">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <h4 style="color: var(--warning); margin: 0; font-size: 1rem;">📚 New Learning Resources Available</h4>
+                                    <span style="font-size: 0.75rem; color: var(--gray-600);">Yesterday, 2:15 PM</span>
+                                </div>
+                                <p style="margin: 0; color: var(--gray-700);">
+                                    Video tutorial tambahan untuk Module 3 telah tersedia di platform. Silakan akses melalui menu Learning Materials.
+                                </p>
+                                <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                                    <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Edit</button>
+                                    <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Archive</button>
+                                    <span style="font-size: 0.75rem; color: var(--gray-600); margin-left: auto;">👁️ 38 views</span>
+                                </div>
+                            </div>
+
+                            <div class="announcement-item">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <h4 style="color: var(--primary); margin: 0; font-size: 1rem;">🎯 Weekly Progress Update</h4>
+                                    <span style="font-size: 0.75rem; color: var(--gray-600);">3 days ago</span>
+                                </div>
+                                <p style="margin: 0; color: var(--gray-700);">
+                                    Selamat untuk semua yang telah menyelesaikan Module 2! Progress kelas sangat baik dengan rata-rata 73% completion rate.
+                                </p>
+                                <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                                    <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Edit</button>
+                                    <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Archive</button>
+                                    <span style="font-size: 0.75rem; color: var(--gray-600); margin-left: auto;">👁️ 42 views</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Discussions Tab -->
+                    <div id="comm-tab-discussions" class="comm-tab-content">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h3 style="color: var(--gray-800); margin: 0;">Discussion Forums</h3>
+                            <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">💭 New Topic</button>
+                        </div>
+
+                        <div style="background: var(--white); border: 1px solid var(--accent); border-radius: 8px; padding: 1rem;">
+                            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 1rem;">
+                                <h4 style="color: var(--primary); margin: 0;">📊 Module 2: Data Analytics Discussion</h4>
+                                <span style="background: var(--success); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Active</span>
+                            </div>
+                            <p style="color: var(--gray-700); margin-bottom: 1rem;">
+                                Diskusi tentang implementasi algoritma machine learning dan best practices dalam data preprocessing.
+                            </p>
+                            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--gray-600);">
+                                <span>👥 12 participants • 💬 28 messages</span>
+                                <span>Last activity: 2 hours ago</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notifications Tab -->
+                    <div id="comm-tab-notifications" class="comm-tab-content">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h3 style="color: var(--gray-800); margin: 0;">Notification Settings</h3>
+                            <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">⚙️ Configure</button>
+                        </div>
+
+                        <div style="background: var(--white); border: 1px solid var(--accent); border-radius: 8px; padding: 1.5rem;">
+                            <h4 style="color: var(--primary); margin-bottom: 1rem;">Email Notifications</h4>
+                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" checked> New student messages
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" checked> Assignment submissions
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox"> Discussion forum activity
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" checked> System announcements
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
 
             <!-- Workflow Page -->
@@ -1440,7 +1728,211 @@
 
             <!-- Advanced Analytics Page -->
             <div id="page-advanced-analytics" class="page-content">
-                <!-- Advanced analytics content will be loaded here -->
+                <section class="card">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
+                            🧠
+                        </div>
+                        <div>
+                            <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">Advanced Analytics Dashboard</h2>
+                            <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">Deep dive into learning analytics with AI-powered insights</p>
+                        </div>
+                        <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+                            <select style="padding: 0.5rem; border: 1px solid var(--accent); border-radius: 6px; background: var(--white); font-size: 0.75rem;">
+                                <option>This Week</option>
+                                <option>This Month</option>
+                                <option>This Semester</option>
+                                <option>All Time</option>
+                            </select>
+                            <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">📊 Export Report</button>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Metrics Grid -->
+                    <div class="grid" style="margin-bottom: 2rem;">
+                        <div class="metric-card" style="background: linear-gradient(135deg, var(--primary), var(--primary-light));">
+                            <div class="metric-value" style="color: white;">96.8%</div>
+                            <div class="metric-label" style="color: rgba(255,255,255,0.9);">Prediction Accuracy</div>
+                        </div>
+                        <div class="metric-card" style="background: linear-gradient(135deg, var(--secondary-dark), var(--secondary));">
+                            <div class="metric-value" style="color: var(--gray-800);">1,247</div>
+                            <div class="metric-label" style="color: var(--gray-700);">AI Predictions Made</div>
+                        </div>
+                        <div class="metric-card" style="background: linear-gradient(135deg, var(--accent-dark), var(--accent));">
+                            <div class="metric-value" style="color: var(--gray-800);">78.5%</div>
+                            <div class="metric-label" style="color: var(--gray-700);">Engagement Score</div>
+                        </div>
+                        <div class="metric-card" style="background: linear-gradient(135deg, var(--info), var(--primary-light));">
+                            <div class="metric-value" style="color: white;">24.3min</div>
+                            <div class="metric-label" style="color: rgba(255,255,255,0.9);">Avg Session Time</div>
+                        </div>
+                    </div>
+
+                    <!-- ML Models Performance -->
+                    <div class="card" style="background: var(--white); margin-bottom: 2rem;">
+                        <h3 style="color: var(--gray-800); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>🤖</span> Machine Learning Models Performance
+                        </h3>
+
+                        <div class="grid">
+                            <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary);">
+                                <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 1rem;">Student Success Predictor</h4>
+                                <div style="margin-bottom: 0.5rem;">
+                                    <span style="font-size: 0.875rem; color: var(--gray-700);">Algorithm:</span>
+                                    <span style="font-weight: 600; color: var(--primary); margin-left: 0.5rem;">Random Forest</span>
+                                </div>
+                                <div style="margin-bottom: 0.5rem;">
+                                    <span style="font-size: 0.875rem; color: var(--gray-700);">Accuracy:</span>
+                                    <span style="font-weight: 600; color: var(--success); margin-left: 0.5rem;">96.8%</span>
+                                </div>
+                                <div style="margin-bottom: 1rem;">
+                                    <span style="font-size: 0.875rem; color: var(--gray-700);">Last Trained:</span>
+                                    <span style="font-weight: 600; color: var(--gray-800); margin-left: 0.5rem;">Today 14:30</span>
+                                </div>
+                                <div style="background: var(--white); padding: 0.75rem; border-radius: 6px;">
+                                    <div style="font-size: 0.75rem; color: var(--gray-600); margin-bottom: 0.5rem;">Key Features:</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-700);">engagement_score, assignment_completion, time_spent, quiz_performance</div>
+                                </div>
+                            </div>
+
+                            <div style="background: var(--secondary-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--secondary-dark);">
+                                <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 1rem;">Learning Path Optimizer</h4>
+                                <div style="margin-bottom: 0.5rem;">
+                                    <span style="font-size: 0.875rem; color: var(--gray-700);">Algorithm:</span>
+                                    <span style="font-weight: 600; color: var(--primary); margin-left: 0.5rem;">Collaborative Filtering</span>
+                                </div>
+                                <div style="margin-bottom: 0.5rem;">
+                                    <span style="font-size: 0.875rem; color: var(--gray-700);">Accuracy:</span>
+                                    <span style="font-weight: 600; color: var(--success); margin-left: 0.5rem;">94.2%</span>
+                                </div>
+                                <div style="margin-bottom: 1rem;">
+                                    <span style="font-size: 0.875rem; color: var(--gray-700);">Last Trained:</span>
+                                    <span style="font-weight: 600; color: var(--gray-800); margin-left: 0.5rem;">Yesterday 16:45</span>
+                                </div>
+                                <div style="background: var(--white); padding: 0.75rem; border-radius: 6px;">
+                                    <div style="font-size: 0.75rem; color: var(--gray-600); margin-bottom: 0.5rem;">Key Features:</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-700);">learning_style, progress_rate, difficulty_preference, topic_interest</div>
+                                </div>
+                            </div>
+
+                            <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--info);">
+                                <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 1rem;">Content Recommendation Engine</h4>
+                                <div style="margin-bottom: 0.5rem;">
+                                    <span style="font-size: 0.875rem; color: var(--gray-700);">Algorithm:</span>
+                                    <span style="font-weight: 600; color: var(--primary); margin-left: 0.5rem;">Neural Network</span>
+                                </div>
+                                <div style="margin-bottom: 0.5rem;">
+                                    <span style="font-size: 0.875rem; color: var(--gray-700);">Accuracy:</span>
+                                    <span style="font-weight: 600; color: var(--success); margin-left: 0.5rem;">91.5%</span>
+                                </div>
+                                <div style="margin-bottom: 1rem;">
+                                    <span style="font-size: 0.875rem; color: var(--gray-700);">Last Trained:</span>
+                                    <span style="font-weight: 600; color: var(--gray-800); margin-left: 0.5rem;">2 days ago</span>
+                                </div>
+                                <div style="background: var(--white); padding: 0.75rem; border-radius: 6px;">
+                                    <div style="font-size: 0.75rem; color: var(--gray-600); margin-bottom: 0.5rem;">Key Features:</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-700);">content_type, difficulty_level, student_performance, time_context</div>
+                                </div>
+                            </div>
+
+                            <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--warning); border: 1px solid var(--accent);">
+                                <h4 style="color: var(--gray-800); margin-bottom: 1rem; font-size: 1rem;">Engagement Predictor</h4>
+                                <div style="margin-bottom: 0.5rem;">
+                                    <span style="font-size: 0.875rem; color: var(--gray-700);">Algorithm:</span>
+                                    <span style="font-weight: 600; color: var(--primary); margin-left: 0.5rem;">Gradient Boosting</span>
+                                </div>
+                                <div style="margin-bottom: 0.5rem;">
+                                    <span style="font-size: 0.875rem; color: var(--gray-700);">Accuracy:</span>
+                                    <span style="font-weight: 600; color: var(--warning); margin-left: 0.5rem;">89.3%</span>
+                                </div>
+                                <div style="margin-bottom: 1rem;">
+                                    <span style="font-size: 0.875rem; color: var(--gray-700);">Status:</span>
+                                    <span style="font-weight: 600; color: var(--warning); margin-left: 0.5rem;">Training</span>
+                                </div>
+                                <div style="background: var(--accent); padding: 0.75rem; border-radius: 6px;">
+                                    <div style="font-size: 0.75rem; color: var(--gray-600); margin-bottom: 0.5rem;">Key Features:</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-700);">session_duration, click_patterns, resource_usage, interaction_frequency</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Predictive Analytics -->
+                    <div class="card" style="background: var(--white); margin-bottom: 2rem;">
+                        <h3 style="color: var(--gray-800); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>🔮</span> Predictive Analytics
+                        </h3>
+
+                        <div class="grid">
+                            <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px;">
+                                <h4 style="color: var(--gray-800); margin-bottom: 1rem;">At-Risk Students Prediction</h4>
+                                <div style="font-size: 2rem; font-weight: 700; color: var(--error); margin-bottom: 0.5rem;">3</div>
+                                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 1rem;">Students predicted to be at risk this week</div>
+                                <div style="background: var(--white); padding: 0.75rem; border-radius: 6px;">
+                                    <div style="font-size: 0.75rem; color: var(--gray-600);">Confidence: <span style="font-weight: 600; color: var(--error);">94.2%</span></div>
+                                </div>
+                            </div>
+
+                            <div style="background: var(--secondary-light); padding: 1.5rem; border-radius: 8px;">
+                                <h4 style="color: var(--gray-800); margin-bottom: 1rem;">Course Completion Forecast</h4>
+                                <div style="font-size: 2rem; font-weight: 700; color: var(--success); margin-bottom: 0.5rem;">87%</div>
+                                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 1rem;">Predicted completion rate by semester end</div>
+                                <div style="background: var(--white); padding: 0.75rem; border-radius: 6px;">
+                                    <div style="font-size: 0.75rem; color: var(--gray-600);">Confidence: <span style="font-weight: 600; color: var(--success);">91.8%</span></div>
+                                </div>
+                            </div>
+
+                            <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent);">
+                                <h4 style="color: var(--gray-800); margin-bottom: 1rem;">Optimal Study Time</h4>
+                                <div style="font-size: 2rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem;">19:00</div>
+                                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 1rem;">Peak engagement time for your students</div>
+                                <div style="background: var(--white); padding: 0.75rem; border-radius: 6px;">
+                                    <div style="font-size: 0.75rem; color: var(--gray-600);">Based on: <span style="font-weight: 600; color: var(--primary);">2,847 data points</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Learning Behavior Analysis -->
+                    <div class="card" style="background: var(--white);">
+                        <h3 style="color: var(--gray-800); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>📊</span> Learning Behavior Analysis
+                        </h3>
+
+                        <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <h4 style="color: var(--gray-800); margin-bottom: 1rem;">Study Pattern Insights</h4>
+                            <div class="grid" style="gap: 1rem;">
+                                <div style="background: var(--white); padding: 1rem; border-radius: 6px;">
+                                    <div style="font-weight: 600; color: var(--primary); margin-bottom: 0.5rem;">Most Active Day</div>
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--gray-800);">Tuesday</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-600);">85% student activity</div>
+                                </div>
+                                <div style="background: var(--white); padding: 1rem; border-radius: 6px;">
+                                    <div style="font-weight: 600; color: var(--primary); margin-bottom: 0.5rem;">Preferred Content</div>
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--gray-800);">Video</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-600);">78% engagement rate</div>
+                                </div>
+                                <div style="background: var(--white); padding: 1rem; border-radius: 6px;">
+                                    <div style="font-weight: 600; color: var(--primary); margin-bottom: 0.5rem;">Device Usage</div>
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--gray-800);">Mobile</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-600);">67% of sessions</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--secondary-light); padding: 1.5rem; border-radius: 8px;">
+                            <h4 style="color: var(--gray-800); margin-bottom: 1rem;">AI Recommendations</h4>
+                            <div style="background: var(--white); padding: 1rem; border-radius: 6px;">
+                                <ul style="margin: 0; padding-left: 1.5rem; color: var(--gray-700);">
+                                    <li style="margin-bottom: 0.5rem;">Schedule more interactive content on Tuesday evenings</li>
+                                    <li style="margin-bottom: 0.5rem;">Optimize video content for mobile viewing</li>
+                                    <li style="margin-bottom: 0.5rem;">Increase engagement through gamification elements</li>
+                                    <li>Provide personalized study schedules based on peak activity times</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
 
             <!-- Mobile & PWA Page -->
@@ -2021,9 +2513,33 @@
             }
         });
 
+        // Communication tabs functionality
+        function showCommTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.comm-tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            // Remove active class from all tab buttons
+            const tabButtons = document.querySelectorAll('.comm-tab-button');
+            tabButtons.forEach(button => button.classList.remove('active'));
+
+            // Show selected tab content
+            const targetTab = document.getElementById(`comm-tab-${tabName}`);
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
+
+            // Add active class to clicked button
+            const activeButton = event.target;
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+        }
+
         // Make functions globally available
         window.showPage = showPage;
         window.toggleMobileMenu = toggleMobileMenu;
+        window.showCommTab = showCommTab;
     </script>
 
     <script type="module" src="./js/educator-portal-green.js"></script>
