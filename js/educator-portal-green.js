@@ -174,11 +174,19 @@ async function initializeEducatorPortal() {
         // Update carbon indicator
         updateCarbonIndicator();
 
-        // Show welcome notification
+        // Show welcome notification and setup demo mode
         const message = isBackendAvailable
             ? "Educator Portal loaded successfully! 🌱"
             : "Educator Portal loaded in demo mode! 🌱";
         showNotification(message, "success");
+
+        // Setup demo mode features if backend unavailable
+        if (!isBackendAvailable) {
+            setupDemoMode();
+            updateConnectionStatus("demo");
+        } else {
+            updateConnectionStatus("connected");
+        }
 
         console.log("🌱 Educator Portal loaded with JSCroot and shared components");
     } catch (error) {
@@ -273,9 +281,44 @@ function renderDemoStudentTable() {
         { id: "student-1", name: "Andi Mahasiswa", email: "andi@student.edu", progress: 75, status: "active", lastActive: new Date().toISOString() },
         { id: "student-2", name: "Sari Belajar", email: "sari@student.edu", progress: 45, status: "active", lastActive: new Date(Date.now() - 86400000).toISOString() },
         { id: "student-3", name: "Budi Cerdas", email: "budi@student.edu", progress: 90, status: "active", lastActive: new Date().toISOString() },
-        { id: "student-4", name: "Maya Rajin", email: "maya@student.edu", progress: 25, status: "inactive", lastActive: new Date(Date.now() - 604800000).toISOString() }
+        { id: "student-4", name: "Maya Rajin", email: "maya@student.edu", progress: 25, status: "inactive", lastActive: new Date(Date.now() - 604800000).toISOString() },
+        { id: "student-5", name: "Dewi Pintar", email: "dewi@student.edu", progress: 88, status: "active", lastActive: new Date(Date.now() - 3600000).toISOString() },
+        { id: "student-6", name: "Rudi Tekun", email: "rudi@student.edu", progress: 62, status: "active", lastActive: new Date(Date.now() - 7200000).toISOString() },
+        { id: "student-7", name: "Lisa Cerdik", email: "lisa@student.edu", progress: 35, status: "inactive", lastActive: new Date(Date.now() - 259200000).toISOString() },
+        { id: "student-8", name: "Agus Rajin", email: "agus@student.edu", progress: 92, status: "active", lastActive: new Date(Date.now() - 1800000).toISOString() }
     ];
     renderStudentTable(demoStudents);
+}
+
+// Enhanced demo data generator
+function generateRealtimeDemoData() {
+    const now = Date.now();
+    const variations = [-2, -1, 0, 1, 2]; // Small random variations
+
+    return {
+        onlineStudents: 12 + variations[Math.floor(Math.random() * variations.length)],
+        activeSessions: 8 + variations[Math.floor(Math.random() * variations.length)],
+        avgEngagement: (78 + variations[Math.floor(Math.random() * variations.length)]) + '%',
+        completionToday: 15 + variations[Math.floor(Math.random() * variations.length)],
+        lastUpdate: new Date().toLocaleTimeString('id-ID')
+    };
+}
+
+// Update real-time demo stats
+function updateDemoStats() {
+    const stats = generateRealtimeDemoData();
+
+    const onlineElement = document.getElementById("online-students");
+    const sessionsElement = document.getElementById("active-sessions");
+    const engagementElement = document.getElementById("avg-engagement");
+    const completionElement = document.getElementById("completion-today");
+    const lastUpdateElement = document.getElementById("last-update-time");
+
+    if (onlineElement) onlineElement.textContent = stats.onlineStudents;
+    if (sessionsElement) sessionsElement.textContent = stats.activeSessions;
+    if (engagementElement) engagementElement.textContent = stats.avgEngagement;
+    if (completionElement) completionElement.textContent = stats.completionToday;
+    if (lastUpdateElement) lastUpdateElement.textContent = stats.lastUpdate;
 }
 
 async function loadAIInsights() {
@@ -301,11 +344,14 @@ async function loadAIInsights() {
     } catch (error) {
         console.error("Failed to load AI insights:", error);
 
-        // Fallback to demo data
+        // Enhanced demo data with dynamic insights
+        const currentHour = new Date().getHours();
+        const timeOfDay = currentHour < 12 ? "pagi" : currentHour < 17 ? "siang" : "malam";
+
         const demoInsights = {
-            learningPatterns: "🕒 Puncak aktivitas: 19:00-21:00 WIB. 📱 85% akses via mobile. 📊 Konten video paling engaging.",
-            atRiskStudents: "⚠️ 3 mahasiswa berisiko: Maya Rajin (25% progress), perlu intervensi segera.",
-            recommendations: "💡 Tingkatkan konten interaktif. 🎯 Focus pada modul Analytics. 📞 Follow-up personal untuk yang tertinggal."
+            learningPatterns: `🕒 Puncak aktivitas: 19:00-21:00 WIB. 📱 85% akses via mobile. 📊 Saat ini ${timeOfDay}, 12 mahasiswa online.`,
+            atRiskStudents: "⚠️ 3 mahasiswa berisiko: Maya Rajin (25% progress), Lisa Cerdik (35% progress). Perlu intervensi segera.",
+            recommendations: `💡 Tingkatkan konten interaktif untuk ${timeOfDay} hari. 🎯 Focus pada Module 2 (completion rate rendah). 📞 Follow-up personal untuk yang tertinggal.`
         };
 
         setInner("learning-patterns", demoInsights.learningPatterns);
@@ -525,6 +571,162 @@ function refreshAnalytics() {
     setTimeout(() => {
         showNotification("✅ Analytics data berhasil direfresh!", "success");
     }, 1500);
+}
+
+// Backend status checker
+async function checkBackendStatus() {
+    try {
+        const isAvailable = await testBackendConnection();
+        if (isAvailable) {
+            showNotification("🎉 Backend is now available! Refreshing data...", "success");
+            // Reload real data
+            await loadEducatorData();
+            await loadClassData();
+            await loadStudentList();
+            await loadAIInsights();
+
+            // Remove demo mode indicator
+            const demoBadge = document.querySelector('[style*="DEMO MODE"]');
+            if (demoBadge) {
+                demoBadge.remove();
+            }
+        }
+    } catch (error) {
+        console.log("Backend still unavailable, continuing in demo mode");
+    }
+}
+
+// Periodic backend status check (every 2 minutes)
+setInterval(checkBackendStatus, 120000);
+
+// Update connection status indicator
+function updateConnectionStatus(status) {
+    const statusElement = document.getElementById("connection-status");
+    if (!statusElement) return;
+
+    const statusConfig = {
+        connected: {
+            text: "🟢 Backend Connected",
+            background: "var(--success)",
+            color: "white",
+            show: true
+        },
+        demo: {
+            text: "🎭 Demo Mode Active",
+            background: "var(--warning)",
+            color: "var(--gray-800)",
+            show: true
+        },
+        checking: {
+            text: "🔄 Checking backend...",
+            background: "var(--info)",
+            color: "white",
+            show: true
+        },
+        hidden: {
+            show: false
+        }
+    };
+
+    const config = statusConfig[status] || statusConfig.hidden;
+
+    if (config.show) {
+        statusElement.style.display = "block";
+        statusElement.style.background = config.background;
+        statusElement.innerHTML = `<span style="font-size: 0.75rem; color: ${config.color};">${config.text}</span>`;
+    } else {
+        statusElement.style.display = "none";
+    }
+}
+
+// Demo mode setup
+function setupDemoMode() {
+    // Add demo mode indicator
+    addDemoModeIndicator();
+
+    // Start real-time demo data updates
+    updateDemoStats();
+    setInterval(updateDemoStats, 30000); // Update every 30 seconds
+
+    // Add demo activity timeline
+    loadDemoActivityTimeline();
+
+    // Show demo mode notification
+    setTimeout(() => {
+        showNotification("🎭 Demo Mode Active - Simulating real-time data", "info");
+    }, 3000);
+}
+
+function addDemoModeIndicator() {
+    // Add demo badge to header
+    const header = document.querySelector('.header');
+    if (header) {
+        const demoBadge = document.createElement('div');
+        demoBadge.style.cssText = `
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        `;
+        demoBadge.textContent = '🎭 DEMO MODE';
+        header.style.position = 'relative';
+        header.appendChild(demoBadge);
+
+        // Add pulse animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { opacity: 1; }
+                50% { opacity: 0.7; }
+                100% { opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+function loadDemoActivityTimeline() {
+    const timelineElement = document.getElementById("activity-timeline");
+    if (timelineElement) {
+        const activities = [
+            { time: "2 menit lalu", student: "Andi Mahasiswa", action: "Menyelesaikan Quiz Module 2", type: "success" },
+            { time: "5 menit lalu", student: "Dewi Pintar", action: "Mengakses Video Lecture 3", type: "info" },
+            { time: "12 menit lalu", student: "Budi Cerdas", action: "Submit Assignment 1", type: "success" },
+            { time: "18 menit lalu", student: "Rudi Tekun", action: "Join Discussion Forum", type: "info" },
+            { time: "25 menit lalu", student: "Agus Rajin", action: "Complete Reading Material", type: "success" },
+            { time: "32 menit lalu", student: "Sari Belajar", action: "Start Module 3", type: "info" },
+            { time: "45 menit lalu", student: "Lisa Cerdik", action: "Login to Platform", type: "warning" }
+        ];
+
+        const timelineHTML = activities.map(activity => {
+            const iconMap = {
+                success: "✅",
+                info: "📚",
+                warning: "⚠️"
+            };
+
+            return `
+                <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; margin-bottom: 0.5rem; background: var(--accent); border-radius: 6px; border-left: 3px solid var(--${activity.type === 'success' ? 'primary' : activity.type === 'warning' ? 'warning' : 'info'});">
+                    <span style="font-size: 1.2rem;">${iconMap[activity.type]}</span>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: var(--gray-800); font-size: 0.875rem;">${activity.student}</div>
+                        <div style="color: var(--gray-600); font-size: 0.75rem;">${activity.action}</div>
+                    </div>
+                    <div style="color: var(--gray-500); font-size: 0.75rem; white-space: nowrap;">${activity.time}</div>
+                </div>
+            `;
+        }).join('');
+
+        timelineElement.innerHTML = timelineHTML;
+    }
 }
 
 // Global functions
