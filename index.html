@@ -2319,12 +2319,465 @@
 
             <!-- Reports & Export Page -->
             <div id="page-reports" class="page-content">
-                <!-- Reports and export content will be loaded here -->
+                <section class="card">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
+                            📊
+                        </div>
+                        <div>
+                            <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">Reports & Export Center</h2>
+                            <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">Generate comprehensive reports and export data for analysis</p>
+                        </div>
+                        <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+                            <button class="btn" id="btn-schedule-report" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                                ⏰ Schedule Report
+                            </button>
+                            <button class="btn btn-success" id="btn-custom-report" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                                📋 Custom Report
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Export Actions -->
+                    <div class="grid" style="margin-bottom: 2rem;">
+                        <div style="background: var(--primary); color: white; padding: 1.5rem; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;" onclick="exportStudentProgress()">
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                <span style="font-size: 2rem;">👥</span>
+                                <h4 style="margin: 0;">Student Progress</h4>
+                            </div>
+                            <p style="margin: 0; opacity: 0.9; font-size: 0.875rem;">Export detailed student progress and performance data</p>
+                            <div style="margin-top: 1rem; font-size: 0.75rem; opacity: 0.8;">📄 CSV, Excel, PDF formats</div>
+                        </div>
+
+                        <div style="background: var(--success); color: white; padding: 1.5rem; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;" onclick="exportAssessmentResults()">
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                <span style="font-size: 2rem;">📊</span>
+                                <h4 style="margin: 0;">Assessment Results</h4>
+                            </div>
+                            <p style="margin: 0; opacity: 0.9; font-size: 0.875rem;">Export quiz and assignment results with analytics</p>
+                            <div style="margin-top: 1rem; font-size: 0.75rem; opacity: 0.8;">📄 Detailed analytics included</div>
+                        </div>
+
+                        <div style="background: var(--info); color: white; padding: 1.5rem; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;" onclick="exportEngagementData()">
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                <span style="font-size: 2rem;">📈</span>
+                                <h4 style="margin: 0;">Engagement Analytics</h4>
+                            </div>
+                            <p style="margin: 0; opacity: 0.9; font-size: 0.875rem;">Export student engagement and activity data</p>
+                            <div style="margin-top: 1rem; font-size: 0.75rem; opacity: 0.8;">📄 Time-series data available</div>
+                        </div>
+
+                        <div style="background: var(--warning); color: var(--gray-800); padding: 1.5rem; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;" onclick="exportComprehensiveReport()">
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                <span style="font-size: 2rem;">📋</span>
+                                <h4 style="margin: 0;">Comprehensive Report</h4>
+                            </div>
+                            <p style="margin: 0; font-size: 0.875rem;">Export complete class overview with all metrics</p>
+                            <div style="margin-top: 1rem; font-size: 0.75rem; opacity: 0.8;">📄 Executive summary format</div>
+                        </div>
+                    </div>
+
+                    <!-- Report Templates -->
+                    <div class="card" style="background: var(--white); margin-bottom: 2rem;">
+                        <h3 style="color: var(--gray-800); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>📋</span> Report Templates
+                        </h3>
+
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                    <h4 style="color: var(--gray-800); margin: 0;">📊 Weekly Progress Report</h4>
+                                    <span style="background: var(--primary); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Popular</span>
+                                </div>
+                                <p style="color: var(--gray-700); margin-bottom: 1rem; font-size: 0.875rem;">
+                                    Comprehensive weekly overview including student progress, engagement metrics, and performance trends
+                                </p>
+                                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                                    <div style="font-size: 0.75rem; color: var(--gray-600); margin-bottom: 0.5rem;">Includes:</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-700);">Student progress, Assignment completion, Quiz results, Engagement analytics, At-risk alerts</div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">📄 Generate Now</button>
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">⏰ Schedule Weekly</button>
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">✏️ Customize</button>
+                                </div>
+                            </div>
+
+                            <div style="background: var(--secondary-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--secondary-dark);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                    <h4 style="color: var(--gray-800); margin: 0;">🎯 Student Performance Analysis</h4>
+                                    <span style="background: var(--secondary-dark); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Detailed</span>
+                                </div>
+                                <p style="color: var(--gray-700); margin-bottom: 1rem; font-size: 0.875rem;">
+                                    Individual student performance analysis with recommendations and intervention strategies
+                                </p>
+                                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                                    <div style="font-size: 0.75rem; color: var(--gray-600); margin-bottom: 0.5rem;">Includes:</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-700);">Individual scorecards, Learning path analysis, Strength/weakness identification, Personalized recommendations</div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">📄 Generate Now</button>
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">👥 Select Students</button>
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">✏️ Customize</button>
+                                </div>
+                            </div>
+
+                            <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent); border-left: 4px solid var(--info);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                    <h4 style="color: var(--gray-800); margin: 0;">📈 Course Analytics Dashboard</h4>
+                                    <span style="background: var(--info); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Executive</span>
+                                </div>
+                                <p style="color: var(--gray-700); margin-bottom: 1rem; font-size: 0.875rem;">
+                                    High-level course analytics for administrators and stakeholders with key performance indicators
+                                </p>
+                                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                                    <div style="font-size: 0.75rem; color: var(--gray-600); margin-bottom: 0.5rem;">Includes:</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-700);">KPI dashboard, Completion rates, Engagement trends, Comparative analysis, ROI metrics</div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">📄 Generate Now</button>
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">📧 Email Report</button>
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">✏️ Customize</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scheduled Reports -->
+                    <div class="card" style="background: var(--white); margin-bottom: 2rem;">
+                        <h3 style="color: var(--gray-800); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>⏰</span> Scheduled Reports
+                        </h3>
+
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: var(--accent);">
+                                        <th style="padding: 1rem; text-align: left; border-bottom: 1px solid var(--accent-dark);">Report Name</th>
+                                        <th style="padding: 1rem; text-align: left; border-bottom: 1px solid var(--accent-dark);">Frequency</th>
+                                        <th style="padding: 1rem; text-align: left; border-bottom: 1px solid var(--accent-dark);">Next Run</th>
+                                        <th style="padding: 1rem; text-align: left; border-bottom: 1px solid var(--accent-dark);">Recipients</th>
+                                        <th style="padding: 1rem; text-align: left; border-bottom: 1px solid var(--accent-dark);">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="border-bottom: 1px solid var(--accent);">
+                                        <td style="padding: 1rem;">📊 Weekly Progress Summary</td>
+                                        <td style="padding: 1rem;">Every Friday</td>
+                                        <td style="padding: 1rem;">Dec 22, 2024 17:00</td>
+                                        <td style="padding: 1rem;">admin@university.edu</td>
+                                        <td style="padding: 1rem;">
+                                            <div style="display: flex; gap: 0.25rem;">
+                                                <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">✏️</button>
+                                                <button class="btn btn-warning" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">⏸️</button>
+                                                <button class="btn btn-success" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">▶️</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid var(--accent);">
+                                        <td style="padding: 1rem;">🎯 Student Performance Alert</td>
+                                        <td style="padding: 1rem;">Daily</td>
+                                        <td style="padding: 1rem;">Tomorrow 09:00</td>
+                                        <td style="padding: 1rem;">instructor@university.edu</td>
+                                        <td style="padding: 1rem;">
+                                            <div style="display: flex; gap: 0.25rem;">
+                                                <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">✏️</button>
+                                                <button class="btn btn-warning" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">⏸️</button>
+                                                <button class="btn btn-success" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">▶️</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 1rem;">📈 Monthly Analytics Report</td>
+                                        <td style="padding: 1rem;">Monthly</td>
+                                        <td style="padding: 1rem;">Jan 1, 2025 08:00</td>
+                                        <td style="padding: 1rem;">dean@university.edu</td>
+                                        <td style="padding: 1rem;">
+                                            <div style="display: flex; gap: 0.25rem;">
+                                                <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">✏️</button>
+                                                <button class="btn btn-warning" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">⏸️</button>
+                                                <button class="btn btn-success" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">▶️</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Export History -->
+                    <div class="card" style="background: var(--white);">
+                        <h3 style="color: var(--gray-800); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>📁</span> Recent Exports
+                        </h3>
+
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--accent); border-radius: 6px;">
+                                <div>
+                                    <div style="font-weight: 600; color: var(--gray-800);">📊 Student Progress Report</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-600);">Generated: Today 14:30 • Size: 2.3 MB • Format: Excel</div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">📥 Download</button>
+                                    <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">📧 Email</button>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--secondary-light); border-radius: 6px;">
+                                <div>
+                                    <div style="font-weight: 600; color: var(--gray-800);">📈 Engagement Analytics</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-600);">Generated: Yesterday 16:45 • Size: 1.8 MB • Format: PDF</div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">📥 Download</button>
+                                    <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">📧 Email</button>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--bg-light); border-radius: 6px; border: 1px solid var(--accent);">
+                                <div>
+                                    <div style="font-weight: 600; color: var(--gray-800);">📋 Assessment Results</div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-600);">Generated: Dec 18, 2024 • Size: 3.1 MB • Format: CSV</div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">📥 Download</button>
+                                    <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">📧 Email</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
 
             <!-- Integrations Page -->
             <div id="page-integrations" class="page-content">
-                <!-- Integrations content will be loaded here -->
+                <section class="card">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; box-shadow: var(--shadow-sm);">
+                            🔗
+                        </div>
+                        <div>
+                            <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-900); margin: 0;">Platform Integrations</h2>
+                            <p style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">Connect with external tools and platforms to enhance your workflow</p>
+                        </div>
+                        <div style="margin-left: auto; display: flex; gap: 0.5rem;">
+                            <button class="btn" id="btn-browse-integrations" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                                🔍 Browse All
+                            </button>
+                            <button class="btn btn-success" id="btn-custom-integration" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                                ⚙️ Custom API
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Integration Status Overview -->
+                    <div class="grid" style="margin-bottom: 2rem;">
+                        <div class="metric-card" style="background: var(--success);">
+                            <div class="metric-value" style="color: white;">8</div>
+                            <div class="metric-label" style="color: rgba(255,255,255,0.9);">Active Integrations</div>
+                        </div>
+                        <div class="metric-card" style="background: var(--info);">
+                            <div class="metric-value" style="color: white;">24</div>
+                            <div class="metric-label" style="color: rgba(255,255,255,0.9);">Available Integrations</div>
+                        </div>
+                        <div class="metric-card" style="background: var(--warning);">
+                            <div class="metric-value" style="color: var(--gray-800);">2</div>
+                            <div class="metric-label" style="color: var(--gray-700);">Pending Setup</div>
+                        </div>
+                        <div class="metric-card" style="background: var(--primary);">
+                            <div class="metric-value" style="color: white;">99.8%</div>
+                            <div class="metric-label" style="color: rgba(255,255,255,0.9);">Uptime</div>
+                        </div>
+                    </div>
+
+                    <!-- Active Integrations -->
+                    <div class="card" style="background: var(--white); margin-bottom: 2rem;">
+                        <h3 style="color: var(--gray-800); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>✅</span> Active Integrations
+                        </h3>
+
+                        <div class="grid">
+                            <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--success);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                    <div style="display: flex; align-items: center; gap: 1rem;">
+                                        <div style="width: 40px; height: 40px; background: #4285f4; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">G</div>
+                                        <div>
+                                            <h4 style="color: var(--gray-800); margin: 0;">Google Classroom</h4>
+                                            <div style="font-size: 0.75rem; color: var(--gray-600);">Learning Management System</div>
+                                        </div>
+                                    </div>
+                                    <span style="background: var(--success); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Connected</span>
+                                </div>
+                                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                                    <div style="font-size: 0.875rem; color: var(--gray-700); margin-bottom: 0.5rem;">
+                                        <strong>Features:</strong> Assignment sync, Grade passback, Student roster sync
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-600);">
+                                        Last sync: 2 minutes ago • Status: Healthy
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">⚙️ Configure</button>
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">🔄 Sync Now</button>
+                                    <button class="btn btn-warning" style="padding: 0.5rem 1rem; font-size: 0.75rem;">⏸️ Pause</button>
+                                </div>
+                            </div>
+
+                            <div style="background: var(--secondary-light); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--success);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                    <div style="display: flex; align-items: center; gap: 1rem;">
+                                        <div style="width: 40px; height: 40px; background: #ff6900; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">Z</div>
+                                        <div>
+                                            <h4 style="color: var(--gray-800); margin: 0;">Zoom</h4>
+                                            <div style="font-size: 0.75rem; color: var(--gray-600);">Video Conferencing</div>
+                                        </div>
+                                    </div>
+                                    <span style="background: var(--success); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Connected</span>
+                                </div>
+                                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                                    <div style="font-size: 0.875rem; color: var(--gray-700); margin-bottom: 0.5rem;">
+                                        <strong>Features:</strong> Auto meeting creation, Attendance tracking, Recording integration
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-600);">
+                                        Last meeting: Today 14:00 • Participants: 42
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">⚙️ Configure</button>
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">📅 Schedule Meeting</button>
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">📊 View Analytics</button>
+                                </div>
+                            </div>
+
+                            <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent); border-left: 4px solid var(--success);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                    <div style="display: flex; align-items: center; gap: 1rem;">
+                                        <div style="width: 40px; height: 40px; background: #7289da; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">S</div>
+                                        <div>
+                                            <h4 style="color: var(--gray-800); margin: 0;">Slack</h4>
+                                            <div style="font-size: 0.75rem; color: var(--gray-600);">Team Communication</div>
+                                        </div>
+                                    </div>
+                                    <span style="background: var(--success); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Connected</span>
+                                </div>
+                                <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                                    <div style="font-size: 0.875rem; color: var(--gray-700); margin-bottom: 0.5rem;">
+                                        <strong>Features:</strong> Assignment notifications, Grade alerts, Student support channel
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: var(--gray-600);">
+                                        Channel: #data-science-class • Members: 47
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">⚙️ Configure</button>
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">💬 Open Channel</button>
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">📊 View Activity</button>
+                                </div>
+                            </div>
+
+                            <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent); border-left: 4px solid var(--warning);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                    <div style="display: flex; align-items: center; gap: 1rem;">
+                                        <div style="width: 40px; height: 40px; background: #f7931e; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">M</div>
+                                        <div>
+                                            <h4 style="color: var(--gray-800); margin: 0;">Moodle</h4>
+                                            <div style="font-size: 0.75rem; color: var(--gray-600);">Learning Management System</div>
+                                        </div>
+                                    </div>
+                                    <span style="background: var(--warning); color: var(--gray-800); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Sync Issues</span>
+                                </div>
+                                <div style="background: var(--accent); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                                    <div style="font-size: 0.875rem; color: var(--gray-700); margin-bottom: 0.5rem;">
+                                        <strong>Features:</strong> Course content sync, Grade book integration, User management
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: var(--warning);">
+                                        ⚠️ Last sync failed: API rate limit exceeded
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-warning" style="padding: 0.5rem 1rem; font-size: 0.75rem;">🔧 Fix Issues</button>
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">🔄 Retry Sync</button>
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">📞 Support</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Available Integrations -->
+                    <div class="card" style="background: var(--white);">
+                        <h3 style="color: var(--gray-800); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>🔍</span> Available Integrations
+                        </h3>
+
+                        <div class="grid">
+                            <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="width: 40px; height: 40px; background: #0078d4; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">T</div>
+                                    <div>
+                                        <h4 style="color: var(--gray-800); margin: 0;">Microsoft Teams</h4>
+                                        <div style="font-size: 0.75rem; color: var(--gray-600);">Collaboration Platform</div>
+                                    </div>
+                                </div>
+                                <p style="color: var(--gray-700); margin-bottom: 1rem; font-size: 0.875rem;">
+                                    Integrate with Microsoft Teams for seamless collaboration and communication
+                                </p>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 0.75rem; color: var(--gray-600);">⭐ Popular integration</span>
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">🔗 Connect</button>
+                                </div>
+                            </div>
+
+                            <div style="background: var(--secondary-light); padding: 1.5rem; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="width: 40px; height: 40px; background: #ff4785; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">N</div>
+                                    <div>
+                                        <h4 style="color: var(--gray-800); margin: 0;">Notion</h4>
+                                        <div style="font-size: 0.75rem; color: var(--gray-600);">Note-taking & Documentation</div>
+                                    </div>
+                                </div>
+                                <p style="color: var(--gray-700); margin-bottom: 1rem; font-size: 0.875rem;">
+                                    Sync course materials and student notes with Notion workspace
+                                </p>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 0.75rem; color: var(--gray-600);">🔥 Trending</span>
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">🔗 Connect</button>
+                                </div>
+                            </div>
+
+                            <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent); cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="width: 40px; height: 40px; background: #00d4aa; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">K</div>
+                                    <div>
+                                        <h4 style="color: var(--gray-800); margin: 0;">Kahoot!</h4>
+                                        <div style="font-size: 0.75rem; color: var(--gray-600);">Interactive Learning</div>
+                                    </div>
+                                </div>
+                                <p style="color: var(--gray-700); margin-bottom: 1rem; font-size: 0.875rem;">
+                                    Create engaging quizzes and interactive learning experiences
+                                </p>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 0.75rem; color: var(--gray-600);">🎮 Gamification</span>
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">🔗 Connect</button>
+                                </div>
+                            </div>
+
+                            <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--accent); cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                    <div style="width: 40px; height: 40px; background: #333; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">G</div>
+                                    <div>
+                                        <h4 style="color: var(--gray-800); margin: 0;">GitHub</h4>
+                                        <div style="font-size: 0.75rem; color: var(--gray-600);">Code Repository</div>
+                                    </div>
+                                </div>
+                                <p style="color: var(--gray-700); margin-bottom: 1rem; font-size: 0.875rem;">
+                                    Integrate with GitHub for coding assignments and project management
+                                </p>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 0.75rem; color: var(--gray-600);">💻 Developer Tools</span>
+                                    <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.75rem;">🔗 Connect</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
 
             <!-- Security & Authentication Page -->
