@@ -1,9 +1,112 @@
-// Educator Portal - JSCroot Implementation with Shared Components
-import { apiClient } from "https://mubaroqadb.github.io/agenticlearn-shared/js/api-client.js";
-import { UIComponents } from "https://mubaroqadb.github.io/agenticlearn-shared/js/ui-components.js";
-import { getCookie } from "https://cdn.jsdelivr.net/gh/jscroot/lib@0.0.4/cookie.js";
-import { setInner, onClick } from "https://cdn.jsdelivr.net/gh/jscroot/lib@0.0.4/element.js";
-import { redirect } from "https://cdn.jsdelivr.net/gh/jscroot/lib@0.0.4/url.js";
+// Educator Portal - Vanilla JavaScript Implementation (No External Dependencies)
+
+// ===== VANILLA JAVASCRIPT UTILITY FUNCTIONS =====
+
+// Cookie management functions
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+}
+
+function setCookie(name, value, days = 7) {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+}
+
+// DOM manipulation functions
+function setInner(elementId, content) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.innerHTML = content;
+        return true;
+    }
+    console.warn(`Element with ID '${elementId}' not found`);
+    return false;
+}
+
+function onClick(elementId, callback) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.addEventListener('click', callback);
+        return true;
+    }
+    console.warn(`Element with ID '${elementId}' not found for click handler`);
+    return false;
+}
+
+// URL redirect function
+function redirect(url) {
+    window.location.href = url;
+}
+
+// UI Components - Self-contained notification system
+const UIComponents = {
+    showNotification: function(message, type = 'info') {
+        // Remove existing notifications
+        const existingNotifications = document.querySelectorAll('.notification');
+        existingNotifications.forEach(notification => notification.remove());
+
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+
+        const colors = {
+            success: '#10B981',
+            error: '#EF4444',
+            warning: '#F59E0B',
+            info: '#3B82F6'
+        };
+
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: ${colors[type] || colors.info};
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 10000;
+            font-size: 0.875rem;
+            font-weight: 500;
+            max-width: 400px;
+            animation: slideIn 0.3s ease-out;
+        `;
+
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => notification.remove(), 300);
+            }
+        }, 5000);
+
+        // Add CSS animations if not already present
+        if (!document.getElementById('notification-styles')) {
+            const style = document.createElement('style');
+            style.id = 'notification-styles';
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    }
+};
+
+// ===== API CONFIGURATION =====
 
 // Enhanced API Configuration for Real Backend Integration
 const API_CONFIG = {
@@ -39,6 +142,8 @@ const API_CONFIG = {
     }
 };
 
+// ===== GLOBAL STATE MANAGEMENT =====
+
 // Get GitHub username for redirects
 const GITHUB_USERNAME = window.location.hostname.includes('github.io')
     ? window.location.hostname.split('.')[0]
@@ -52,6 +157,8 @@ let currentStudentData = [];
 let currentAnalyticsData = null;
 let authToken = null;
 let isBackendConnected = false;
+
+// ===== ENHANCED API CLIENT =====
 
 // Enhanced API Client with Real Backend Integration
 class EducatorAPIClient {
@@ -1087,6 +1194,233 @@ function renderDemoStudentTable() {
         }
     ];
     renderEnhancedStudentTable(demoStudents);
+}
+
+// ===== AI INSIGHTS LOADING =====
+
+async function loadAIInsightsWithFallback() {
+    try {
+        console.log("🔄 Loading AI insights...");
+        const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.AI_INSIGHTS);
+
+        if (response && response.data) {
+            currentAnalyticsData = response.data;
+
+            // Load all AI insights components
+            await loadLearningPatterns(currentAnalyticsData.learningPatterns);
+            await loadAtRiskStudents(currentAnalyticsData.atRiskStudents);
+            await loadContentEffectiveness(currentAnalyticsData.contentEffectiveness);
+
+            console.log("✅ Real AI insights loaded:", response.data);
+            return response.data;
+        } else {
+            throw new Error("Invalid AI insights data format");
+        }
+    } catch (error) {
+        console.error("❌ Failed to load real AI insights:", error);
+        return loadDemoAIInsights();
+    }
+}
+
+function loadDemoAIInsights() {
+    console.log("🔄 Loading demo AI insights...");
+
+    // Load demo learning patterns
+    loadLearningPatterns();
+
+    // Load demo at-risk students
+    loadAtRiskStudents();
+
+    // Load demo content effectiveness
+    loadContentEffectiveness();
+
+    console.log("✅ Demo AI insights loaded");
+    return true;
+}
+
+async function loadStudentPerformanceAlertsWithFallback() {
+    try {
+        console.log("🔄 Loading student performance alerts...");
+        const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.STUDENT_ALERTS);
+
+        if (response && (response.data || response.alerts)) {
+            const alerts = response.data || response.alerts || response;
+            renderStudentPerformanceAlerts(Array.isArray(alerts) ? alerts : [], true);
+            console.log("✅ Real student alerts loaded:", alerts);
+            return alerts;
+        } else {
+            throw new Error("Invalid student alerts data format");
+        }
+    } catch (error) {
+        console.error("❌ Failed to load real student alerts:", error);
+        return loadDemoStudentPerformanceAlerts();
+    }
+}
+
+function loadDemoStudentPerformanceAlerts() {
+    console.log("🔄 Loading demo student performance alerts...");
+    const demoAlerts = [
+        {
+            id: "alert-1",
+            type: "at-risk",
+            studentName: "Maya Rajin",
+            message: "No activity for 7 days, progress below 30%",
+            severity: "high",
+            timestamp: new Date(Date.now() - 86400000).toISOString()
+        },
+        {
+            id: "alert-2",
+            type: "low-engagement",
+            studentName: "Budi Santoso",
+            message: "Engagement score dropped to 45%",
+            severity: "medium",
+            timestamp: new Date(Date.now() - 3600000).toISOString()
+        },
+        {
+            id: "alert-3",
+            type: "achievement",
+            studentName: "Sari Dewi",
+            message: "Completed Module 3 with 95% score",
+            severity: "positive",
+            timestamp: new Date(Date.now() - 1800000).toISOString()
+        }
+    ];
+
+    renderStudentPerformanceAlerts(demoAlerts, false);
+    console.log("✅ Demo student alerts loaded");
+    return demoAlerts;
+}
+
+function renderStudentPerformanceAlerts(alerts, isRealData = false) {
+    const alertsHTML = alerts.map(alert => {
+        const severityColors = {
+            high: 'var(--error)',
+            medium: 'var(--warning)',
+            low: 'var(--info)',
+            positive: 'var(--success)'
+        };
+
+        const severityIcons = {
+            high: '🚨',
+            medium: '⚠️',
+            low: 'ℹ️',
+            positive: '🎉'
+        };
+
+        return `
+            <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; border-left: 3px solid ${severityColors[alert.severity]}; background: var(--bg-light); border-radius: 4px; margin-bottom: 0.5rem;">
+                <div style="font-size: 1.25rem;">${severityIcons[alert.severity]}</div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 600; color: var(--gray-800); font-size: 0.875rem;">${alert.studentName}</div>
+                    <div style="color: var(--gray-600); font-size: 0.75rem;">${alert.message}</div>
+                </div>
+                <div style="color: var(--gray-500); font-size: 0.75rem;">${getRelativeTime(alert.timestamp)}</div>
+            </div>
+        `;
+    }).join('');
+
+    const dataIndicator = isRealData
+        ? '<span style="color: var(--success); font-size: 0.75rem;">🟢 Live</span>'
+        : '<span style="color: var(--warning); font-size: 0.75rem;">🟡 Demo</span>';
+
+    setInner("student-performance-alerts", `
+        <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 1rem;">
+            <h4 style="margin: 0;">Performance Alerts</h4>
+            <div>${dataIndicator}</div>
+        </div>
+        ${alertsHTML}
+    `);
+}
+
+async function loadSystemHealthStatusWithFallback() {
+    try {
+        console.log("🔄 Loading system health status...");
+        const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.SYSTEM_HEALTH);
+
+        if (response && (response.data || response.health)) {
+            const health = response.data || response.health || response;
+            renderSystemHealthStatus(health, true);
+            console.log("✅ Real system health loaded:", health);
+            return health;
+        } else {
+            throw new Error("Invalid system health data format");
+        }
+    } catch (error) {
+        console.error("❌ Failed to load real system health:", error);
+        return loadDemoSystemHealthStatus();
+    }
+}
+
+function loadDemoSystemHealthStatus() {
+    console.log("🔄 Loading demo system health status...");
+    const demoHealth = {
+        overall: "healthy",
+        apiStatus: "operational",
+        databaseStatus: "operational",
+        serverLoad: 45,
+        uptime: "99.9%",
+        lastCheck: new Date().toISOString()
+    };
+
+    renderSystemHealthStatus(demoHealth, false);
+    console.log("✅ Demo system health loaded");
+    return demoHealth;
+}
+
+function renderSystemHealthStatus(health, isRealData = false) {
+    const statusColors = {
+        healthy: 'var(--success)',
+        warning: 'var(--warning)',
+        critical: 'var(--error)',
+        operational: 'var(--success)',
+        degraded: 'var(--warning)',
+        down: 'var(--error)'
+    };
+
+    const statusIcons = {
+        healthy: '✅',
+        warning: '⚠️',
+        critical: '🚨',
+        operational: '✅',
+        degraded: '⚠️',
+        down: '❌'
+    };
+
+    const dataIndicator = isRealData
+        ? '<span style="color: var(--success); font-size: 0.75rem;">🟢 Live</span>'
+        : '<span style="color: var(--warning); font-size: 0.75rem;">🟡 Demo</span>';
+
+    setInner("system-health-status", `
+        <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 1rem;">
+            <h4 style="margin: 0;">System Health</h4>
+            <div>${dataIndicator}</div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+            <div style="text-align: center; padding: 1rem; background: var(--bg-light); border-radius: 8px;">
+                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">${statusIcons[health.overall] || '✅'}</div>
+                <div style="font-weight: 600; color: ${statusColors[health.overall] || 'var(--success)'};">Overall</div>
+                <div style="font-size: 0.75rem; color: var(--gray-600); text-transform: capitalize;">${health.overall || 'Healthy'}</div>
+            </div>
+            <div style="text-align: center; padding: 1rem; background: var(--bg-light); border-radius: 8px;">
+                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">${statusIcons[health.apiStatus] || '✅'}</div>
+                <div style="font-weight: 600; color: ${statusColors[health.apiStatus] || 'var(--success)'};">API</div>
+                <div style="font-size: 0.75rem; color: var(--gray-600); text-transform: capitalize;">${health.apiStatus || 'Operational'}</div>
+            </div>
+            <div style="text-align: center; padding: 1rem; background: var(--bg-light); border-radius: 8px;">
+                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">${statusIcons[health.databaseStatus] || '✅'}</div>
+                <div style="font-weight: 600; color: ${statusColors[health.databaseStatus] || 'var(--success)'};">Database</div>
+                <div style="font-size: 0.75rem; color: var(--gray-600); text-transform: capitalize;">${health.databaseStatus || 'Operational'}</div>
+            </div>
+            <div style="text-align: center; padding: 1rem; background: var(--bg-light); border-radius: 8px;">
+                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📊</div>
+                <div style="font-weight: 600; color: var(--primary);">Load</div>
+                <div style="font-size: 0.75rem; color: var(--gray-600);">${health.serverLoad || 45}%</div>
+            </div>
+        </div>
+        <div style="margin-top: 1rem; text-align: center; font-size: 0.75rem; color: var(--gray-600);">
+            Uptime: ${health.uptime || '99.9%'} | Last check: ${getRelativeTime(health.lastCheck)}
+        </div>
+    `);
 }
 
 async function loadAIInsights() {
@@ -8899,7 +9233,68 @@ window.manageStoreListing = manageStoreListing;
 // Global functions
 window.viewStudentDetail = viewStudentDetail;
 
-// Initialize when DOM ready
-document.addEventListener('DOMContentLoaded', initializeEducatorPortal);
+// ===== ENHANCED INITIALIZATION =====
 
-console.log("🌱 AgenticLearn Educator Portal loaded with JSCroot");
+// Initialize the portal when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 DOM loaded, initializing Educator Portal...');
+
+    // Skip authentication for local testing
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        console.log('🔧 Local development mode - skipping authentication');
+        setCookie('login', 'demo-token', 1); // Set demo token for local testing
+    }
+
+    // Initialize the portal
+    initializeEducatorPortal().catch(error => {
+        console.error('❌ Failed to initialize portal:', error);
+        UIComponents.showNotification('Failed to initialize portal. Using demo mode.', 'error');
+
+        // Fallback initialization
+        try {
+            initializeSidebar();
+            loadDemoEducatorData();
+            loadDemoClassData();
+            loadDemoStudentData();
+            setupEventListeners();
+            updateCarbonIndicator();
+            UIComponents.showNotification('🌱 Portal loaded in demo mode', 'info');
+        } catch (fallbackError) {
+            console.error('❌ Fallback initialization failed:', fallbackError);
+            UIComponents.showNotification('Critical error: Portal failed to load', 'error');
+        }
+    });
+});
+
+// Also initialize if DOM is already loaded
+if (document.readyState !== 'loading') {
+    // DOM is already loaded
+    console.log('🚀 DOM already loaded, initializing Educator Portal...');
+
+    // Skip authentication for local testing
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        console.log('🔧 Local development mode - skipping authentication');
+        setCookie('login', 'demo-token', 1);
+    }
+
+    initializeEducatorPortal().catch(error => {
+        console.error('❌ Failed to initialize portal:', error);
+        UIComponents.showNotification('Failed to initialize portal. Using demo mode.', 'error');
+
+        // Fallback initialization
+        try {
+            initializeSidebar();
+            loadDemoEducatorData();
+            loadDemoClassData();
+            loadDemoStudentData();
+            setupEventListeners();
+            updateCarbonIndicator();
+            UIComponents.showNotification('🌱 Portal loaded in demo mode', 'info');
+        } catch (fallbackError) {
+            console.error('❌ Fallback initialization failed:', fallbackError);
+            UIComponents.showNotification('Critical error: Portal failed to load', 'error');
+        }
+    });
+}
+
+console.log("🌱 AgenticLearn Educator Portal - Vanilla JavaScript Version Loaded");
