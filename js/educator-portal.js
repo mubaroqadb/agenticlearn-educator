@@ -4240,20 +4240,21 @@ async function refreshAllDashboardData() {
     UIComponents.showNotification("🔄 Refreshing all dashboard data...", "info");
 
     try {
-        // Refresh all main data sources
+        // Refresh all main data sources with correct function names
         await Promise.all([
-            loadEducatorData(),
-            loadClassData(),
-            loadStudentList(),
-            loadAIInsights(),
-            loadStudentPerformanceAlerts(),
-            loadSystemHealthStatus()
+            loadEducatorDataWithFallback(),
+            loadClassDataWithFallback(),
+            loadStudentListWithFallback(),
+            loadAIInsightsWithFallback()
         ]);
 
-        updateCarbonIndicator();
+        // Update last refresh time
+        updateLastUpdateTime();
+
         UIComponents.showNotification("✅ All dashboard data refreshed successfully!", "success");
+        console.log("✅ Dashboard refresh completed successfully");
     } catch (error) {
-        console.error("Failed to refresh dashboard data:", error);
+        console.error("❌ Failed to refresh dashboard data:", error);
         UIComponents.showNotification("❌ Some data failed to refresh. Check connection.", "error");
     }
 }
@@ -4262,9 +4263,10 @@ async function refreshAllDashboardData() {
 async function refreshAIInsights() {
     UIComponents.showNotification("🤖 Refreshing AI insights...", "info");
     try {
-        await loadAIInsights();
+        await loadAIInsightsWithFallback();
         UIComponents.showNotification("✅ AI insights refreshed successfully!", "success");
     } catch (error) {
+        console.error("❌ Failed to refresh AI insights:", error);
         UIComponents.showNotification("❌ Failed to refresh AI insights", "error");
     }
 }
@@ -4273,10 +4275,11 @@ async function refreshAIInsights() {
 async function refreshActivityFeed() {
     UIComponents.showNotification("🔄 Refreshing activity feed...", "info");
     try {
-        await loadActivityTimeline();
+        await loadActivityTimelineWithFallback();
         updateLastUpdateTime();
         UIComponents.showNotification("✅ Activity feed refreshed!", "success");
     } catch (error) {
+        console.error("❌ Failed to refresh activity feed:", error);
         UIComponents.showNotification("❌ Failed to refresh activity feed", "error");
     }
 }
@@ -4286,7 +4289,18 @@ window.sendMessage = sendMessage;
 window.refreshAllDashboardData = refreshAllDashboardData;
 window.refreshAIInsights = refreshAIInsights;
 window.refreshActivityFeed = refreshActivityFeed;
-window.loadStudentPerformanceAlerts = loadStudentPerformanceAlerts;
+window.refreshData = refreshData;
+window.refreshAnalytics = refreshAnalytics;
+window.exportStudentProgress = exportStudentProgress;
+window.sendReminder = sendReminder;
+window.createAssignment = createAssignment;
+window.scheduleClass = scheduleClass;
+window.viewAnalytics = viewAnalytics;
+window.manageContent = manageContent;
+window.chatWithAI = chatWithAI;
+window.viewStudentDetail = viewStudentDetail;
+window.closeStudentProfile = closeStudentProfile;
+window.switchTab = switchTab;
 
 function exportStudentProgress() {
     const csvData = "Nama,Email,Progress,Status,Terakhir Aktif\n" +
@@ -4315,24 +4329,26 @@ function sendReminder() {
 }
 
 async function refreshData() {
-    UIComponents.showNotification("🔄 Merefresh data...", "info");
+    UIComponents.showNotification("🔄 Refreshing data...", "info");
     try {
-        await loadClassData();
-        await loadStudentList();
-        await loadAIInsights();
-        updateCarbonIndicator();
-        UIComponents.showNotification("✅ Data berhasil direfresh!", "success");
+        await loadClassDataWithFallback();
+        await loadStudentListWithFallback();
+        await loadAIInsightsWithFallback();
+        updateLastUpdateTime();
+        UIComponents.showNotification("✅ Data refreshed successfully!", "success");
     } catch (error) {
-        UIComponents.showNotification("❌ Gagal refresh data. Silakan coba lagi.", "error");
+        console.error("❌ Failed to refresh data:", error);
+        UIComponents.showNotification("❌ Failed to refresh data. Please try again.", "error");
     }
 }
 
 async function refreshAnalytics() {
     UIComponents.showNotification("🔄 Refreshing AI Analytics Dashboard...", "info");
     try {
-        await loadAIInsights();
+        await loadAIInsightsWithFallback();
         UIComponents.showNotification("✅ AI Analytics refreshed successfully!", "success");
     } catch (error) {
+        console.error("❌ Failed to refresh analytics:", error);
         UIComponents.showNotification("❌ Failed to refresh analytics. Using cached data.", "error");
     }
 }
