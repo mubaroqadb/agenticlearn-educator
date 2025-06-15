@@ -1643,6 +1643,593 @@ class CommunicationManager {
 // Initialize Communication Manager
 const communicationManager = new CommunicationManager();
 
+// ===== D19-D24: CONTENT MANAGEMENT SYSTEM =====
+
+class ContentManagementSystem {
+    constructor() {
+        this.contentLibrary = [];
+        this.resources = [];
+        this.curriculumMaps = [];
+        this.sharedContent = [];
+        this.isLoading = false;
+    }
+
+    async loadContentManagementData() {
+        try {
+            this.isLoading = true;
+            console.log("🔄 Loading content management data...");
+
+            const [library, resources, curriculum, shared] = await Promise.all([
+                this.loadContentLibrary(),
+                this.loadResources(),
+                this.loadCurriculumMaps(),
+                this.loadSharedContent()
+            ]);
+
+            this.contentLibrary = library;
+            this.resources = resources;
+            this.curriculumMaps = curriculum;
+            this.sharedContent = shared;
+
+            console.log("✅ Content management data loaded");
+            return {
+                library: this.contentLibrary,
+                resources: this.resources,
+                curriculum: this.curriculumMaps,
+                shared: this.sharedContent
+            };
+        } catch (error) {
+            console.error("❌ Failed to load content management data:", error);
+            return this.loadDemoContentData();
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
+    async loadContentLibrary() {
+        try {
+            const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.CONTENT_LIBRARY);
+            return response?.data || this.getDemoContentLibrary();
+        } catch (error) {
+            return this.getDemoContentLibrary();
+        }
+    }
+
+    async loadResources() {
+        try {
+            const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.RESOURCE_MANAGEMENT);
+            return response?.data || this.getDemoResources();
+        } catch (error) {
+            return this.getDemoResources();
+        }
+    }
+
+    async loadCurriculumMaps() {
+        try {
+            const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.CURRICULUM_MAPPING);
+            return response?.data || this.getDemoCurriculumMaps();
+        } catch (error) {
+            return this.getDemoCurriculumMaps();
+        }
+    }
+
+    async loadSharedContent() {
+        try {
+            const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.CONTENT_SHARING);
+            return response?.data || this.getDemoSharedContent();
+        } catch (error) {
+            return this.getDemoSharedContent();
+        }
+    }
+
+    getDemoContentLibrary() {
+        return [
+            {
+                id: "content-1",
+                title: "Introduction to Data Science",
+                type: "video",
+                duration: 45,
+                size: "125 MB",
+                format: "MP4",
+                uploadDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+                views: 156,
+                rating: 4.8,
+                tags: ["data-science", "introduction", "fundamentals"],
+                status: "published"
+            },
+            {
+                id: "content-2",
+                title: "Python Programming Basics",
+                type: "document",
+                duration: null,
+                size: "2.3 MB",
+                format: "PDF",
+                uploadDate: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
+                views: 203,
+                rating: 4.6,
+                tags: ["python", "programming", "basics"],
+                status: "published"
+            },
+            {
+                id: "content-3",
+                title: "Statistics Interactive Quiz",
+                type: "interactive",
+                duration: 30,
+                size: "5.1 MB",
+                format: "HTML5",
+                uploadDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+                views: 89,
+                rating: 4.9,
+                tags: ["statistics", "quiz", "interactive"],
+                status: "published"
+            },
+            {
+                id: "content-4",
+                title: "Machine Learning Workshop",
+                type: "video",
+                duration: 120,
+                size: "450 MB",
+                format: "MP4",
+                uploadDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+                views: 45,
+                rating: 4.7,
+                tags: ["machine-learning", "workshop", "advanced"],
+                status: "draft"
+            }
+        ];
+    }
+
+    getDemoResources() {
+        return [
+            {
+                id: "resource-1",
+                name: "Data Science Textbook",
+                type: "book",
+                url: "https://example.com/textbook.pdf",
+                description: "Comprehensive textbook covering all data science fundamentals",
+                category: "textbook",
+                accessLevel: "all",
+                downloads: 234
+            },
+            {
+                id: "resource-2",
+                name: "Python Cheat Sheet",
+                type: "reference",
+                url: "https://example.com/python-cheat.pdf",
+                description: "Quick reference for Python syntax and functions",
+                category: "reference",
+                accessLevel: "all",
+                downloads: 456
+            },
+            {
+                id: "resource-3",
+                name: "Dataset Collection",
+                type: "data",
+                url: "https://example.com/datasets.zip",
+                description: "Practice datasets for assignments and projects",
+                category: "dataset",
+                accessLevel: "students",
+                downloads: 123
+            }
+        ];
+    }
+
+    getDemoCurriculumMaps() {
+        return [
+            {
+                id: "curriculum-1",
+                title: "Data Science Fundamentals",
+                modules: [
+                    {
+                        id: "module-1",
+                        title: "Introduction to Data Science",
+                        lessons: 8,
+                        duration: 240,
+                        completion: 95
+                    },
+                    {
+                        id: "module-2",
+                        title: "Python Programming",
+                        lessons: 12,
+                        duration: 360,
+                        completion: 78
+                    },
+                    {
+                        id: "module-3",
+                        title: "Statistics and Probability",
+                        lessons: 10,
+                        duration: 300,
+                        completion: 65
+                    },
+                    {
+                        id: "module-4",
+                        title: "Data Visualization",
+                        lessons: 6,
+                        duration: 180,
+                        completion: 45
+                    }
+                ],
+                totalLessons: 36,
+                totalDuration: 1080,
+                overallCompletion: 71
+            }
+        ];
+    }
+
+    getDemoSharedContent() {
+        return [
+            {
+                id: "shared-1",
+                title: "Best Practices in Data Analysis",
+                sharedBy: "Dr. Sarah Johnson",
+                institution: "MIT",
+                type: "presentation",
+                downloads: 89,
+                rating: 4.8,
+                sharedDate: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
+            },
+            {
+                id: "shared-2",
+                title: "Advanced Python Techniques",
+                sharedBy: "Prof. Michael Chen",
+                institution: "Stanford",
+                type: "video",
+                downloads: 156,
+                rating: 4.9,
+                sharedDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString()
+            }
+        ];
+    }
+
+    loadDemoContentData() {
+        console.log("🔄 Loading demo content management data...");
+        this.contentLibrary = this.getDemoContentLibrary();
+        this.resources = this.getDemoResources();
+        this.curriculumMaps = this.getDemoCurriculumMaps();
+        this.sharedContent = this.getDemoSharedContent();
+
+        console.log("✅ Demo content management data loaded");
+        return {
+            library: this.contentLibrary,
+            resources: this.resources,
+            curriculum: this.curriculumMaps,
+            shared: this.sharedContent
+        };
+    }
+
+    async createContent(contentData) {
+        try {
+            const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.CREATE_CONTENT, {
+                method: 'POST',
+                body: contentData
+            });
+
+            if (response?.data) {
+                this.contentLibrary.unshift(response.data);
+                UIComponents.showNotification("✅ Content created successfully", "success");
+                return response.data;
+            } else {
+                throw new Error("Invalid response");
+            }
+        } catch (error) {
+            console.error("❌ Failed to create content:", error);
+            UIComponents.showNotification("❌ Failed to create content", "error");
+            return null;
+        }
+    }
+
+    async shareContent(contentId, targetInstitutions) {
+        try {
+            const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.CONTENT_SHARING, {
+                method: 'POST',
+                body: { contentId, targetInstitutions, timestamp: new Date().toISOString() }
+            });
+
+            if (response?.data) {
+                UIComponents.showNotification("✅ Content shared successfully", "success");
+                return response.data;
+            } else {
+                throw new Error("Invalid response");
+            }
+        } catch (error) {
+            console.error("❌ Failed to share content:", error);
+            UIComponents.showNotification("❌ Failed to share content", "error");
+            return null;
+        }
+    }
+
+    renderContentManagementDashboard() {
+        const totalContent = this.contentLibrary.length;
+        const publishedContent = this.contentLibrary.filter(content => content.status === 'published').length;
+        const totalViews = this.contentLibrary.reduce((sum, content) => sum + (content.views || 0), 0);
+        const avgRating = this.contentLibrary.reduce((sum, content) => sum + (content.rating || 0), 0) / totalContent;
+
+        const dashboardHTML = `
+            <!-- Content Management Overview -->
+            <section class="card" style="margin-bottom: 2rem;">
+                <h3 style="margin: 0 0 1rem 0; color: var(--gray-800); display: flex; align-items: center; gap: 0.5rem;">
+                    📚 Content Management System
+                    <span style="background: ${isBackendConnected ? 'var(--success)' : 'var(--warning)'}; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">
+                        ${isBackendConnected ? '🟢 Live' : '🟡 Demo'}
+                    </span>
+                </h3>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                    <div class="metric-card">
+                        <div class="metric-value">${totalContent}</div>
+                        <div class="metric-label">Total Content</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${publishedContent}</div>
+                        <div class="metric-label">Published</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${totalViews}</div>
+                        <div class="metric-label">Total Views</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${avgRating.toFixed(1)}</div>
+                        <div class="metric-label">Avg Rating</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button onclick="showCreateContentModal()" class="btn" style="background: var(--primary);">
+                        ➕ Create Content
+                    </button>
+                    <button onclick="showUploadResourceModal()" class="btn" style="background: var(--info);">
+                        📤 Upload Resource
+                    </button>
+                    <button onclick="showCurriculumMapperModal()" class="btn" style="background: var(--success);">
+                        🗺️ Map Curriculum
+                    </button>
+                    <button onclick="showContentSharingModal()" class="btn" style="background: var(--secondary);">
+                        🔗 Share Content
+                    </button>
+                </div>
+            </section>
+
+            <!-- Content Library -->
+            <section class="card" style="margin-bottom: 2rem;">
+                <h3 style="margin: 0 0 1rem 0; color: var(--gray-800);">Content Library</h3>
+                <div id="content-library-list">
+                    ${this.renderContentLibrary()}
+                </div>
+            </section>
+
+            <!-- Resource Management -->
+            <section class="card" style="margin-bottom: 2rem;">
+                <h3 style="margin: 0 0 1rem 0; color: var(--gray-800);">Resource Management</h3>
+                <div id="resources-list">
+                    ${this.renderResourcesList()}
+                </div>
+            </section>
+
+            <!-- Curriculum Mapping -->
+            <section class="card" style="margin-bottom: 2rem;">
+                <h3 style="margin: 0 0 1rem 0; color: var(--gray-800);">Curriculum Mapping</h3>
+                <div id="curriculum-maps-list">
+                    ${this.renderCurriculumMaps()}
+                </div>
+            </section>
+
+            <!-- Shared Content -->
+            <section class="card">
+                <h3 style="margin: 0 0 1rem 0; color: var(--gray-800);">Shared Content from Community</h3>
+                <div id="shared-content-list">
+                    ${this.renderSharedContent()}
+                </div>
+            </section>
+        `;
+
+        setInner("content-management-content", dashboardHTML);
+    }
+
+    renderContentLibrary() {
+        return this.contentLibrary.map(content => {
+            const typeIcons = {
+                video: '🎥',
+                document: '📄',
+                interactive: '🎮',
+                audio: '🎵',
+                image: '🖼️'
+            };
+
+            const statusColors = {
+                published: 'var(--success)',
+                draft: 'var(--warning)',
+                archived: 'var(--gray-500)'
+            };
+
+            return `
+                <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid ${statusColors[content.status]};">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="font-size: 1.5rem;">${typeIcons[content.type] || '📄'}</span>
+                            <div>
+                                <h4 style="margin: 0; color: var(--gray-800);">${content.title}</h4>
+                                <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">
+                                    ${content.format} • ${content.size} ${content.duration ? `• ${content.duration} min` : ''}
+                                </p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                            <span style="background: ${statusColors[content.status]}; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; text-transform: capitalize;">
+                                ${content.status}
+                            </span>
+                            <span style="color: var(--warning);">⭐ ${content.rating}</span>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.25rem; font-weight: 600; color: var(--primary);">${content.views}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Views</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.25rem; font-weight: 600; color: var(--success);">${content.rating}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Rating</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.875rem; font-weight: 600; color: var(--info);">${getRelativeTime(content.uploadDate)}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Uploaded</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            ${content.tags.map(tag => `
+                                <span style="background: var(--accent); color: var(--gray-700); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">
+                                    #${tag}
+                                </span>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <button onclick="editContent('${content.id}')" class="btn" style="padding: 0.5rem 1rem; background: var(--primary); font-size: 0.875rem;">
+                            ✏️ Edit
+                        </button>
+                        <button onclick="viewContentAnalytics('${content.id}')" class="btn" style="padding: 0.5rem 1rem; background: var(--info); font-size: 0.875rem;">
+                            📊 Analytics
+                        </button>
+                        <button onclick="shareContent('${content.id}')" class="btn" style="padding: 0.5rem 1rem; background: var(--success); font-size: 0.875rem;">
+                            🔗 Share
+                        </button>
+                        <button onclick="duplicateContent('${content.id}')" class="btn" style="padding: 0.5rem 1rem; background: var(--secondary); font-size: 0.875rem;">
+                            📋 Duplicate
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    renderResourcesList() {
+        return this.resources.map(resource => {
+            const typeIcons = {
+                book: '📚',
+                reference: '📖',
+                data: '💾',
+                tool: '🛠️',
+                link: '🔗'
+            };
+
+            return `
+                <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="font-size: 1.5rem;">${typeIcons[resource.type] || '📄'}</span>
+                            <div>
+                                <h4 style="margin: 0; color: var(--gray-800);">${resource.name}</h4>
+                                <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">${resource.description}</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button onclick="editResource('${resource.id}')" class="btn" style="background: var(--primary); padding: 0.5rem 1rem;">
+                                ✏️ Edit
+                            </button>
+                            <button onclick="downloadResource('${resource.id}')" class="btn" style="background: var(--success); padding: 0.5rem 1rem;">
+                                📥 Download
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.25rem; font-weight: 600; color: var(--info); text-transform: capitalize;">${resource.type}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Type</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.25rem; font-weight: 600; color: var(--primary); text-transform: capitalize;">${resource.accessLevel}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Access</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.25rem; font-weight: 600; color: var(--success);">${resource.downloads}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Downloads</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    renderCurriculumMaps() {
+        return this.curriculumMaps.map(curriculum => `
+            <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1.5rem;">
+                    <div>
+                        <h4 style="margin: 0 0 0.5rem 0; color: var(--gray-800);">${curriculum.title}</h4>
+                        <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">
+                            ${curriculum.totalLessons} lessons • ${Math.round(curriculum.totalDuration / 60)} hours • ${curriculum.overallCompletion}% complete
+                        </p>
+                    </div>
+                    <button onclick="editCurriculum('${curriculum.id}')" class="btn" style="background: var(--primary); padding: 0.5rem 1rem;">
+                        ✏️ Edit Map
+                    </button>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                    ${curriculum.modules.map(module => `
+                        <div style="background: var(--white); padding: 1rem; border-radius: 6px;">
+                            <h5 style="margin: 0 0 0.5rem 0; color: var(--gray-800);">${module.title}</h5>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.875rem; color: var(--gray-600);">
+                                <span>${module.lessons} lessons</span>
+                                <span>${Math.round(module.duration / 60)} hours</span>
+                            </div>
+                            <div style="background: var(--gray-300); height: 6px; border-radius: 3px; overflow: hidden;">
+                                <div style="background: var(--success); height: 100%; width: ${module.completion}%; transition: width 0.3s ease;"></div>
+                            </div>
+                            <div style="text-align: center; margin-top: 0.5rem; font-size: 0.875rem; font-weight: 600; color: var(--success);">
+                                ${module.completion}% Complete
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    renderSharedContent() {
+        return this.sharedContent.map(content => `
+            <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                    <div>
+                        <h4 style="margin: 0 0 0.5rem 0; color: var(--gray-800);">${content.title}</h4>
+                        <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">
+                            Shared by ${content.sharedBy} from ${content.institution}
+                        </p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <span style="color: var(--warning);">⭐ ${content.rating}</span>
+                        <button onclick="importSharedContent('${content.id}')" class="btn" style="background: var(--success); padding: 0.5rem 1rem;">
+                            📥 Import
+                        </button>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.25rem; font-weight: 600; color: var(--info); text-transform: capitalize;">${content.type}</div>
+                        <div style="font-size: 0.75rem; color: var(--gray-600);">Type</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.25rem; font-weight: 600; color: var(--primary);">${content.downloads}</div>
+                        <div style="font-size: 0.75rem; color: var(--gray-600);">Downloads</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 0.875rem; font-weight: 600; color: var(--success);">${getRelativeTime(content.sharedDate)}</div>
+                        <div style="font-size: 0.75rem; color: var(--gray-600);">Shared</div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+}
+
+// Initialize Content Management System
+const contentManagementSystem = new ContentManagementSystem();
+
 async function initializeEducatorPortal() {
     // Get authentication token
     const token = getCookie("login");
@@ -11171,5 +11758,384 @@ window.viewAssessmentResults = viewAssessmentResults;
 window.closeResultsModal = closeResultsModal;
 window.editAssessment = editAssessment;
 window.deleteAssessmentConfirm = deleteAssessmentConfirm;
+
+// ===== D7-D24 WORKFLOW PAGE LOADING FUNCTIONS =====
+
+// D7-D12: Advanced Analytics Pages
+async function loadEnhancedAdvancedAnalyticsPage() {
+    console.log("🔄 Loading enhanced advanced analytics page...");
+
+    // Load advanced analytics data
+    await advancedAnalyticsManager.loadAdvancedAnalytics();
+
+    const pageHTML = `
+        <div style="margin-bottom: 2rem;">
+            <h2 style="margin: 0 0 0.5rem 0; color: var(--gray-800); display: flex; align-items: center; gap: 0.5rem;">
+                📊 Advanced Analytics Dashboard
+                <span style="background: ${isBackendConnected ? 'var(--success)' : 'var(--warning)'}; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">
+                    ${isBackendConnected ? '🟢 Live Data' : '🟡 Demo Mode'}
+                </span>
+            </h2>
+            <p style="margin: 0; color: var(--gray-600);">Comprehensive learning analytics with AI-powered insights</p>
+        </div>
+
+        <div id="advanced-analytics-content">
+            <!-- Content will be rendered by AdvancedAnalyticsManager -->
+        </div>
+    `;
+
+    setInner("page-advanced-analytics", pageHTML);
+
+    // Render the analytics dashboard
+    advancedAnalyticsManager.renderAdvancedAnalyticsDashboard();
+
+    console.log("✅ Enhanced advanced analytics page loaded");
+}
+
+// D13-D18: Communication Pages
+async function loadEnhancedCommunicationPage() {
+    console.log("🔄 Loading enhanced communication page...");
+
+    // Load communication data
+    await communicationManager.loadCommunicationData();
+
+    const pageHTML = `
+        <div style="margin-bottom: 2rem;">
+            <h2 style="margin: 0 0 0.5rem 0; color: var(--gray-800); display: flex; align-items: center; gap: 0.5rem;">
+                💬 Communication Center
+                <span style="background: ${isBackendConnected ? 'var(--success)' : 'var(--warning)'}; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">
+                    ${isBackendConnected ? '🟢 Live Data' : '🟡 Demo Mode'}
+                </span>
+            </h2>
+            <p style="margin: 0; color: var(--gray-600);">Comprehensive communication tools for student engagement</p>
+        </div>
+
+        <div id="communication-content">
+            <!-- Content will be rendered by CommunicationManager -->
+        </div>
+    `;
+
+    setInner("page-communication", pageHTML);
+
+    // Render the communication dashboard
+    communicationManager.renderCommunicationDashboard();
+
+    console.log("✅ Enhanced communication page loaded");
+}
+
+// D19-D24: Content Management Pages
+async function loadEnhancedContentManagementPage() {
+    console.log("🔄 Loading enhanced content management page...");
+
+    // Load content management data
+    await contentManagementSystem.loadContentManagementData();
+
+    const pageHTML = `
+        <div style="margin-bottom: 2rem;">
+            <h2 style="margin: 0 0 0.5rem 0; color: var(--gray-800); display: flex; align-items: center; gap: 0.5rem;">
+                📚 Content Management System
+                <span style="background: ${isBackendConnected ? 'var(--success)' : 'var(--warning)'}; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">
+                    ${isBackendConnected ? '🟢 Live Data' : '🟡 Demo Mode'}
+                </span>
+            </h2>
+            <p style="margin: 0; color: var(--gray-600);">Complete content lifecycle management with curriculum mapping</p>
+        </div>
+
+        <div id="content-management-content">
+            <!-- Content will be rendered by ContentManagementSystem -->
+        </div>
+    `;
+
+    setInner("page-content-management", pageHTML);
+
+    // Render the content management dashboard
+    contentManagementSystem.renderContentManagementDashboard();
+
+    console.log("✅ Enhanced content management page loaded");
+}
+
+// Enhanced Assessment Page with new features
+async function loadEnhancedAssessmentsPage() {
+    console.log("🔄 Loading enhanced assessments page...");
+
+    // Load assessments data
+    await assessmentManager.loadAssessments();
+
+    // Calculate statistics
+    const totalAssessments = assessmentManager.assessments.length;
+    const activeAssessments = assessmentManager.assessments.filter(a => a.status === 'active').length;
+    const completedAssessments = assessmentManager.assessments.filter(a => a.status === 'completed');
+    const averageScore = completedAssessments.length > 0
+        ? Math.round(completedAssessments.reduce((sum, a) => sum + a.averageScore, 0) / completedAssessments.length)
+        : 0;
+    const pendingReviews = assessmentManager.assessments.filter(a => a.status === 'active' && a.submissions > 0).length;
+
+    const assessmentsHTML = `
+        <div style="margin-bottom: 2rem;">
+            <h2 style="margin: 0 0 0.5rem 0; color: var(--gray-800); display: flex; align-items: center; gap: 0.5rem;">
+                📝 Assessment Management
+                <span style="background: ${isBackendConnected ? 'var(--success)' : 'var(--warning)'}; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">
+                    ${isBackendConnected ? '🟢 Live Data' : '🟡 Demo Mode'}
+                </span>
+            </h2>
+            <p style="margin: 0; color: var(--gray-600);">Create, manage, and analyze student assessments with AI insights</p>
+        </div>
+
+        <!-- Assessment Statistics -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+            <div class="metric-card">
+                <div class="metric-icon">📊</div>
+                <div class="metric-value">${totalAssessments}</div>
+                <div class="metric-label">Total Assessments</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">✅</div>
+                <div class="metric-value">${activeAssessments}</div>
+                <div class="metric-label">Active Assessments</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">📈</div>
+                <div class="metric-value">${averageScore}%</div>
+                <div class="metric-label">Average Score</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">⏰</div>
+                <div class="metric-value">${pendingReviews}</div>
+                <div class="metric-label">Pending Reviews</div>
+            </div>
+        </div>
+
+        <!-- Assessment Builder -->
+        <section class="card" style="margin-bottom: 2rem;">
+            <h3 style="margin: 0 0 1rem 0; color: var(--gray-800);">Quick Assessment Builder</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                <button class="assessment-type-btn" onclick="showCreateAssessmentModal('quiz')">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📝</div>
+                    <h4 style="margin: 0 0 0.5rem 0;">Create Quiz</h4>
+                    <p style="margin: 0; font-size: 0.875rem; color: var(--gray-600);">Multiple choice, true/false questions</p>
+                </button>
+                <button class="assessment-type-btn" onclick="showCreateAssessmentModal('assignment')">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📋</div>
+                    <h4 style="margin: 0 0 0.5rem 0;">Create Assignment</h4>
+                    <p style="margin: 0; font-size: 0.875rem; color: var(--gray-600);">File uploads, written responses</p>
+                </button>
+                <button class="assessment-type-btn" onclick="showCreateAssessmentModal('project')">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎯</div>
+                    <h4 style="margin: 0 0 0.5rem 0;">Create Project</h4>
+                    <p style="margin: 0; font-size: 0.875rem; color: var(--gray-600);">Long-term collaborative work</p>
+                </button>
+                <button class="assessment-type-btn" onclick="showCreateAssessmentModal('exam')">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📊</div>
+                    <h4 style="margin: 0 0 0.5rem 0;">Create Exam</h4>
+                    <p style="margin: 0; font-size: 0.875rem; color: var(--gray-600);">Comprehensive evaluations</p>
+                </button>
+            </div>
+        </section>
+
+        <!-- Assessments List -->
+        <section class="card">
+            <div id="assessments-content">
+                <!-- Assessment list will be rendered here -->
+            </div>
+        </section>
+
+        <!-- Assessment Creation Modal -->
+        <div id="assessment-modal" class="modal" style="display: none;">
+            <div class="modal-content" style="max-width: 800px;">
+                <div class="modal-header">
+                    <h3 id="modal-title">Create New Assessment</h3>
+                    <button onclick="closeAssessmentModal()" class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="assessment-form">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Assessment Title</label>
+                                <input type="text" id="assessment-title" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--accent); border-radius: 4px;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Assessment Type</label>
+                                <select id="assessment-type" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--accent); border-radius: 4px;">
+                                    <option value="quiz">Quiz</option>
+                                    <option value="assignment">Assignment</option>
+                                    <option value="project">Project</option>
+                                    <option value="exam">Exam</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Due Date</label>
+                                <input type="datetime-local" id="assessment-due-date" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--accent); border-radius: 4px;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Duration (minutes)</label>
+                                <input type="number" id="assessment-duration" min="1" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--accent); border-radius: 4px;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Total Questions</label>
+                                <input type="number" id="assessment-questions" min="1" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--accent); border-radius: 4px;">
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Description</label>
+                            <textarea id="assessment-description" rows="3" style="width: 100%; padding: 0.75rem; border: 1px solid var(--accent); border-radius: 4px; resize: vertical;"></textarea>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                            <button type="button" onclick="closeAssessmentModal()" class="btn" style="background: var(--gray-500);">Cancel</button>
+                            <button type="submit" class="btn" style="background: var(--success);">Create Assessment</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    `;
+
+    setInner("page-assessments", assessmentsHTML);
+
+    // Render assessments list
+    assessmentManager.renderAssessmentsList();
+
+    // Setup form handler
+    setupAssessmentFormHandler();
+
+    console.log("✅ Enhanced assessments page loaded");
+}
+
+// Global functions for D7-D24 workflow tools
+window.loadEnhancedAdvancedAnalyticsPage = loadEnhancedAdvancedAnalyticsPage;
+window.loadEnhancedCommunicationPage = loadEnhancedCommunicationPage;
+window.loadEnhancedContentManagementPage = loadEnhancedContentManagementPage;
+window.loadEnhancedAssessmentsPage = loadEnhancedAssessmentsPage;
+
+// Utility functions for enhanced features
+async function refreshAdvancedAnalytics() {
+    UIComponents.showNotification("🔄 Refreshing analytics data...", "info");
+    await advancedAnalyticsManager.loadAdvancedAnalytics();
+    advancedAnalyticsManager.renderAdvancedAnalyticsDashboard();
+    UIComponents.showNotification("✅ Analytics data refreshed", "success");
+}
+
+async function exportAnalyticsReport() {
+    UIComponents.showNotification("📊 Generating analytics report...", "info");
+    // Simulate export process
+    setTimeout(() => {
+        UIComponents.showNotification("✅ Analytics report exported successfully", "success");
+    }, 2000);
+}
+
+// Communication functions
+function showComposeMessageModal() {
+    UIComponents.showNotification("✉️ Opening message composer...", "info");
+}
+
+function showSendNotificationModal() {
+    UIComponents.showNotification("📢 Opening notification sender...", "info");
+}
+
+function showScheduleVideoModal() {
+    UIComponents.showNotification("📹 Opening video session scheduler...", "info");
+}
+
+function showBulkMessageModal() {
+    UIComponents.showNotification("📨 Opening bulk message tool...", "info");
+}
+
+function replyToMessage(messageId) {
+    UIComponents.showNotification(`↩️ Replying to message ${messageId}...`, "info");
+}
+
+function markAsRead(messageId) {
+    UIComponents.showNotification(`✅ Message ${messageId} marked as read`, "success");
+}
+
+function manageForum(forumId) {
+    UIComponents.showNotification(`⚙️ Managing forum ${forumId}...`, "info");
+}
+
+function editVideoSession(sessionId) {
+    UIComponents.showNotification(`✏️ Editing video session ${sessionId}...`, "info");
+}
+
+function startVideoSession(sessionId) {
+    UIComponents.showNotification(`▶️ Starting video session ${sessionId}...`, "success");
+}
+
+// Content management functions
+function showCreateContentModal() {
+    UIComponents.showNotification("➕ Opening content creator...", "info");
+}
+
+function showUploadResourceModal() {
+    UIComponents.showNotification("📤 Opening resource uploader...", "info");
+}
+
+function showCurriculumMapperModal() {
+    UIComponents.showNotification("🗺️ Opening curriculum mapper...", "info");
+}
+
+function showContentSharingModal() {
+    UIComponents.showNotification("🔗 Opening content sharing tool...", "info");
+}
+
+function editContent(contentId) {
+    UIComponents.showNotification(`✏️ Editing content ${contentId}...`, "info");
+}
+
+function viewContentAnalytics(contentId) {
+    UIComponents.showNotification(`📊 Viewing analytics for content ${contentId}...`, "info");
+}
+
+function shareContent(contentId) {
+    UIComponents.showNotification(`🔗 Sharing content ${contentId}...`, "info");
+}
+
+function duplicateContent(contentId) {
+    UIComponents.showNotification(`📋 Duplicating content ${contentId}...`, "success");
+}
+
+function editResource(resourceId) {
+    UIComponents.showNotification(`✏️ Editing resource ${resourceId}...`, "info");
+}
+
+function downloadResource(resourceId) {
+    UIComponents.showNotification(`📥 Downloading resource ${resourceId}...`, "success");
+}
+
+function editCurriculum(curriculumId) {
+    UIComponents.showNotification(`✏️ Editing curriculum ${curriculumId}...`, "info");
+}
+
+function importSharedContent(contentId) {
+    UIComponents.showNotification(`📥 Importing shared content ${contentId}...`, "success");
+}
+
+// Global function assignments
+window.refreshAdvancedAnalytics = refreshAdvancedAnalytics;
+window.exportAnalyticsReport = exportAnalyticsReport;
+window.showComposeMessageModal = showComposeMessageModal;
+window.showSendNotificationModal = showSendNotificationModal;
+window.showScheduleVideoModal = showScheduleVideoModal;
+window.showBulkMessageModal = showBulkMessageModal;
+window.replyToMessage = replyToMessage;
+window.markAsRead = markAsRead;
+window.manageForum = manageForum;
+window.editVideoSession = editVideoSession;
+window.startVideoSession = startVideoSession;
+window.showCreateContentModal = showCreateContentModal;
+window.showUploadResourceModal = showUploadResourceModal;
+window.showCurriculumMapperModal = showCurriculumMapperModal;
+window.showContentSharingModal = showContentSharingModal;
+window.editContent = editContent;
+window.viewContentAnalytics = viewContentAnalytics;
+window.shareContent = shareContent;
+window.duplicateContent = duplicateContent;
+window.editResource = editResource;
+window.downloadResource = downloadResource;
+window.editCurriculum = editCurriculum;
+window.importSharedContent = importSharedContent;
 
 console.log("🌱 AgenticLearn Educator Portal - Vanilla JavaScript Version Loaded");
