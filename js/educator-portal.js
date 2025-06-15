@@ -155,7 +155,31 @@ const API_CONFIG = {
         DELETE_ASSESSMENT: "/educator/assessments/{id}",
         ASSESSMENT_RESULTS: "/educator/assessments/{id}/results",
         GRADE_SUBMISSION: "/educator/assessments/{id}/grade",
-        ASSESSMENT_ANALYTICS: "/educator/assessments/{id}/analytics"
+        ASSESSMENT_ANALYTICS: "/educator/assessments/{id}/analytics",
+
+        // D7-D12: Advanced Analytics
+        ADVANCED_ANALYTICS: "/educator/analytics/advanced",
+        LEARNING_ANALYTICS: "/educator/analytics/learning",
+        ENGAGEMENT_ANALYTICS: "/educator/analytics/engagement",
+        PERFORMANCE_TRENDS: "/educator/analytics/performance-trends",
+        COMPARATIVE_ANALYTICS: "/educator/analytics/comparative",
+        PREDICTIVE_MODELS: "/educator/analytics/predictive",
+
+        // D13-D18: Communication Tools
+        STUDENT_MESSAGES: "/educator/communication/messages",
+        SEND_NOTIFICATION: "/educator/communication/notifications",
+        DISCUSSION_FORUMS: "/educator/communication/forums",
+        VIDEO_CONFERENCES: "/educator/communication/video",
+        PARENT_COMMUNICATION: "/educator/communication/parents",
+        BULK_MESSAGING: "/educator/communication/bulk",
+
+        // D19-D24: Content Management
+        CONTENT_LIBRARY: "/educator/content/library",
+        CREATE_CONTENT: "/educator/content/create",
+        CONTENT_ANALYTICS: "/educator/content/analytics",
+        RESOURCE_MANAGEMENT: "/educator/content/resources",
+        CURRICULUM_MAPPING: "/educator/content/curriculum",
+        CONTENT_SHARING: "/educator/content/sharing"
     }
 };
 
@@ -683,6 +707,941 @@ class AssessmentManager {
 
 // Initialize Assessment Manager
 const assessmentManager = new AssessmentManager();
+
+// ===== D7-D12: ADVANCED ANALYTICS MANAGER =====
+
+class AdvancedAnalyticsManager {
+    constructor() {
+        this.analyticsData = {};
+        this.chartInstances = {};
+        this.isLoading = false;
+    }
+
+    async loadAdvancedAnalytics() {
+        try {
+            this.isLoading = true;
+            console.log("🔄 Loading advanced analytics...");
+
+            const [
+                learningAnalytics,
+                engagementAnalytics,
+                performanceTrends,
+                comparativeAnalytics,
+                predictiveModels
+            ] = await Promise.all([
+                this.loadLearningAnalytics(),
+                this.loadEngagementAnalytics(),
+                this.loadPerformanceTrends(),
+                this.loadComparativeAnalytics(),
+                this.loadPredictiveModels()
+            ]);
+
+            this.analyticsData = {
+                learning: learningAnalytics,
+                engagement: engagementAnalytics,
+                performance: performanceTrends,
+                comparative: comparativeAnalytics,
+                predictive: predictiveModels
+            };
+
+            console.log("✅ Advanced analytics loaded:", this.analyticsData);
+            return this.analyticsData;
+        } catch (error) {
+            console.error("❌ Failed to load advanced analytics:", error);
+            return this.loadDemoAnalytics();
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
+    async loadLearningAnalytics() {
+        try {
+            const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.LEARNING_ANALYTICS);
+            return response?.data || this.getDemoLearningAnalytics();
+        } catch (error) {
+            return this.getDemoLearningAnalytics();
+        }
+    }
+
+    async loadEngagementAnalytics() {
+        try {
+            const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.ENGAGEMENT_ANALYTICS);
+            return response?.data || this.getDemoEngagementAnalytics();
+        } catch (error) {
+            return this.getDemoEngagementAnalytics();
+        }
+    }
+
+    async loadPerformanceTrends() {
+        try {
+            const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.PERFORMANCE_TRENDS);
+            return response?.data || this.getDemoPerformanceTrends();
+        } catch (error) {
+            return this.getDemoPerformanceTrends();
+        }
+    }
+
+    async loadComparativeAnalytics() {
+        try {
+            const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.COMPARATIVE_ANALYTICS);
+            return response?.data || this.getDemoComparativeAnalytics();
+        } catch (error) {
+            return this.getDemoComparativeAnalytics();
+        }
+    }
+
+    async loadPredictiveModels() {
+        try {
+            const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.PREDICTIVE_MODELS);
+            return response?.data || this.getDemoPredictiveModels();
+        } catch (error) {
+            return this.getDemoPredictiveModels();
+        }
+    }
+
+    getDemoLearningAnalytics() {
+        return {
+            totalLearningTime: 2847,
+            averageSessionDuration: 42,
+            completionRate: 78,
+            retentionRate: 85,
+            learningVelocity: 1.2,
+            conceptMastery: {
+                "Data Science Fundamentals": 92,
+                "Python Programming": 78,
+                "Statistics": 85,
+                "Machine Learning": 65,
+                "Data Visualization": 88
+            },
+            learningPaths: [
+                { path: "Beginner Track", students: 18, completion: 85 },
+                { path: "Intermediate Track", students: 15, completion: 72 },
+                { path: "Advanced Track", students: 12, completion: 58 }
+            ]
+        };
+    }
+
+    getDemoEngagementAnalytics() {
+        return {
+            overallEngagement: 82,
+            dailyActiveUsers: 38,
+            weeklyActiveUsers: 42,
+            monthlyActiveUsers: 45,
+            sessionFrequency: 4.2,
+            contentInteraction: {
+                videos: 85,
+                quizzes: 78,
+                assignments: 72,
+                discussions: 65,
+                resources: 88
+            },
+            peakHours: [
+                { hour: "09:00", engagement: 65 },
+                { hour: "14:00", engagement: 78 },
+                { hour: "19:00", engagement: 92 },
+                { hour: "21:00", engagement: 85 }
+            ]
+        };
+    }
+
+    getDemoPerformanceTrends() {
+        return {
+            overallTrend: "improving",
+            trendPercentage: 15.3,
+            weeklyPerformance: [
+                { week: "Week 1", average: 72 },
+                { week: "Week 2", average: 75 },
+                { week: "Week 3", average: 78 },
+                { week: "Week 4", average: 82 },
+                { week: "Week 5", average: 85 }
+            ],
+            subjectPerformance: {
+                "Mathematics": { current: 85, trend: 8.2 },
+                "Science": { current: 78, trend: 12.5 },
+                "Programming": { current: 82, trend: 15.3 },
+                "Analytics": { current: 79, trend: 6.8 }
+            },
+            improvementAreas: [
+                "Statistical Analysis",
+                "Advanced Programming",
+                "Data Interpretation"
+            ]
+        };
+    }
+
+    getDemoComparativeAnalytics() {
+        return {
+            classComparison: {
+                thisClass: { average: 82, students: 45 },
+                schoolAverage: { average: 78, students: 180 },
+                nationalAverage: { average: 75, students: 15000 }
+            },
+            peerComparison: [
+                { student: "Top Performer", score: 95, percentile: 98 },
+                { student: "Class Average", score: 82, percentile: 50 },
+                { student: "Needs Support", score: 65, percentile: 15 }
+            ],
+            historicalComparison: {
+                lastSemester: 78,
+                currentSemester: 82,
+                improvement: 5.1
+            }
+        };
+    }
+
+    getDemoPredictiveModels() {
+        return {
+            successPrediction: {
+                highSuccess: 28,
+                moderateSuccess: 12,
+                atRisk: 5
+            },
+            interventionRecommendations: [
+                {
+                    student: "Maya Rajin",
+                    riskLevel: "high",
+                    recommendation: "Immediate tutoring support",
+                    successProbability: 85
+                },
+                {
+                    student: "Budi Santoso",
+                    riskLevel: "medium",
+                    recommendation: "Additional practice materials",
+                    successProbability: 78
+                }
+            ],
+            futurePerformance: {
+                nextWeek: 84,
+                nextMonth: 87,
+                endOfSemester: 89
+            }
+        };
+    }
+
+    loadDemoAnalytics() {
+        console.log("🔄 Loading demo advanced analytics...");
+        this.analyticsData = {
+            learning: this.getDemoLearningAnalytics(),
+            engagement: this.getDemoEngagementAnalytics(),
+            performance: this.getDemoPerformanceTrends(),
+            comparative: this.getDemoComparativeAnalytics(),
+            predictive: this.getDemoPredictiveModels()
+        };
+        console.log("✅ Demo advanced analytics loaded");
+        return this.analyticsData;
+    }
+
+    renderAdvancedAnalyticsDashboard() {
+        const data = this.analyticsData;
+
+        const dashboardHTML = `
+            <!-- Learning Analytics Section -->
+            <section class="card" style="margin-bottom: 2rem;">
+                <h3 style="margin: 0 0 1rem 0; color: var(--gray-800); display: flex; align-items: center; gap: 0.5rem;">
+                    📊 Learning Analytics Overview
+                    <span style="background: ${isBackendConnected ? 'var(--success)' : 'var(--warning)'}; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">
+                        ${isBackendConnected ? '🟢 Live' : '🟡 Demo'}
+                    </span>
+                </h3>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                    <div class="metric-card">
+                        <div class="metric-value">${data.learning?.totalLearningTime || 0} min</div>
+                        <div class="metric-label">Total Learning Time</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${data.learning?.averageSessionDuration || 0} min</div>
+                        <div class="metric-label">Avg Session Duration</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${data.learning?.completionRate || 0}%</div>
+                        <div class="metric-label">Completion Rate</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${data.learning?.retentionRate || 0}%</div>
+                        <div class="metric-label">Retention Rate</div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div>
+                        <h4 style="margin: 0 0 1rem 0; color: var(--gray-800);">Concept Mastery</h4>
+                        <div id="concept-mastery-chart" style="background: var(--accent); padding: 1rem; border-radius: 8px; min-height: 200px;">
+                            ${this.renderConceptMasteryChart(data.learning?.conceptMastery)}
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin: 0 0 1rem 0; color: var(--gray-800);">Learning Paths Progress</h4>
+                        <div id="learning-paths-chart" style="background: var(--accent); padding: 1rem; border-radius: 8px; min-height: 200px;">
+                            ${this.renderLearningPathsChart(data.learning?.learningPaths)}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Engagement Analytics Section -->
+            <section class="card" style="margin-bottom: 2rem;">
+                <h3 style="margin: 0 0 1rem 0; color: var(--gray-800); display: flex; align-items: center; gap: 0.5rem;">
+                    🎯 Engagement Analytics
+                </h3>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                    <div class="metric-card">
+                        <div class="metric-value">${data.engagement?.overallEngagement || 0}%</div>
+                        <div class="metric-label">Overall Engagement</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${data.engagement?.dailyActiveUsers || 0}</div>
+                        <div class="metric-label">Daily Active Users</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${data.engagement?.sessionFrequency || 0}</div>
+                        <div class="metric-label">Session Frequency</div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div>
+                        <h4 style="margin: 0 0 1rem 0; color: var(--gray-800);">Content Interaction</h4>
+                        <div id="content-interaction-chart" style="background: var(--accent); padding: 1rem; border-radius: 8px; min-height: 200px;">
+                            ${this.renderContentInteractionChart(data.engagement?.contentInteraction)}
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin: 0 0 1rem 0; color: var(--gray-800);">Peak Hours</h4>
+                        <div id="peak-hours-chart" style="background: var(--accent); padding: 1rem; border-radius: 8px; min-height: 200px;">
+                            ${this.renderPeakHoursChart(data.engagement?.peakHours)}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Performance Trends Section -->
+            <section class="card" style="margin-bottom: 2rem;">
+                <h3 style="margin: 0 0 1rem 0; color: var(--gray-800); display: flex; align-items: center; gap: 0.5rem;">
+                    📈 Performance Trends
+                </h3>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div>
+                        <h4 style="margin: 0 0 1rem 0; color: var(--gray-800);">Weekly Performance</h4>
+                        <div id="weekly-performance-chart" style="background: var(--accent); padding: 1rem; border-radius: 8px; min-height: 250px;">
+                            ${this.renderWeeklyPerformanceChart(data.performance?.weeklyPerformance)}
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin: 0 0 1rem 0; color: var(--gray-800);">Subject Performance</h4>
+                        <div id="subject-performance-chart" style="background: var(--accent); padding: 1rem; border-radius: 8px; min-height: 250px;">
+                            ${this.renderSubjectPerformanceChart(data.performance?.subjectPerformance)}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Predictive Analytics Section -->
+            <section class="card">
+                <h3 style="margin: 0 0 1rem 0; color: var(--gray-800); display: flex; align-items: center; gap: 0.5rem;">
+                    🔮 Predictive Analytics
+                </h3>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                    <div>
+                        <h4 style="margin: 0 0 1rem 0; color: var(--gray-800);">Success Prediction</h4>
+                        <div style="background: var(--accent); padding: 1rem; border-radius: 8px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>High Success</span>
+                                <span style="font-weight: 600; color: var(--success);">${data.predictive?.successPrediction?.highSuccess || 0} students</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Moderate Success</span>
+                                <span style="font-weight: 600; color: var(--warning);">${data.predictive?.successPrediction?.moderateSuccess || 0} students</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>At Risk</span>
+                                <span style="font-weight: 600; color: var(--error);">${data.predictive?.successPrediction?.atRisk || 0} students</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 style="margin: 0 0 1rem 0; color: var(--gray-800);">Future Performance</h4>
+                        <div style="background: var(--accent); padding: 1rem; border-radius: 8px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Next Week</span>
+                                <span style="font-weight: 600; color: var(--info);">${data.predictive?.futurePerformance?.nextWeek || 0}%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Next Month</span>
+                                <span style="font-weight: 600; color: var(--primary);">${data.predictive?.futurePerformance?.nextMonth || 0}%</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>End of Semester</span>
+                                <span style="font-weight: 600; color: var(--success);">${data.predictive?.futurePerformance?.endOfSemester || 0}%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        `;
+
+        setInner("advanced-analytics-content", dashboardHTML);
+    }
+
+    renderConceptMasteryChart(conceptMastery) {
+        if (!conceptMastery) return '<div style="text-align: center; color: var(--gray-600);">No data available</div>';
+
+        return Object.entries(conceptMastery).map(([concept, mastery]) => `
+            <div style="margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                    <span style="font-size: 0.875rem; color: var(--gray-700);">${concept}</span>
+                    <span style="font-weight: 600; color: var(--primary);">${mastery}%</span>
+                </div>
+                <div style="background: var(--gray-300); height: 8px; border-radius: 4px; overflow: hidden;">
+                    <div style="background: var(--primary); height: 100%; width: ${mastery}%; transition: width 0.3s ease;"></div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    renderLearningPathsChart(learningPaths) {
+        if (!learningPaths) return '<div style="text-align: center; color: var(--gray-600);">No data available</div>';
+
+        return learningPaths.map(path => `
+            <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <h5 style="margin: 0; color: var(--gray-800);">${path.path}</h5>
+                    <span style="font-weight: 600; color: var(--success);">${path.completion}%</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.875rem; color: var(--gray-600);">
+                    <span>${path.students} students</span>
+                    <span>Completion: ${path.completion}%</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    renderContentInteractionChart(contentInteraction) {
+        if (!contentInteraction) return '<div style="text-align: center; color: var(--gray-600);">No data available</div>';
+
+        return Object.entries(contentInteraction).map(([content, interaction]) => `
+            <div style="margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                    <span style="font-size: 0.875rem; color: var(--gray-700); text-transform: capitalize;">${content}</span>
+                    <span style="font-weight: 600; color: var(--secondary);">${interaction}%</span>
+                </div>
+                <div style="background: var(--gray-300); height: 6px; border-radius: 3px; overflow: hidden;">
+                    <div style="background: var(--secondary); height: 100%; width: ${interaction}%; transition: width 0.3s ease;"></div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    renderPeakHoursChart(peakHours) {
+        if (!peakHours) return '<div style="text-align: center; color: var(--gray-600);">No data available</div>';
+
+        return peakHours.map(hour => `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; background: var(--white); border-radius: 4px; margin-bottom: 0.5rem;">
+                <span style="font-weight: 600; color: var(--gray-800);">${hour.hour}</span>
+                <span style="color: var(--info);">${hour.engagement}%</span>
+            </div>
+        `).join('');
+    }
+
+    renderWeeklyPerformanceChart(weeklyPerformance) {
+        if (!weeklyPerformance) return '<div style="text-align: center; color: var(--gray-600);">No data available</div>';
+
+        return weeklyPerformance.map(week => `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--white); border-radius: 4px; margin-bottom: 0.5rem;">
+                <span style="font-weight: 600; color: var(--gray-800);">${week.week}</span>
+                <span style="color: var(--success); font-weight: 600;">${week.average}%</span>
+            </div>
+        `).join('');
+    }
+
+    renderSubjectPerformanceChart(subjectPerformance) {
+        if (!subjectPerformance) return '<div style="text-align: center; color: var(--gray-600);">No data available</div>';
+
+        return Object.entries(subjectPerformance).map(([subject, data]) => `
+            <div style="background: var(--white); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <h6 style="margin: 0; color: var(--gray-800);">${subject}</h6>
+                    <span style="font-weight: 600; color: var(--primary);">${data.current}%</span>
+                </div>
+                <div style="font-size: 0.875rem; color: ${data.trend > 0 ? 'var(--success)' : 'var(--error)'};">
+                    Trend: ${data.trend > 0 ? '+' : ''}${data.trend}%
+                </div>
+            </div>
+        `).join('');
+    }
+}
+
+// Initialize Advanced Analytics Manager
+const advancedAnalyticsManager = new AdvancedAnalyticsManager();
+
+// ===== D13-D18: COMMUNICATION MANAGER =====
+
+class CommunicationManager {
+    constructor() {
+        this.messages = [];
+        this.notifications = [];
+        this.forums = [];
+        this.videoSessions = [];
+        this.isLoading = false;
+    }
+
+    async loadCommunicationData() {
+        try {
+            this.isLoading = true;
+            console.log("🔄 Loading communication data...");
+
+            const [messages, notifications, forums, videoSessions] = await Promise.all([
+                this.loadMessages(),
+                this.loadNotifications(),
+                this.loadForums(),
+                this.loadVideoSessions()
+            ]);
+
+            this.messages = messages;
+            this.notifications = notifications;
+            this.forums = forums;
+            this.videoSessions = videoSessions;
+
+            console.log("✅ Communication data loaded");
+            return {
+                messages: this.messages,
+                notifications: this.notifications,
+                forums: this.forums,
+                videoSessions: this.videoSessions
+            };
+        } catch (error) {
+            console.error("❌ Failed to load communication data:", error);
+            return this.loadDemoCommunicationData();
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
+    async loadMessages() {
+        try {
+            const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.STUDENT_MESSAGES);
+            return response?.data || this.getDemoMessages();
+        } catch (error) {
+            return this.getDemoMessages();
+        }
+    }
+
+    async loadNotifications() {
+        try {
+            const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.SEND_NOTIFICATION);
+            return response?.data || this.getDemoNotifications();
+        } catch (error) {
+            return this.getDemoNotifications();
+        }
+    }
+
+    async loadForums() {
+        try {
+            const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.DISCUSSION_FORUMS);
+            return response?.data || this.getDemoForums();
+        } catch (error) {
+            return this.getDemoForums();
+        }
+    }
+
+    async loadVideoSessions() {
+        try {
+            const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.VIDEO_CONFERENCES);
+            return response?.data || this.getDemoVideoSessions();
+        } catch (error) {
+            return this.getDemoVideoSessions();
+        }
+    }
+
+    getDemoMessages() {
+        return [
+            {
+                id: "msg-1",
+                from: "Andi Mahasiswa",
+                subject: "Question about Assignment 3",
+                message: "Hi Prof, I'm having trouble with the data visualization part. Could you help?",
+                timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+                status: "unread",
+                priority: "normal"
+            },
+            {
+                id: "msg-2",
+                from: "Sari Belajar",
+                subject: "Request for Extension",
+                message: "Dear Professor, I would like to request a 2-day extension for the Python project due to illness.",
+                timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+                status: "read",
+                priority: "high"
+            },
+            {
+                id: "msg-3",
+                from: "Maya Rajin",
+                subject: "Thank you for the feedback",
+                message: "Thank you for the detailed feedback on my last assignment. It really helped me understand the concepts better.",
+                timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+                status: "read",
+                priority: "low"
+            }
+        ];
+    }
+
+    getDemoNotifications() {
+        return [
+            {
+                id: "notif-1",
+                title: "Assignment Due Reminder",
+                message: "Python Programming Assignment is due in 2 days",
+                type: "reminder",
+                recipients: "all",
+                scheduled: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+                status: "scheduled"
+            },
+            {
+                id: "notif-2",
+                title: "Class Cancelled",
+                message: "Tomorrow's class is cancelled due to technical issues",
+                type: "announcement",
+                recipients: "all",
+                scheduled: new Date().toISOString(),
+                status: "sent"
+            }
+        ];
+    }
+
+    getDemoForums() {
+        return [
+            {
+                id: "forum-1",
+                title: "General Discussion",
+                description: "General course discussions and Q&A",
+                posts: 45,
+                lastActivity: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+                participants: 38
+            },
+            {
+                id: "forum-2",
+                title: "Assignment Help",
+                description: "Get help with assignments and projects",
+                posts: 23,
+                lastActivity: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+                participants: 28
+            },
+            {
+                id: "forum-3",
+                title: "Study Groups",
+                description: "Organize and join study groups",
+                posts: 12,
+                lastActivity: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+                participants: 15
+            }
+        ];
+    }
+
+    getDemoVideoSessions() {
+        return [
+            {
+                id: "video-1",
+                title: "Weekly Office Hours",
+                scheduled: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+                duration: 60,
+                participants: 0,
+                maxParticipants: 50,
+                status: "scheduled",
+                type: "office-hours"
+            },
+            {
+                id: "video-2",
+                title: "Data Science Workshop",
+                scheduled: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+                duration: 120,
+                participants: 25,
+                maxParticipants: 45,
+                status: "scheduled",
+                type: "workshop"
+            }
+        ];
+    }
+
+    loadDemoCommunicationData() {
+        console.log("🔄 Loading demo communication data...");
+        this.messages = this.getDemoMessages();
+        this.notifications = this.getDemoNotifications();
+        this.forums = this.getDemoForums();
+        this.videoSessions = this.getDemoVideoSessions();
+
+        console.log("✅ Demo communication data loaded");
+        return {
+            messages: this.messages,
+            notifications: this.notifications,
+            forums: this.forums,
+            videoSessions: this.videoSessions
+        };
+    }
+
+    async sendMessage(recipientId, subject, message) {
+        try {
+            const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.STUDENT_MESSAGES, {
+                method: 'POST',
+                body: { recipientId, subject, message, timestamp: new Date().toISOString() }
+            });
+
+            if (response?.data) {
+                UIComponents.showNotification("✅ Message sent successfully", "success");
+                return response.data;
+            } else {
+                throw new Error("Invalid response");
+            }
+        } catch (error) {
+            console.error("❌ Failed to send message:", error);
+            UIComponents.showNotification("❌ Failed to send message", "error");
+            return null;
+        }
+    }
+
+    async sendNotification(title, message, recipients = "all") {
+        try {
+            const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.SEND_NOTIFICATION, {
+                method: 'POST',
+                body: { title, message, recipients, timestamp: new Date().toISOString() }
+            });
+
+            if (response?.data) {
+                UIComponents.showNotification("✅ Notification sent successfully", "success");
+                return response.data;
+            } else {
+                throw new Error("Invalid response");
+            }
+        } catch (error) {
+            console.error("❌ Failed to send notification:", error);
+            UIComponents.showNotification("❌ Failed to send notification", "error");
+            return null;
+        }
+    }
+
+    async scheduleVideoSession(title, datetime, duration, type = "meeting") {
+        try {
+            const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.VIDEO_CONFERENCES, {
+                method: 'POST',
+                body: { title, scheduled: datetime, duration, type, timestamp: new Date().toISOString() }
+            });
+
+            if (response?.data) {
+                UIComponents.showNotification("✅ Video session scheduled successfully", "success");
+                return response.data;
+            } else {
+                throw new Error("Invalid response");
+            }
+        } catch (error) {
+            console.error("❌ Failed to schedule video session:", error);
+            UIComponents.showNotification("❌ Failed to schedule video session", "error");
+            return null;
+        }
+    }
+
+    renderCommunicationDashboard() {
+        const unreadMessages = this.messages.filter(msg => msg.status === 'unread').length;
+        const activeForums = this.forums.length;
+        const upcomingVideos = this.videoSessions.filter(session => new Date(session.scheduled) > new Date()).length;
+
+        const dashboardHTML = `
+            <!-- Communication Overview -->
+            <section class="card" style="margin-bottom: 2rem;">
+                <h3 style="margin: 0 0 1rem 0; color: var(--gray-800); display: flex; align-items: center; gap: 0.5rem;">
+                    💬 Communication Center
+                    <span style="background: ${isBackendConnected ? 'var(--success)' : 'var(--warning)'}; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">
+                        ${isBackendConnected ? '🟢 Live' : '🟡 Demo'}
+                    </span>
+                </h3>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                    <div class="metric-card">
+                        <div class="metric-value">${unreadMessages}</div>
+                        <div class="metric-label">Unread Messages</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${activeForums}</div>
+                        <div class="metric-label">Active Forums</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${upcomingVideos}</div>
+                        <div class="metric-label">Upcoming Sessions</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">${this.notifications.length}</div>
+                        <div class="metric-label">Notifications Sent</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button onclick="showComposeMessageModal()" class="btn" style="background: var(--primary);">
+                        ✉️ Compose Message
+                    </button>
+                    <button onclick="showSendNotificationModal()" class="btn" style="background: var(--info);">
+                        📢 Send Notification
+                    </button>
+                    <button onclick="showScheduleVideoModal()" class="btn" style="background: var(--success);">
+                        📹 Schedule Video Session
+                    </button>
+                    <button onclick="showBulkMessageModal()" class="btn" style="background: var(--secondary);">
+                        📨 Bulk Message
+                    </button>
+                </div>
+            </section>
+
+            <!-- Recent Messages -->
+            <section class="card" style="margin-bottom: 2rem;">
+                <h3 style="margin: 0 0 1rem 0; color: var(--gray-800);">Recent Messages</h3>
+                <div id="recent-messages-list">
+                    ${this.renderMessagesList()}
+                </div>
+            </section>
+
+            <!-- Discussion Forums -->
+            <section class="card" style="margin-bottom: 2rem;">
+                <h3 style="margin: 0 0 1rem 0; color: var(--gray-800);">Discussion Forums</h3>
+                <div id="forums-list">
+                    ${this.renderForumsList()}
+                </div>
+            </section>
+
+            <!-- Upcoming Video Sessions -->
+            <section class="card">
+                <h3 style="margin: 0 0 1rem 0; color: var(--gray-800);">Upcoming Video Sessions</h3>
+                <div id="video-sessions-list">
+                    ${this.renderVideoSessionsList()}
+                </div>
+            </section>
+        `;
+
+        setInner("communication-content", dashboardHTML);
+    }
+
+    renderMessagesList() {
+        return this.messages.map(message => {
+            const priorityColors = {
+                high: 'var(--error)',
+                normal: 'var(--info)',
+                low: 'var(--gray-500)'
+            };
+
+            return `
+                <div style="background: ${message.status === 'unread' ? 'var(--accent)' : 'var(--bg-light)'}; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid ${priorityColors[message.priority]};">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                        <div>
+                            <h4 style="margin: 0; color: var(--gray-800); font-size: 1rem;">${message.subject}</h4>
+                            <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">From: ${message.from}</p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                            <span style="background: ${priorityColors[message.priority]}; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; text-transform: capitalize;">
+                                ${message.priority}
+                            </span>
+                            <span style="font-size: 0.75rem; color: var(--gray-500);">
+                                ${getRelativeTime(message.timestamp)}
+                            </span>
+                        </div>
+                    </div>
+                    <p style="margin: 0 0 1rem 0; color: var(--gray-700); font-size: 0.875rem;">${message.message}</p>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button onclick="replyToMessage('${message.id}')" class="btn" style="padding: 0.5rem 1rem; background: var(--primary); font-size: 0.875rem;">
+                            ↩️ Reply
+                        </button>
+                        <button onclick="markAsRead('${message.id}')" class="btn" style="padding: 0.5rem 1rem; background: var(--success); font-size: 0.875rem;">
+                            ✅ Mark as Read
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    renderForumsList() {
+        return this.forums.map(forum => `
+            <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                    <div>
+                        <h4 style="margin: 0 0 0.5rem 0; color: var(--gray-800);">${forum.title}</h4>
+                        <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">${forum.description}</p>
+                    </div>
+                    <button onclick="manageForum('${forum.id}')" class="btn" style="background: var(--info); padding: 0.5rem 1rem;">
+                        ⚙️ Manage
+                    </button>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.25rem; font-weight: 600; color: var(--primary);">${forum.posts}</div>
+                        <div style="font-size: 0.75rem; color: var(--gray-600);">Posts</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.25rem; font-weight: 600; color: var(--success);">${forum.participants}</div>
+                        <div style="font-size: 0.75rem; color: var(--gray-600);">Participants</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 0.875rem; font-weight: 600; color: var(--info);">${getRelativeTime(forum.lastActivity)}</div>
+                        <div style="font-size: 0.75rem; color: var(--gray-600);">Last Activity</div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    renderVideoSessionsList() {
+        return this.videoSessions.map(session => {
+            const typeIcons = {
+                'office-hours': '🏢',
+                'workshop': '🛠️',
+                'meeting': '👥',
+                'lecture': '📚'
+            };
+
+            return `
+                <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="font-size: 1.5rem;">${typeIcons[session.type] || '📹'}</span>
+                            <div>
+                                <h4 style="margin: 0; color: var(--gray-800);">${session.title}</h4>
+                                <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">
+                                    ${new Date(session.scheduled).toLocaleDateString()} at ${new Date(session.scheduled).toLocaleTimeString()}
+                                </p>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button onclick="editVideoSession('${session.id}')" class="btn" style="background: var(--primary); padding: 0.5rem 1rem;">
+                                ✏️ Edit
+                            </button>
+                            <button onclick="startVideoSession('${session.id}')" class="btn" style="background: var(--success); padding: 0.5rem 1rem;">
+                                ▶️ Start
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.25rem; font-weight: 600; color: var(--info);">${session.duration} min</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Duration</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.25rem; font-weight: 600; color: var(--primary);">${session.participants}/${session.maxParticipants}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Participants</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.25rem; font-weight: 600; color: var(--success); text-transform: capitalize;">${session.status}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Status</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+}
+
+// Initialize Communication Manager
+const communicationManager = new CommunicationManager();
 
 async function initializeEducatorPortal() {
     // Get authentication token
