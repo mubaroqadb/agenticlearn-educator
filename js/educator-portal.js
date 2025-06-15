@@ -3371,30 +3371,813 @@ function setupWorkflowEventListeners() {
     }, 200);
 }
 
-// D1-D6: Weekly Planning Session (30 minutes)
+// D1-D6: Weekly Planning Session (30 minutes) - Enhanced Implementation
 function startWeeklyPlanning() {
     UIComponents.showNotification("📅 Starting Weekly Planning Session (D1-D6) - 30 minutes", "info");
 
-    const planningSteps = [
-        "D1: Weekly Planning Session",
-        "D2: Review AI Analytics Dashboard",
-        "D3: Identify At-Risk Students",
-        "D4: Analyze Content Effectiveness",
-        "D5: Plan Intervention Strategies",
-        "D6: Create Session Plan"
-    ];
+    // Open Weekly Planning Modal
+    openWeeklyPlanningModal();
+}
 
-    let currentStep = 0;
-    const interval = setInterval(() => {
-        if (currentStep < planningSteps.length) {
-            UIComponents.showNotification(`✅ ${planningSteps[currentStep]}`, "success");
-            currentStep++;
-        } else {
-            clearInterval(interval);
-            UIComponents.showNotification("🎯 Weekly Planning Session completed! Ready for next week.", "success");
+function openWeeklyPlanningModal() {
+    const modalHTML = `
+        <div class="modal-overlay" id="weekly-planning-modal" style="display: flex;">
+            <div class="modal-content" style="max-width: 1200px; width: 95%;">
+                <div class="modal-header">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 48px; height: 48px; background: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
+                            📅
+                        </div>
+                        <div>
+                            <h2 style="margin: 0; color: var(--gray-900);">Weekly Planning Session (D1-D6)</h2>
+                            <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">30-minute structured planning workflow</p>
+                        </div>
+                    </div>
+                    <button class="modal-close" onclick="closeWeeklyPlanningModal()">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="planning-tabs">
+                        <button class="planning-tab-button active" onclick="showPlanningTab('overview')">📊 Overview</button>
+                        <button class="planning-tab-button" onclick="showPlanningTab('analytics')">🤖 AI Analytics (D2)</button>
+                        <button class="planning-tab-button" onclick="showPlanningTab('at-risk')">⚠️ At-Risk Students (D3)</button>
+                        <button class="planning-tab-button" onclick="showPlanningTab('content')">📚 Content Analysis (D4)</button>
+                        <button class="planning-tab-button" onclick="showPlanningTab('intervention')">🎯 Interventions (D5)</button>
+                        <button class="planning-tab-button" onclick="showPlanningTab('session-plan')">📝 Session Plan (D6)</button>
+                    </div>
+
+                    <!-- Planning Tab Contents -->
+                    <div id="planning-tab-overview" class="planning-tab-content active">
+                        ${renderPlanningOverview()}
+                    </div>
+                    <div id="planning-tab-analytics" class="planning-tab-content">
+                        ${renderAnalyticsTab()}
+                    </div>
+                    <div id="planning-tab-at-risk" class="planning-tab-content">
+                        ${renderAtRiskTab()}
+                    </div>
+                    <div id="planning-tab-content" class="planning-tab-content">
+                        ${renderContentAnalysisTab()}
+                    </div>
+                    <div id="planning-tab-intervention" class="planning-tab-content">
+                        ${renderInterventionTab()}
+                    </div>
+                    <div id="planning-tab-session-plan" class="planning-tab-content">
+                        ${renderSessionPlanTab()}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    // Initialize planning session timer
+    startPlanningTimer();
+}
+
+// Planning Tab Content Functions
+function renderPlanningOverview() {
+    return `
+        <div class="planning-progress">
+            <h3 style="margin: 0 0 1rem 0; color: var(--gray-800);">📅 Weekly Planning Session Progress</h3>
+            <p style="margin: 0 0 1rem 0; color: var(--gray-600);">Complete all 6 steps within 30 minutes for optimal planning efficiency.</p>
+
+            <div class="progress-steps">
+                <div class="progress-step active" id="step-d1">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📋</div>
+                    <div style="font-weight: 600; font-size: 0.875rem;">D1: Planning</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-600);">Session Setup</div>
+                </div>
+                <div class="progress-step" id="step-d2">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🤖</div>
+                    <div style="font-weight: 600; font-size: 0.875rem;">D2: Analytics</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-600);">AI Review</div>
+                </div>
+                <div class="progress-step" id="step-d3">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">⚠️</div>
+                    <div style="font-weight: 600; font-size: 0.875rem;">D3: At-Risk</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-600);">Student ID</div>
+                </div>
+                <div class="progress-step" id="step-d4">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📚</div>
+                    <div style="font-weight: 600; font-size: 0.875rem;">D4: Content</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-600);">Effectiveness</div>
+                </div>
+                <div class="progress-step" id="step-d5">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🎯</div>
+                    <div style="font-weight: 600; font-size: 0.875rem;">D5: Intervention</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-600);">Planning</div>
+                </div>
+                <div class="progress-step" id="step-d6">
+                    <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📝</div>
+                    <div style="font-weight: 600; font-size: 0.875rem;">D6: Session</div>
+                    <div style="font-size: 0.75rem; color: var(--gray-600);">Plan Creation</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h4 style="color: var(--gray-800); margin-bottom: 1rem;">🎯 This Week's Focus Areas</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px;">
+                    <h5 style="margin: 0 0 0.5rem 0; color: var(--primary);">📊 Key Metrics</h5>
+                    <ul style="margin: 0; padding-left: 1rem; color: var(--gray-700);">
+                        <li>Class average: 78% (+5% from last week)</li>
+                        <li>At-risk students: 3 (needs attention)</li>
+                        <li>Engagement rate: 85% (target: 90%)</li>
+                        <li>Completion rate: 68% (improving)</li>
+                    </ul>
+                </div>
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px;">
+                    <h5 style="margin: 0 0 0.5rem 0; color: var(--warning);">⚠️ Priority Actions</h5>
+                    <ul style="margin: 0; padding-left: 1rem; color: var(--gray-700);">
+                        <li>Schedule intervention for Maya Rajin</li>
+                        <li>Review Module 2 content effectiveness</li>
+                        <li>Increase video content engagement</li>
+                        <li>Plan peer mentoring sessions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
+            <button class="btn" onclick="closeWeeklyPlanningModal()" style="background: var(--gray-500);">
+                ❌ Cancel Planning
+            </button>
+            <button class="btn btn-primary" onclick="showPlanningTab('analytics')">
+                ▶️ Start with AI Analytics (D2)
+            </button>
+        </div>
+    `;
+}
+
+function renderAnalyticsTab() {
+    return `
+        <div class="card" style="margin-bottom: 2rem;">
+            <h4 style="color: var(--gray-800); margin-bottom: 1rem;">🤖 AI Analytics Dashboard Review (D2)</h4>
+            <p style="color: var(--gray-600); margin-bottom: 1.5rem;">Review AI-generated insights to inform your weekly planning decisions.</p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--success);">
+                    <h5 style="margin: 0 0 1rem 0; color: var(--success);">📈 Learning Patterns</h5>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Peak Learning Time:</strong> 19:00-21:00 WIB<br>
+                        <strong>Mobile Access:</strong> 85% of students<br>
+                        <strong>Avg Session:</strong> 45 minutes<br>
+                        <strong>Best Content:</strong> Video tutorials
+                    </div>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 6px; font-size: 0.875rem; color: var(--gray-700);">
+                        💡 <strong>AI Insight:</strong> Students show highest engagement during evening hours. Consider scheduling live sessions between 7-9 PM.
+                    </div>
+                </div>
+
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--warning);">
+                    <h5 style="margin: 0 0 1rem 0; color: var(--warning);">⚠️ At-Risk Analysis</h5>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>High Risk:</strong> 3 students<br>
+                        <strong>Medium Risk:</strong> 7 students<br>
+                        <strong>Intervention Needed:</strong> 5 students<br>
+                        <strong>Success Rate:</strong> 75% with intervention
+                    </div>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 6px; font-size: 0.875rem; color: var(--gray-700);">
+                        🎯 <strong>AI Recommendation:</strong> Focus on students with <30% progress and no activity in 7+ days.
+                    </div>
+                </div>
+
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary);">
+                    <h5 style="margin: 0 0 1rem 0; color: var(--primary);">📚 Content Effectiveness</h5>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Video Content:</strong> 92% engagement<br>
+                        <strong>Interactive Exercises:</strong> 78% engagement<br>
+                        <strong>Text Content:</strong> 45% engagement<br>
+                        <strong>Completion Rate:</strong> 65% average
+                    </div>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 6px; font-size: 0.875rem; color: var(--gray-700);">
+                        📊 <strong>AI Strategy:</strong> Increase video content ratio and add more interactive elements to boost engagement.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <button class="btn" onclick="showPlanningTab('overview')" style="background: var(--gray-500);">
+                ◀️ Back to Overview
+            </button>
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn" onclick="markStepCompleted('d2')" style="background: var(--success);">
+                    ✅ Mark D2 Complete
+                </button>
+                <button class="btn btn-primary" onclick="showPlanningTab('at-risk')">
+                    ▶️ Next: At-Risk Students (D3)
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function renderAtRiskTab() {
+    return `
+        <div class="card" style="margin-bottom: 2rem;">
+            <h4 style="color: var(--gray-800); margin-bottom: 1rem;">⚠️ At-Risk Student Identification (D3)</h4>
+            <p style="color: var(--gray-600); margin-bottom: 1.5rem;">Identify students who need immediate intervention and plan appropriate support strategies.</p>
+
+            <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+                <h5 style="margin: 0 0 1rem 0; color: var(--error);">🚨 High-Risk Students (Immediate Action Required)</h5>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div style="background: var(--white); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--error);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong style="color: var(--gray-800);">Maya Rajin</strong>
+                                <div style="font-size: 0.875rem; color: var(--gray-600);">Progress: 25% • Last active: 7 days ago</div>
+                                <div style="font-size: 0.875rem; color: var(--error);">Risk factors: Low progress, inactive, missed 2 deadlines</div>
+                            </div>
+                            <button class="btn" onclick="planIntervention('maya-rajin')" style="background: var(--error); font-size: 0.75rem;">
+                                🎯 Plan Intervention
+                            </button>
+                        </div>
+                    </div>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--error);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong style="color: var(--gray-800);">Ahmad Rizki</strong>
+                                <div style="font-size: 0.875rem; color: var(--gray-600);">Progress: 15% • Last active: 10 days ago</div>
+                                <div style="font-size: 0.875rem; color: var(--error);">Risk factors: Very low progress, long inactivity</div>
+                            </div>
+                            <button class="btn" onclick="planIntervention('ahmad-rizki')" style="background: var(--error); font-size: 0.75rem;">
+                                🎯 Plan Intervention
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+                <h5 style="margin: 0 0 1rem 0; color: var(--warning);">⚠️ Medium-Risk Students (Monitor Closely)</h5>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                    <div style="background: var(--white); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--warning);">
+                        <strong style="color: var(--gray-800);">Sari Lambat</strong>
+                        <div style="font-size: 0.875rem; color: var(--gray-600);">Progress: 45% • Engagement: 60%</div>
+                    </div>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--warning);">
+                        <strong style="color: var(--gray-800);">Budi Tertinggal</strong>
+                        <div style="font-size: 0.875rem; color: var(--gray-600);">Progress: 50% • Missed 1 deadline</div>
+                    </div>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--warning);">
+                        <strong style="color: var(--gray-800);">Dewi Kurang</strong>
+                        <div style="font-size: 0.875rem; color: var(--gray-600);">Progress: 55% • Low engagement</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--primary);">
+                <h5 style="margin: 0 0 1rem 0; color: var(--primary);">🎯 AI-Recommended Intervention Strategies</h5>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                    <div>
+                        <strong style="color: var(--gray-800);">Immediate Actions:</strong>
+                        <ul style="margin: 0.5rem 0 0 1rem; color: var(--gray-700);">
+                            <li>Schedule 1-on-1 check-in calls</li>
+                            <li>Send personalized encouragement messages</li>
+                            <li>Offer flexible deadline extensions</li>
+                            <li>Provide additional learning resources</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <strong style="color: var(--gray-800);">Long-term Support:</strong>
+                        <ul style="margin: 0.5rem 0 0 1rem; color: var(--gray-700);">
+                            <li>Pair with high-performing study buddies</li>
+                            <li>Create personalized learning paths</li>
+                            <li>Schedule regular progress check-ins</li>
+                            <li>Implement gamification elements</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <button class="btn" onclick="showPlanningTab('analytics')" style="background: var(--gray-500);">
+                ◀️ Back to Analytics
+            </button>
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn" onclick="markStepCompleted('d3')" style="background: var(--success);">
+                    ✅ Mark D3 Complete
+                </button>
+                <button class="btn btn-primary" onclick="showPlanningTab('content')">
+                    ▶️ Next: Content Analysis (D4)
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function renderContentAnalysisTab() {
+    return `
+        <div class="card" style="margin-bottom: 2rem;">
+            <h4 style="color: var(--gray-800); margin-bottom: 1rem;">📚 Content Effectiveness Analysis (D4)</h4>
+            <p style="color: var(--gray-600); margin-bottom: 1.5rem;">Analyze which content types and modules are most effective for student learning.</p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px;">
+                    <h5 style="margin: 0 0 1rem 0; color: var(--success);">📹 Video Content Performance</h5>
+                    <div style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Engagement Rate:</span>
+                            <strong style="color: var(--success);">92%</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Completion Rate:</span>
+                            <strong style="color: var(--success);">88%</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Avg Watch Time:</span>
+                            <strong>85%</strong>
+                        </div>
+                    </div>
+                    <div style="background: var(--success); color: white; padding: 0.75rem; border-radius: 6px; font-size: 0.875rem;">
+                        ✅ <strong>Recommendation:</strong> Increase video content ratio to 60% of total materials.
+                    </div>
+                </div>
+
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px;">
+                    <h5 style="margin: 0 0 1rem 0; color: var(--primary);">🎮 Interactive Exercises</h5>
+                    <div style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Engagement Rate:</span>
+                            <strong style="color: var(--primary);">78%</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Completion Rate:</span>
+                            <strong style="color: var(--primary);">72%</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Retry Rate:</span>
+                            <strong>45%</strong>
+                        </div>
+                    </div>
+                    <div style="background: var(--primary); color: white; padding: 0.75rem; border-radius: 6px; font-size: 0.875rem;">
+                        📈 <strong>Recommendation:</strong> Add more gamification elements and immediate feedback.
+                    </div>
+                </div>
+
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px;">
+                    <h5 style="margin: 0 0 1rem 0; color: var(--warning);">📝 Text-based Content</h5>
+                    <div style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Engagement Rate:</span>
+                            <strong style="color: var(--warning);">45%</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Completion Rate:</span>
+                            <strong style="color: var(--warning);">38%</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Time on Page:</span>
+                            <strong>2.5 min</strong>
+                        </div>
+                    </div>
+                    <div style="background: var(--warning); color: white; padding: 0.75rem; border-radius: 6px; font-size: 0.875rem;">
+                        ⚠️ <strong>Action Needed:</strong> Convert text content to interactive formats or infographics.
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--primary);">
+                <h5 style="margin: 0 0 1rem 0; color: var(--primary);">📊 Module Performance Analysis</h5>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div style="text-align: center; padding: 1rem; background: var(--white); border-radius: 8px;">
+                        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📈</div>
+                        <strong style="color: var(--success);">Module 1</strong>
+                        <div style="font-size: 0.875rem; color: var(--gray-600);">95% completion</div>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: var(--white); border-radius: 8px;">
+                        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📊</div>
+                        <strong style="color: var(--primary);">Module 2</strong>
+                        <div style="font-size: 0.875rem; color: var(--gray-600);">78% completion</div>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: var(--white); border-radius: 8px;">
+                        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📉</div>
+                        <strong style="color: var(--warning);">Module 3</strong>
+                        <div style="font-size: 0.875rem; color: var(--gray-600);">52% completion</div>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: var(--white); border-radius: 8px;">
+                        <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">📋</div>
+                        <strong style="color: var(--gray-600);">Module 4</strong>
+                        <div style="font-size: 0.875rem; color: var(--gray-600);">Not started</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <button class="btn" onclick="showPlanningTab('at-risk')" style="background: var(--gray-500);">
+                ◀️ Back to At-Risk
+            </button>
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn" onclick="markStepCompleted('d4')" style="background: var(--success);">
+                    ✅ Mark D4 Complete
+                </button>
+                <button class="btn btn-primary" onclick="showPlanningTab('intervention')">
+                    ▶️ Next: Interventions (D5)
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function renderInterventionTab() {
+    return `
+        <div class="card" style="margin-bottom: 2rem;">
+            <h4 style="color: var(--gray-800); margin-bottom: 1rem;">🎯 Intervention Strategy Planning (D5)</h4>
+            <p style="color: var(--gray-600); margin-bottom: 1.5rem;">Plan specific intervention strategies based on analytics and at-risk student identification.</p>
+
+            <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+                <h5 style="margin: 0 0 1rem 0; color: var(--error);">🚨 Priority Interventions (This Week)</h5>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--error);">
+                        <div style="display: flex; justify-content: between; align-items: start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <strong style="color: var(--gray-800);">Maya Rajin - Individual Support Plan</strong>
+                                <div style="margin: 0.5rem 0; color: var(--gray-600); font-size: 0.875rem;">
+                                    Status: 25% progress, 7 days inactive, missed 2 deadlines
+                                </div>
+                                <div style="background: var(--bg-light); padding: 1rem; border-radius: 6px; margin: 1rem 0;">
+                                    <strong style="color: var(--primary);">Planned Actions:</strong>
+                                    <ul style="margin: 0.5rem 0 0 1rem; color: var(--gray-700);">
+                                        <li>📞 Schedule 30-min 1-on-1 call (Tomorrow 2 PM)</li>
+                                        <li>📚 Provide simplified Module 2 materials</li>
+                                        <li>⏰ Extend deadline by 1 week with milestones</li>
+                                        <li>👥 Pair with study buddy (Budi Cerdas)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <button class="btn" onclick="scheduleIntervention('maya-rajin')" style="background: var(--primary); font-size: 0.75rem;">
+                                📅 Schedule
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--warning);">
+                        <div style="display: flex; justify-content: between; align-items: start; gap: 1rem;">
+                            <div style="flex: 1;">
+                                <strong style="color: var(--gray-800);">Ahmad Rizki - Re-engagement Strategy</strong>
+                                <div style="margin: 0.5rem 0; color: var(--gray-600); font-size: 0.875rem;">
+                                    Status: 15% progress, 10 days inactive, needs motivation
+                                </div>
+                                <div style="background: var(--bg-light); padding: 1rem; border-radius: 6px; margin: 1rem 0;">
+                                    <strong style="color: var(--primary);">Planned Actions:</strong>
+                                    <ul style="margin: 0.5rem 0 0 1rem; color: var(--gray-700);">
+                                        <li>💬 Send encouraging WhatsApp message today</li>
+                                        <li>🎯 Create personalized learning path</li>
+                                        <li>🏆 Implement achievement badges system</li>
+                                        <li>📱 Enable mobile-friendly content access</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <button class="btn" onclick="scheduleIntervention('ahmad-rizki')" style="background: var(--warning); font-size: 0.75rem;">
+                                📅 Schedule
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--primary); margin-bottom: 2rem;">
+                <h5 style="margin: 0 0 1rem 0; color: var(--primary);">📋 Intervention Resource Allocation</h5>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                    <div style="background: var(--white); padding: 1rem; border-radius: 8px;">
+                        <strong style="color: var(--gray-800);">⏰ Time Investment</strong>
+                        <div style="margin: 0.5rem 0; color: var(--gray-600); font-size: 0.875rem;">
+                            • 1-on-1 calls: 2 hours/week<br>
+                            • Content creation: 1 hour<br>
+                            • Follow-up messages: 30 min
+                        </div>
+                    </div>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 8px;">
+                        <strong style="color: var(--gray-800);">📚 Resources Needed</strong>
+                        <div style="margin: 0.5rem 0; color: var(--gray-600); font-size: 0.875rem;">
+                            • Simplified materials<br>
+                            • Video tutorials<br>
+                            • Practice exercises<br>
+                            • Study guides
+                        </div>
+                    </div>
+                    <div style="background: var(--white); padding: 1rem; border-radius: 8px;">
+                        <strong style="color: var(--gray-800);">🎯 Success Metrics</strong>
+                        <div style="margin: 0.5rem 0; color: var(--gray-600); font-size: 0.875rem;">
+                            • 50% progress increase<br>
+                            • Daily activity resumption<br>
+                            • Assignment completion<br>
+                            • Engagement improvement
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <button class="btn" onclick="showPlanningTab('content')" style="background: var(--gray-500);">
+                ◀️ Back to Content
+            </button>
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn" onclick="markStepCompleted('d5')" style="background: var(--success);">
+                    ✅ Mark D5 Complete
+                </button>
+                <button class="btn btn-primary" onclick="showPlanningTab('session-plan')">
+                    ▶️ Next: Session Plan (D6)
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function renderSessionPlanTab() {
+    return `
+        <div class="card" style="margin-bottom: 2rem;">
+            <h4 style="color: var(--gray-800); margin-bottom: 1rem;">📝 Session Plan Creation (D6)</h4>
+            <p style="color: var(--gray-600); margin-bottom: 1.5rem;">Create detailed session plans based on analytics insights and intervention strategies.</p>
+
+            <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+                <h5 style="margin: 0 0 1rem 0; color: var(--primary);">📅 This Week's Session Plan</h5>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                    <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary);">
+                        <h6 style="margin: 0 0 1rem 0; color: var(--primary);">🎯 Session 1: Module 3 Review</h6>
+                        <div style="margin-bottom: 1rem;">
+                            <strong>Date:</strong> Monday, 2 PM<br>
+                            <strong>Duration:</strong> 90 minutes<br>
+                            <strong>Focus:</strong> Data Visualization<br>
+                            <strong>Format:</strong> Interactive Workshop
+                        </div>
+                        <div style="background: var(--bg-light); padding: 1rem; border-radius: 6px;">
+                            <strong>Key Activities:</strong>
+                            <ul style="margin: 0.5rem 0 0 1rem; color: var(--gray-700);">
+                                <li>Live coding demonstration (30 min)</li>
+                                <li>Hands-on practice (45 min)</li>
+                                <li>Q&A and troubleshooting (15 min)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--success);">
+                        <h6 style="margin: 0 0 1rem 0; color: var(--success);">👥 Session 2: Peer Collaboration</h6>
+                        <div style="margin-bottom: 1rem;">
+                            <strong>Date:</strong> Wednesday, 7 PM<br>
+                            <strong>Duration:</strong> 60 minutes<br>
+                            <strong>Focus:</strong> Group Projects<br>
+                            <strong>Format:</strong> Collaborative Session
+                        </div>
+                        <div style="background: var(--bg-light); padding: 1rem; border-radius: 6px;">
+                            <strong>Key Activities:</strong>
+                            <ul style="margin: 0.5rem 0 0 1rem; color: var(--gray-700);">
+                                <li>Team formation and project planning (20 min)</li>
+                                <li>Collaborative work time (30 min)</li>
+                                <li>Progress sharing and feedback (10 min)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--warning);">
+                        <h6 style="margin: 0 0 1rem 0; color: var(--warning);">🆘 Session 3: Support Session</h6>
+                        <div style="margin-bottom: 1rem;">
+                            <strong>Date:</strong> Friday, 4 PM<br>
+                            <strong>Duration:</strong> 45 minutes<br>
+                            <strong>Focus:</strong> At-Risk Student Support<br>
+                            <strong>Format:</strong> Small Group Tutorial
+                        </div>
+                        <div style="background: var(--bg-light); padding: 1rem; border-radius: 6px;">
+                            <strong>Key Activities:</strong>
+                            <ul style="margin: 0.5rem 0 0 1rem; color: var(--gray-700);">
+                                <li>Individual progress review (15 min)</li>
+                                <li>Targeted skill building (20 min)</li>
+                                <li>Next steps planning (10 min)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: var(--white); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--primary);">
+                    <h6 style="margin: 0 0 1rem 0; color: var(--primary);">📋 Session Preparation Checklist</h6>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                        <div>
+                            <strong style="color: var(--gray-800);">📚 Content Preparation:</strong>
+                            <ul style="margin: 0.5rem 0 0 1rem; color: var(--gray-700); font-size: 0.875rem;">
+                                <li>✅ Update Module 3 slides</li>
+                                <li>✅ Prepare coding examples</li>
+                                <li>⏳ Create practice exercises</li>
+                                <li>⏳ Record backup video</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <strong style="color: var(--gray-800);">🔧 Technical Setup:</strong>
+                            <ul style="margin: 0.5rem 0 0 1rem; color: var(--gray-700); font-size: 0.875rem;">
+                                <li>✅ Test Zoom connection</li>
+                                <li>✅ Prepare screen sharing</li>
+                                <li>⏳ Setup breakout rooms</li>
+                                <li>⏳ Test interactive tools</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <strong style="color: var(--gray-800);">👥 Student Engagement:</strong>
+                            <ul style="margin: 0.5rem 0 0 1rem; color: var(--gray-700); font-size: 0.875rem;">
+                                <li>✅ Send session reminders</li>
+                                <li>⏳ Prepare engagement activities</li>
+                                <li>⏳ Plan intervention moments</li>
+                                <li>⏳ Setup feedback collection</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <button class="btn" onclick="showPlanningTab('intervention')" style="background: var(--gray-500);">
+                ◀️ Back to Interventions
+            </button>
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn" onclick="markStepCompleted('d6')" style="background: var(--success);">
+                    ✅ Mark D6 Complete
+                </button>
+                <button class="btn btn-primary" onclick="completePlanningSession()">
+                    🎯 Complete Planning Session
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+// Planning Modal Control Functions
+function showPlanningTab(tabName) {
+    // Hide all tab contents
+    document.querySelectorAll('.planning-tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+
+    // Remove active class from all tab buttons
+    document.querySelectorAll('.planning-tab-button').forEach(button => {
+        button.classList.remove('active');
+    });
+
+    // Show selected tab content
+    document.getElementById(`planning-tab-${tabName}`).classList.add('active');
+
+    // Add active class to selected tab button
+    event.target.classList.add('active');
+
+    // Update progress step if applicable
+    const stepMap = {
+        'analytics': 'd2',
+        'at-risk': 'd3',
+        'content': 'd4',
+        'intervention': 'd5',
+        'session-plan': 'd6'
+    };
+
+    if (stepMap[tabName]) {
+        updatePlanningProgress(stepMap[tabName]);
+    }
+}
+
+function markStepCompleted(step) {
+    const stepElement = document.getElementById(`step-${step}`);
+    if (stepElement) {
+        stepElement.classList.remove('active');
+        stepElement.classList.add('completed');
+    }
+
+    UIComponents.showNotification(`✅ ${step.toUpperCase()} completed successfully!`, "success");
+}
+
+function updatePlanningProgress(currentStep) {
+    const steps = ['d1', 'd2', 'd3', 'd4', 'd5', 'd6'];
+    const currentIndex = steps.indexOf(currentStep);
+
+    steps.forEach((step, index) => {
+        const stepElement = document.getElementById(`step-${step}`);
+        if (stepElement) {
+            stepElement.classList.remove('active', 'completed');
+
+            if (index < currentIndex) {
+                stepElement.classList.add('completed');
+            } else if (index === currentIndex) {
+                stepElement.classList.add('active');
+            }
         }
+    });
+}
+
+function closeWeeklyPlanningModal() {
+    const modal = document.getElementById('weekly-planning-modal');
+    if (modal) {
+        modal.remove();
+    }
+
+    // Stop planning timer
+    if (window.planningTimer) {
+        clearInterval(window.planningTimer);
+    }
+
+    // Remove timer display
+    const timerDisplay = document.querySelector('.planning-timer');
+    if (timerDisplay) {
+        timerDisplay.remove();
+    }
+}
+
+function completePlanningSession() {
+    // Mark all steps as completed
+    ['d1', 'd2', 'd3', 'd4', 'd5', 'd6'].forEach(step => {
+        markStepCompleted(step);
+    });
+
+    UIComponents.showNotification("🎯 Weekly Planning Session completed successfully! All insights saved.", "success");
+
+    setTimeout(() => {
+        closeWeeklyPlanningModal();
+        UIComponents.showNotification("📅 Ready for next week's planning session. Great work!", "info");
     }, 2000);
 }
+
+function startPlanningTimer() {
+    let timeRemaining = 30 * 60; // 30 minutes in seconds
+
+    // Create timer display
+    const timerHTML = `
+        <div class="planning-timer" id="planning-timer">
+            ⏰ Planning Time: <span id="timer-display">30:00</span>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', timerHTML);
+
+    // Update timer every second
+    window.planningTimer = setInterval(() => {
+        timeRemaining--;
+
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        const display = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+        const timerDisplay = document.getElementById('timer-display');
+        if (timerDisplay) {
+            timerDisplay.textContent = display;
+
+            // Change color as time runs out
+            if (timeRemaining < 300) { // Last 5 minutes
+                timerDisplay.style.color = 'var(--warning)';
+            }
+            if (timeRemaining < 60) { // Last minute
+                timerDisplay.style.color = 'var(--error)';
+            }
+        }
+
+        if (timeRemaining <= 0) {
+            clearInterval(window.planningTimer);
+            UIComponents.showNotification("⏰ Planning session time completed! Consider wrapping up.", "warning");
+        }
+    }, 1000);
+}
+
+// Intervention Planning Functions
+function planIntervention(studentId) {
+    const studentNames = {
+        'maya-rajin': 'Maya Rajin',
+        'ahmad-rizki': 'Ahmad Rizki'
+    };
+
+    const studentName = studentNames[studentId] || studentId;
+
+    UIComponents.showNotification(`🎯 Opening intervention planner for ${studentName}...`, "info");
+
+    // This would open a detailed intervention planning interface
+    setTimeout(() => {
+        UIComponents.showNotification(`📋 Intervention plan created for ${studentName}. Added to calendar.`, "success");
+    }, 1500);
+}
+
+function scheduleIntervention(studentId) {
+    const studentNames = {
+        'maya-rajin': 'Maya Rajin',
+        'ahmad-rizki': 'Ahmad Rizki'
+    };
+
+    const studentName = studentNames[studentId] || studentId;
+
+    UIComponents.showNotification(`📅 Scheduling intervention session for ${studentName}...`, "info");
+
+    // This would integrate with calendar system
+    setTimeout(() => {
+        UIComponents.showNotification(`✅ Intervention session scheduled for ${studentName}. Reminder set.`, "success");
+    }, 1500);
+}
+
+// Global functions for planning modal
+window.showPlanningTab = showPlanningTab;
+window.markStepCompleted = markStepCompleted;
+window.closeWeeklyPlanningModal = closeWeeklyPlanningModal;
+window.completePlanningSession = completePlanningSession;
+window.planIntervention = planIntervention;
+window.scheduleIntervention = scheduleIntervention;
 
 // D7-D11: Pre-Class Setup (15 minutes)
 function startPreClassSetup() {
