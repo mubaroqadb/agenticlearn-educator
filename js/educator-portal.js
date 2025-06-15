@@ -146,7 +146,16 @@ const API_CONFIG = {
 
         // Communication
         SEND_MESSAGE: "/educator/communication/send",
-        ANNOUNCEMENTS: "/educator/communication/announcements"
+        ANNOUNCEMENTS: "/educator/communication/announcements",
+
+        // Assessment Management
+        ASSESSMENTS_LIST: "/educator/assessments",
+        CREATE_ASSESSMENT: "/educator/assessments/create",
+        UPDATE_ASSESSMENT: "/educator/assessments/{id}",
+        DELETE_ASSESSMENT: "/educator/assessments/{id}",
+        ASSESSMENT_RESULTS: "/educator/assessments/{id}/results",
+        GRADE_SUBMISSION: "/educator/assessments/{id}/grade",
+        ASSESSMENT_ANALYTICS: "/educator/assessments/{id}/analytics"
     }
 };
 
@@ -390,6 +399,290 @@ class ARIAAIClient {
 
 // Initialize ARIA AI client
 const ariaAI = new ARIAAIClient();
+
+// ===== ASSESSMENT MANAGEMENT SYSTEM =====
+
+class AssessmentManager {
+    constructor() {
+        this.assessments = [];
+        this.currentAssessment = null;
+        this.isLoading = false;
+    }
+
+    async loadAssessments() {
+        try {
+            this.isLoading = true;
+            console.log("🔄 Loading assessments...");
+
+            const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.ASSESSMENTS_LIST);
+
+            if (response && (response.data || response.assessments)) {
+                this.assessments = response.data || response.assessments || response;
+                console.log("✅ Real assessments loaded:", this.assessments);
+                return this.assessments;
+            } else {
+                throw new Error("Invalid assessments data format");
+            }
+        } catch (error) {
+            console.error("❌ Failed to load real assessments:", error);
+            return this.loadDemoAssessments();
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
+    loadDemoAssessments() {
+        console.log("🔄 Loading demo assessments...");
+        this.assessments = [
+            {
+                id: "assessment-1",
+                title: "Module 1: Data Science Fundamentals Quiz",
+                type: "quiz",
+                status: "active",
+                dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+                totalQuestions: 20,
+                duration: 60,
+                submissions: 12,
+                totalStudents: 45,
+                averageScore: 78,
+                createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
+            },
+            {
+                id: "assessment-2",
+                title: "Python Programming Assignment",
+                type: "assignment",
+                status: "draft",
+                dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
+                totalQuestions: 5,
+                duration: 180,
+                submissions: 0,
+                totalStudents: 45,
+                averageScore: 0,
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: "assessment-3",
+                title: "Data Visualization Project",
+                type: "project",
+                status: "completed",
+                dueDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+                totalQuestions: 1,
+                duration: 1440,
+                submissions: 42,
+                totalStudents: 45,
+                averageScore: 85,
+                createdAt: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString()
+            }
+        ];
+        console.log("✅ Demo assessments loaded");
+        return this.assessments;
+    }
+
+    async createAssessment(assessmentData) {
+        try {
+            console.log("🔄 Creating assessment...", assessmentData);
+
+            const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.CREATE_ASSESSMENT, {
+                method: 'POST',
+                body: assessmentData
+            });
+
+            if (response && response.data) {
+                this.assessments.unshift(response.data);
+                UIComponents.showNotification("✅ Assessment created successfully", "success");
+                return response.data;
+            } else {
+                throw new Error("Invalid create assessment response");
+            }
+        } catch (error) {
+            console.error("❌ Failed to create assessment:", error);
+            UIComponents.showNotification("❌ Failed to create assessment", "error");
+            return null;
+        }
+    }
+
+    async updateAssessment(assessmentId, updateData) {
+        try {
+            console.log("🔄 Updating assessment...", assessmentId, updateData);
+
+            const endpoint = API_CONFIG.ENDPOINTS.UPDATE_ASSESSMENT.replace('{id}', assessmentId);
+            const response = await educatorAPI.request(endpoint, {
+                method: 'PUT',
+                body: updateData
+            });
+
+            if (response && response.data) {
+                const index = this.assessments.findIndex(a => a.id === assessmentId);
+                if (index !== -1) {
+                    this.assessments[index] = response.data;
+                }
+                UIComponents.showNotification("✅ Assessment updated successfully", "success");
+                return response.data;
+            } else {
+                throw new Error("Invalid update assessment response");
+            }
+        } catch (error) {
+            console.error("❌ Failed to update assessment:", error);
+            UIComponents.showNotification("❌ Failed to update assessment", "error");
+            return null;
+        }
+    }
+
+    async deleteAssessment(assessmentId) {
+        try {
+            console.log("🔄 Deleting assessment...", assessmentId);
+
+            const endpoint = API_CONFIG.ENDPOINTS.DELETE_ASSESSMENT.replace('{id}', assessmentId);
+            await educatorAPI.request(endpoint, {
+                method: 'DELETE'
+            });
+
+            this.assessments = this.assessments.filter(a => a.id !== assessmentId);
+            UIComponents.showNotification("✅ Assessment deleted successfully", "success");
+            return true;
+        } catch (error) {
+            console.error("❌ Failed to delete assessment:", error);
+            UIComponents.showNotification("❌ Failed to delete assessment", "error");
+            return false;
+        }
+    }
+
+    async getAssessmentResults(assessmentId) {
+        try {
+            console.log("🔄 Loading assessment results...", assessmentId);
+
+            const endpoint = API_CONFIG.ENDPOINTS.ASSESSMENT_RESULTS.replace('{id}', assessmentId);
+            const response = await educatorAPI.request(endpoint);
+
+            if (response && (response.data || response.results)) {
+                return response.data || response.results || response;
+            } else {
+                throw new Error("Invalid assessment results response");
+            }
+        } catch (error) {
+            console.error("❌ Failed to load assessment results:", error);
+            return this.getDemoAssessmentResults(assessmentId);
+        }
+    }
+
+    getDemoAssessmentResults(assessmentId) {
+        return [
+            {
+                studentId: "student-1",
+                studentName: "Ahmad Rizki",
+                score: 85,
+                submittedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+                status: "completed",
+                timeSpent: 45
+            },
+            {
+                studentId: "student-2",
+                studentName: "Sari Dewi",
+                score: 92,
+                submittedAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+                status: "completed",
+                timeSpent: 38
+            },
+            {
+                studentId: "student-3",
+                studentName: "Budi Santoso",
+                score: 67,
+                submittedAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+                status: "completed",
+                timeSpent: 52
+            }
+        ];
+    }
+
+    renderAssessmentsList() {
+        const assessmentsHTML = this.assessments.map(assessment => {
+            const statusColors = {
+                active: 'var(--success)',
+                draft: 'var(--warning)',
+                completed: 'var(--info)',
+                archived: 'var(--gray-500)'
+            };
+
+            const typeIcons = {
+                quiz: '📝',
+                assignment: '📋',
+                project: '🎯',
+                exam: '📊'
+            };
+
+            const completionRate = assessment.totalStudents > 0
+                ? Math.round((assessment.submissions / assessment.totalStudents) * 100)
+                : 0;
+
+            return `
+                <div class="assessment-card" style="background: var(--bg-light); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid ${statusColors[assessment.status]};">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                        <div style="flex: 1;">
+                            <h4 style="margin: 0 0 0.5rem 0; color: var(--gray-800); display: flex; align-items: center; gap: 0.5rem;">
+                                ${typeIcons[assessment.type]} ${assessment.title}
+                                <span style="background: ${statusColors[assessment.status]}; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; text-transform: capitalize;">
+                                    ${assessment.status}
+                                </span>
+                            </h4>
+                            <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">
+                                Due: ${new Date(assessment.dueDate).toLocaleDateString()} |
+                                Duration: ${assessment.duration} min |
+                                Questions: ${assessment.totalQuestions}
+                            </p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button onclick="viewAssessmentResults('${assessment.id}')" class="btn" style="padding: 0.5rem 1rem; background: var(--info); font-size: 0.875rem;">
+                                📊 Results
+                            </button>
+                            <button onclick="editAssessment('${assessment.id}')" class="btn" style="padding: 0.5rem 1rem; background: var(--primary); font-size: 0.875rem;">
+                                ✏️ Edit
+                            </button>
+                            <button onclick="deleteAssessmentConfirm('${assessment.id}')" class="btn" style="padding: 0.5rem 1rem; background: var(--error); font-size: 0.875rem;">
+                                🗑️ Delete
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;">
+                        <div style="text-align: center; padding: 0.75rem; background: var(--white); border-radius: 6px;">
+                            <div style="font-size: 1.25rem; font-weight: 600; color: var(--primary);">${assessment.submissions}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Submissions</div>
+                        </div>
+                        <div style="text-align: center; padding: 0.75rem; background: var(--white); border-radius: 6px;">
+                            <div style="font-size: 1.25rem; font-weight: 600; color: var(--success);">${completionRate}%</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Completion</div>
+                        </div>
+                        <div style="text-align: center; padding: 0.75rem; background: var(--white); border-radius: 6px;">
+                            <div style="font-size: 1.25rem; font-weight: 600; color: var(--secondary);">${assessment.averageScore}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Avg Score</div>
+                        </div>
+                        <div style="text-align: center; padding: 0.75rem; background: var(--white); border-radius: 6px;">
+                            <div style="font-size: 1.25rem; font-weight: 600; color: var(--info);">${assessment.totalStudents}</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-600);">Total Students</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        const assessmentsContainer = `
+            <div style="margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 style="margin: 0; color: var(--gray-800);">Assessment Management</h3>
+                    <button onclick="showCreateAssessmentModal()" class="btn" style="background: var(--success); padding: 0.75rem 1.5rem;">
+                        ➕ Create New Assessment
+                    </button>
+                </div>
+                ${assessmentsHTML}
+            </div>
+        `;
+
+        setInner("assessments-content", assessmentsContainer);
+    }
+}
+
+// Initialize Assessment Manager
+const assessmentManager = new AssessmentManager();
 
 async function initializeEducatorPortal() {
     // Get authentication token
@@ -9721,5 +10014,203 @@ if (document.readyState !== 'loading') {
         }
     });
 }
+
+// ===== ASSESSMENT MANAGEMENT FUNCTIONS =====
+
+function showCreateAssessmentModal(type = 'quiz') {
+    const modal = document.getElementById('assessment-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+
+        // Set default values based on type
+        document.getElementById('assessment-type').value = type;
+        document.getElementById('modal-title').textContent = `Create New ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+
+        // Set default duration based on type
+        const defaultDurations = {
+            quiz: 30,
+            assignment: 120,
+            project: 1440,
+            exam: 90
+        };
+        document.getElementById('assessment-duration').value = defaultDurations[type] || 60;
+
+        // Set default questions based on type
+        const defaultQuestions = {
+            quiz: 10,
+            assignment: 5,
+            project: 1,
+            exam: 25
+        };
+        document.getElementById('assessment-questions').value = defaultQuestions[type] || 10;
+    }
+}
+
+function closeAssessmentModal() {
+    const modal = document.getElementById('assessment-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.getElementById('assessment-form').reset();
+    }
+}
+
+function setupAssessmentFormHandler() {
+    const form = document.getElementById('assessment-form');
+    if (form) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = {
+                title: document.getElementById('assessment-title').value,
+                type: document.getElementById('assessment-type').value,
+                dueDate: document.getElementById('assessment-due-date').value,
+                duration: parseInt(document.getElementById('assessment-duration').value),
+                totalQuestions: parseInt(document.getElementById('assessment-questions').value),
+                description: document.getElementById('assessment-description').value,
+                status: 'draft',
+                createdAt: new Date().toISOString(),
+                submissions: 0,
+                totalStudents: currentStudentData?.length || 45,
+                averageScore: 0
+            };
+
+            const result = await assessmentManager.createAssessment(formData);
+            if (result) {
+                closeAssessmentModal();
+                assessmentManager.renderAssessmentsList();
+                UIComponents.showNotification('✅ Assessment created successfully!', 'success');
+            }
+        });
+    }
+}
+
+async function viewAssessmentResults(assessmentId) {
+    try {
+        UIComponents.showNotification('🔄 Loading assessment results...', 'info');
+        const results = await assessmentManager.getAssessmentResults(assessmentId);
+
+        // Create results modal
+        const resultsModal = `
+            <div id="results-modal" class="modal" style="display: flex;">
+                <div class="modal-content" style="max-width: 1000px;">
+                    <div class="modal-header">
+                        <h3>Assessment Results</h3>
+                        <button onclick="closeResultsModal()" class="close-btn">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                            <div class="metric-card">
+                                <div class="metric-value">${results.length}</div>
+                                <div class="metric-label">Total Submissions</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">${Math.round(results.reduce((sum, r) => sum + r.score, 0) / results.length)}%</div>
+                                <div class="metric-label">Average Score</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">${Math.round(results.reduce((sum, r) => sum + r.timeSpent, 0) / results.length)} min</div>
+                                <div class="metric-label">Average Time</div>
+                            </div>
+                        </div>
+
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: var(--accent);">
+                                    <th style="padding: 0.75rem; text-align: left; border: 1px solid var(--gray-300);">Student</th>
+                                    <th style="padding: 0.75rem; text-align: center; border: 1px solid var(--gray-300);">Score</th>
+                                    <th style="padding: 0.75rem; text-align: center; border: 1px solid var(--gray-300);">Time Spent</th>
+                                    <th style="padding: 0.75rem; text-align: center; border: 1px solid var(--gray-300);">Status</th>
+                                    <th style="padding: 0.75rem; text-align: center; border: 1px solid var(--gray-300);">Submitted</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${results.map(result => `
+                                    <tr>
+                                        <td style="padding: 0.75rem; border: 1px solid var(--gray-300);">${result.studentName}</td>
+                                        <td style="padding: 0.75rem; text-align: center; border: 1px solid var(--gray-300); font-weight: 600; color: ${result.score >= 80 ? 'var(--success)' : result.score >= 60 ? 'var(--warning)' : 'var(--error)'};">${result.score}%</td>
+                                        <td style="padding: 0.75rem; text-align: center; border: 1px solid var(--gray-300);">${result.timeSpent} min</td>
+                                        <td style="padding: 0.75rem; text-align: center; border: 1px solid var(--gray-300);">
+                                            <span style="background: var(--success); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">${result.status}</span>
+                                        </td>
+                                        <td style="padding: 0.75rem; text-align: center; border: 1px solid var(--gray-300); font-size: 0.875rem;">${getRelativeTime(result.submittedAt)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', resultsModal);
+
+    } catch (error) {
+        console.error('Failed to load assessment results:', error);
+        UIComponents.showNotification('❌ Failed to load assessment results', 'error');
+    }
+}
+
+function closeResultsModal() {
+    const modal = document.getElementById('results-modal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+async function editAssessment(assessmentId) {
+    const assessment = assessmentManager.assessments.find(a => a.id === assessmentId);
+    if (assessment) {
+        showCreateAssessmentModal(assessment.type);
+
+        // Populate form with existing data
+        document.getElementById('assessment-title').value = assessment.title;
+        document.getElementById('assessment-type').value = assessment.type;
+        document.getElementById('assessment-due-date').value = new Date(assessment.dueDate).toISOString().slice(0, 16);
+        document.getElementById('assessment-duration').value = assessment.duration;
+        document.getElementById('assessment-questions').value = assessment.totalQuestions;
+        document.getElementById('assessment-description').value = assessment.description || '';
+
+        document.getElementById('modal-title').textContent = 'Edit Assessment';
+
+        // Update form handler for editing
+        const form = document.getElementById('assessment-form');
+        form.onsubmit = async function(e) {
+            e.preventDefault();
+
+            const updateData = {
+                title: document.getElementById('assessment-title').value,
+                type: document.getElementById('assessment-type').value,
+                dueDate: document.getElementById('assessment-due-date').value,
+                duration: parseInt(document.getElementById('assessment-duration').value),
+                totalQuestions: parseInt(document.getElementById('assessment-questions').value),
+                description: document.getElementById('assessment-description').value
+            };
+
+            const result = await assessmentManager.updateAssessment(assessmentId, updateData);
+            if (result) {
+                closeAssessmentModal();
+                assessmentManager.renderAssessmentsList();
+            }
+        };
+    }
+}
+
+async function deleteAssessmentConfirm(assessmentId) {
+    const assessment = assessmentManager.assessments.find(a => a.id === assessmentId);
+    if (assessment && confirm(`Are you sure you want to delete "${assessment.title}"?`)) {
+        const result = await assessmentManager.deleteAssessment(assessmentId);
+        if (result) {
+            assessmentManager.renderAssessmentsList();
+        }
+    }
+}
+
+// Global assessment functions
+window.showCreateAssessmentModal = showCreateAssessmentModal;
+window.closeAssessmentModal = closeAssessmentModal;
+window.viewAssessmentResults = viewAssessmentResults;
+window.closeResultsModal = closeResultsModal;
+window.editAssessment = editAssessment;
+window.deleteAssessmentConfirm = deleteAssessmentConfirm;
 
 console.log("🌱 AgenticLearn Educator Portal - Vanilla JavaScript Version Loaded");
