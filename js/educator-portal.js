@@ -5,43 +5,162 @@ import { getCookie } from "https://cdn.jsdelivr.net/gh/jscroot/lib@0.0.4/cookie.
 import { setInner, onClick } from "https://cdn.jsdelivr.net/gh/jscroot/lib@0.0.4/element.js";
 import { redirect } from "https://cdn.jsdelivr.net/gh/jscroot/lib@0.0.4/url.js";
 
-// Dynamic API Configuration
-const API_BASE_URL = window.location.hostname.includes("localhost")
-    ? "https://asia-southeast2-agenticai-462517.cloudfunctions.net/domyid/api/agenticlearn"
-    : "https://asia-southeast2-agenticai-462517.cloudfunctions.net/domyid/api/agenticlearn";
+// Enhanced API Configuration for Real Backend Integration
+const API_CONFIG = {
+    BASE_URL: "https://asia-southeast2-agenticai-462517.cloudfunctions.net/domyid/api/agenticlearn",
+    ENDPOINTS: {
+        // Authentication
+        AUTH_CHECK: "/auth/verify",
+        EDUCATOR_PROFILE: "/educator/profile",
+
+        // Dashboard Data
+        DASHBOARD_STATS: "/educator/dashboard/stats",
+        STUDENTS_LIST: "/educator/students",
+        REALTIME_STATS: "/educator/analytics/realtime",
+
+        // AI & Analytics
+        AI_INSIGHTS: "/educator/ai/insights",
+        LEARNING_PATTERNS: "/educator/analytics/learning-patterns",
+        AT_RISK_STUDENTS: "/educator/analytics/at-risk-students",
+        CONTENT_EFFECTIVENESS: "/educator/analytics/content-effectiveness",
+
+        // Activity & Alerts
+        RECENT_ACTIVITY: "/educator/analytics/recent-activity",
+        STUDENT_ALERTS: "/educator/analytics/student-alerts",
+        SYSTEM_HEALTH: "/educator/system/health",
+
+        // Student Management
+        STUDENT_DETAIL: "/educator/students/{id}",
+        STUDENT_PROGRESS: "/educator/students/{id}/progress",
+
+        // Communication
+        SEND_MESSAGE: "/educator/communication/send",
+        ANNOUNCEMENTS: "/educator/communication/announcements"
+    }
+};
 
 // Get GitHub username for redirects
 const GITHUB_USERNAME = window.location.hostname.includes('github.io')
     ? window.location.hostname.split('.')[0]
     : 'mubaroqadb';
 
-// Global state management
+// Enhanced Global State Management
 let realTimeMonitoring = false;
 let monitoringInterval = null;
 let currentEducatorData = null;
 let currentStudentData = [];
 let currentAnalyticsData = null;
+let authToken = null;
+let isBackendConnected = false;
+
+// Enhanced API Client with Real Backend Integration
+class EducatorAPIClient {
+    constructor() {
+        this.baseURL = API_CONFIG.BASE_URL;
+        this.token = null;
+        this.isConnected = false;
+    }
+
+    async request(endpoint, options = {}) {
+        const url = `${this.baseURL}${endpoint}`;
+        const headers = {
+            'Content-Type': 'application/json',
+            ...options.headers
+        };
+
+        // Add authentication token if available
+        if (this.token) {
+            headers['Authorization'] = `Bearer ${this.token}`;
+        }
+
+        const config = {
+            method: options.method || 'GET',
+            headers,
+            ...options
+        };
+
+        if (options.body) {
+            config.body = JSON.stringify(options.body);
+        }
+
+        try {
+            console.log(`🔗 API Request: ${config.method} ${url}`);
+            const response = await fetch(url, config);
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log(`✅ API Response: ${endpoint}`, data);
+
+            this.isConnected = true;
+            isBackendConnected = true;
+
+            return data;
+        } catch (error) {
+            console.error(`❌ API Error: ${endpoint}`, error);
+            this.isConnected = false;
+            isBackendConnected = false;
+            throw error;
+        }
+    }
+
+    setToken(token) {
+        this.token = token;
+        authToken = token;
+    }
+
+    async testConnection() {
+        try {
+            await this.request('/health');
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+}
+
+// Initialize enhanced API client
+const educatorAPI = new EducatorAPIClient();
 
 async function initializeEducatorPortal() {
+    // Get authentication token
     const token = getCookie("login");
     if (!token) {
+        console.log("❌ No authentication token found");
         redirect(`https://${GITHUB_USERNAME}.github.io/agenticlearn-auth`);
         return;
     }
 
+    // Set token for API client
+    educatorAPI.setToken(token);
+
     try {
+        // Test backend connection first
+        UIComponents.showNotification("🔗 Connecting to AgenticAI backend...", "info");
+
+        const isConnected = await educatorAPI.testConnection();
+        if (!isConnected) {
+            console.log("⚠️ Backend connection failed, using demo mode");
+            UIComponents.showNotification("⚠️ Backend offline - Using demo data", "warning");
+        } else {
+            console.log("✅ Backend connection successful");
+            UIComponents.showNotification("✅ Connected to AgenticAI backend", "success");
+        }
+
         // Initialize sidebar navigation
         initializeSidebar();
 
-        // Load educator data
-        await loadEducatorData();
-        await loadClassData();
-        await loadStudentList();
-        await loadAIInsights();
+        // Load educator data with enhanced error handling
+        await loadEducatorDataWithFallback();
+        await loadClassDataWithFallback();
+        await loadStudentListWithFallback();
+        await loadAIInsightsWithFallback();
 
         // Load additional dashboard components
-        await loadStudentPerformanceAlerts();
-        await loadSystemHealthStatus();
+        await loadStudentPerformanceAlertsWithFallback();
+        await loadSystemHealthStatusWithFallback();
 
         // Setup event listeners
         setupEventListeners();
@@ -49,14 +168,17 @@ async function initializeEducatorPortal() {
         // Update carbon indicator
         updateCarbonIndicator();
 
-        // Show welcome notification
-        UIComponents.showNotification("Educator Portal loaded successfully! 🌱", "success");
+        // Show final status
+        const statusMessage = isBackendConnected
+            ? "🌱 Educator Portal loaded with real data!"
+            : "🌱 Educator Portal loaded with demo data";
+        UIComponents.showNotification(statusMessage, "success");
 
-        console.log("🌱 Educator Portal loaded with JSCroot and shared components");
+        console.log("🌱 Educator Portal initialization complete");
     } catch (error) {
         console.error("Failed to load educator portal:", error);
         setInner("educator-name", "Error loading data");
-        UIComponents.showNotification("Failed to load educator portal", "error");
+        UIComponents.showNotification("❌ Failed to load educator portal", "error");
     }
 }
 
@@ -241,135 +363,324 @@ function loadPageContent(pageName) {
     }
 }
 
-async function loadEducatorData() {
+// Enhanced data loading functions with robust fallback
+async function loadEducatorDataWithFallback() {
     try {
-        // Try to load real educator data from API
-        const response = await apiClient.request("/educator/profile");
+        console.log("🔄 Loading educator data...");
+        const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.EDUCATOR_PROFILE);
+
         if (response && response.data) {
             currentEducatorData = response.data;
-            setInner("educator-name", response.data.name || "Dr. Sarah Educator");
+            const educatorName = response.data.name || response.data.fullName || "Dr. Sarah Educator";
+            setInner("educator-name", educatorName);
 
             // Update sidebar footer with real educator info
-            const sidebarFooter = document.querySelector('.sidebar-footer');
-            if (sidebarFooter && response.data.name) {
-                sidebarFooter.innerHTML = `
-                    <div style="background: var(--accent); padding: 0.75rem; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 0.75rem; color: var(--gray-600); margin-bottom: 0.25rem;">Welcome back</div>
-                        <div style="font-weight: 600; color: var(--primary); font-size: 0.875rem;">${response.data.name}</div>
-                        <div style="font-size: 0.75rem; color: var(--gray-600);">${response.data.department || 'Educator'}</div>
-                    </div>
-                `;
-            }
+            updateSidebarEducatorInfo(response.data);
 
-            UIComponents.showNotification("✅ Educator profile loaded successfully", "success");
+            console.log("✅ Real educator data loaded:", response.data);
+            return response.data;
         } else {
-            throw new Error("No educator data received");
+            throw new Error("Invalid educator data format");
         }
     } catch (error) {
-        console.error("Failed to load educator data:", error);
-        // Fallback to demo data
-        setInner("educator-name", "Dr. Sarah Johnson");
-        UIComponents.showNotification("Using demo educator profile", "info");
+        console.error("❌ Failed to load real educator data:", error);
+        return loadDemoEducatorData();
     }
 }
 
-async function loadClassData() {
-    try {
-        // Load real class data from API
-        const classData = await apiClient.request("/educator/dashboard/stats");
+function loadDemoEducatorData() {
+    console.log("🔄 Loading demo educator data...");
+    const demoData = {
+        id: "educator-demo-1",
+        name: "Dr. Sarah Johnson",
+        fullName: "Dr. Sarah Johnson",
+        email: "sarah.johnson@agenticlearn.com",
+        department: "Computer Science",
+        title: "Senior Lecturer",
+        experience: "8 years",
+        specialization: ["Data Science", "Machine Learning", "AI Education"]
+    };
 
-        if (classData && classData.data) {
-            const stats = classData.data;
+    currentEducatorData = demoData;
+    setInner("educator-name", demoData.name);
+    updateSidebarEducatorInfo(demoData);
 
-            // Update dashboard metrics with real data
-            setInner("total-students", stats.totalStudents || 45);
-            setInner("average-progress", `${Math.round(stats.averageProgress || 78)}%`);
-            setInner("unread-messages", stats.unreadMessages || 12);
-            setInner("at-risk-students", stats.atRiskStudents || 3);
+    console.log("✅ Demo educator data loaded");
+    return demoData;
+}
 
-            // Update additional metrics if elements exist
-            if (document.getElementById("active-classes")) {
-                setInner("active-classes", stats.activeClasses || 3);
-            }
-            if (document.getElementById("completion-rate")) {
-                setInner("completion-rate", `${Math.round(stats.completionRate || 68)}%`);
-            }
+function updateSidebarEducatorInfo(educatorData) {
+    const sidebarFooter = document.querySelector('.sidebar-footer');
+    if (sidebarFooter && educatorData) {
+        const statusIndicator = isBackendConnected ? '🟢' : '🟡';
+        const statusText = isBackendConnected ? 'Live Data' : 'Demo Mode';
 
-            UIComponents.showNotification("📊 Dashboard metrics updated with real data", "success");
-        } else {
-            throw new Error("No class data received");
-        }
-    } catch (error) {
-        console.error("Failed to load class data:", error);
-        // Fallback to demo data
-        setInner("total-students", "45");
-        setInner("average-progress", "78%");
-        setInner("unread-messages", "12");
-        setInner("at-risk-students", "3");
-        UIComponents.showNotification("Using demo data for class statistics", "info");
+        sidebarFooter.innerHTML = `
+            <div style="background: var(--accent); padding: 0.75rem; border-radius: 8px; text-align: center;">
+                <div style="font-size: 0.75rem; color: var(--gray-600); margin-bottom: 0.25rem;">
+                    ${statusIndicator} ${statusText}
+                </div>
+                <div style="font-weight: 600; color: var(--primary); font-size: 0.875rem;">
+                    ${educatorData.name || educatorData.fullName}
+                </div>
+                <div style="font-size: 0.75rem; color: var(--gray-600);">
+                    ${educatorData.department || educatorData.title || 'Educator'}
+                </div>
+            </div>
+        `;
     }
 }
 
-async function loadStudentList() {
+async function loadClassDataWithFallback() {
     try {
-        // Load real student data from API
-        const studentsResponse = await apiClient.request("/educator/students");
+        console.log("🔄 Loading class dashboard data...");
+        const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.DASHBOARD_STATS);
 
-        if (studentsResponse && studentsResponse.data) {
-            currentStudentData = studentsResponse.data;
+        if (response && (response.data || response.stats)) {
+            const stats = response.data || response.stats || response;
+            updateDashboardMetrics(stats, true);
+            console.log("✅ Real class data loaded:", stats);
+            return stats;
+        } else {
+            throw new Error("Invalid class data format");
+        }
+    } catch (error) {
+        console.error("❌ Failed to load real class data:", error);
+        return loadDemoClassData();
+    }
+}
+
+function loadDemoClassData() {
+    console.log("🔄 Loading demo class data...");
+    const demoStats = {
+        totalStudents: 45,
+        averageProgress: 78,
+        unreadMessages: 12,
+        atRiskStudents: 3,
+        activeClasses: 3,
+        completionRate: 68,
+        engagementRate: 85,
+        onlineStudents: 12,
+        activeSessions: 8,
+        completionToday: 24
+    };
+
+    updateDashboardMetrics(demoStats, false);
+    console.log("✅ Demo class data loaded");
+    return demoStats;
+}
+
+function updateDashboardMetrics(stats, isRealData = false) {
+    // Update main dashboard metrics
+    setInner("total-students", stats.totalStudents || 45);
+    setInner("average-progress", `${Math.round(stats.averageProgress || 78)}%`);
+    setInner("unread-messages", stats.unreadMessages || 12);
+    setInner("at-risk-students", stats.atRiskStudents || 3);
+
+    // Update additional metrics if elements exist
+    if (document.getElementById("active-classes")) {
+        setInner("active-classes", stats.activeClasses || 3);
+    }
+    if (document.getElementById("completion-rate")) {
+        setInner("completion-rate", `${Math.round(stats.completionRate || 68)}%`);
+    }
+    if (document.getElementById("engagement-rate")) {
+        setInner("engagement-rate", `${Math.round(stats.engagementRate || 85)}%`);
+    }
+
+    // Update real-time stats if available
+    if (document.getElementById("online-students")) {
+        setInner("online-students", stats.onlineStudents || 12);
+    }
+    if (document.getElementById("active-sessions")) {
+        setInner("active-sessions", stats.activeSessions || 8);
+    }
+    if (document.getElementById("completion-today")) {
+        setInner("completion-today", stats.completionToday || 24);
+    }
+
+    // Show appropriate notification
+    const message = isRealData
+        ? "📊 Dashboard updated with real-time data"
+        : "📊 Dashboard loaded with demo data";
+    const type = isRealData ? "success" : "info";
+
+    // Only show notification if not during initial load
+    if (document.readyState === 'complete') {
+        UIComponents.showNotification(message, type);
+    }
+}
+
+async function loadStudentListWithFallback() {
+    try {
+        console.log("🔄 Loading student list...");
+        const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.STUDENTS_LIST);
+
+        if (response && (response.data || response.students || Array.isArray(response))) {
+            const students = response.data || response.students || response;
+            currentStudentData = Array.isArray(students) ? students : [];
 
             // Load additional real-time data
-            await loadRealTimeStats();
-            await loadActivityTimeline();
+            await loadRealTimeStatsWithFallback();
+            await loadActivityTimelineWithFallback();
 
             // Render student table with real data
-            renderEnhancedStudentTable(currentStudentData);
+            renderEnhancedStudentTable(currentStudentData, true);
             updateLastUpdateTime();
 
-            UIComponents.showNotification(`📚 Loaded ${currentStudentData.length} students successfully`, "success");
+            console.log(`✅ Real student data loaded: ${currentStudentData.length} students`);
+            return currentStudentData;
         } else {
-            throw new Error("No student data received");
+            throw new Error("Invalid student data format");
         }
     } catch (error) {
-        console.error("Failed to load student list:", error);
-        // Fallback to demo data
-        renderDemoStudentTable();
-        loadDemoRealTimeStats();
-        loadDemoActivityTimeline();
-        UIComponents.showNotification("Using demo data for student monitoring", "info");
+        console.error("❌ Failed to load real student data:", error);
+        return loadDemoStudentData();
     }
 }
 
-async function loadRealTimeStats() {
+function loadDemoStudentData() {
+    console.log("🔄 Loading demo student data...");
+
+    const demoStudents = [
+        {
+            id: "student-1",
+            name: "Ahmad Rizki",
+            email: "ahmad.rizki@student.com",
+            progress: 85,
+            lastActive: "2 hours ago",
+            status: "active",
+            modules: 8,
+            assignments: 12,
+            grade: "A"
+        },
+        {
+            id: "student-2",
+            name: "Sari Dewi",
+            email: "sari.dewi@student.com",
+            progress: 92,
+            lastActive: "1 hour ago",
+            status: "active",
+            modules: 9,
+            assignments: 14,
+            grade: "A+"
+        },
+        {
+            id: "student-3",
+            name: "Budi Santoso",
+            email: "budi.santoso@student.com",
+            progress: 67,
+            lastActive: "1 day ago",
+            status: "warning",
+            modules: 6,
+            assignments: 8,
+            grade: "B"
+        },
+        {
+            id: "student-4",
+            name: "Maya Rajin",
+            email: "maya.rajin@student.com",
+            progress: 25,
+            lastActive: "7 days ago",
+            status: "at-risk",
+            modules: 2,
+            assignments: 3,
+            grade: "D"
+        },
+        {
+            id: "student-5",
+            name: "Andi Cerdas",
+            email: "andi.cerdas@student.com",
+            progress: 78,
+            lastActive: "3 hours ago",
+            status: "active",
+            modules: 7,
+            assignments: 10,
+            grade: "B+"
+        }
+    ];
+
+    currentStudentData = demoStudents;
+
+    // Load demo supporting data
+    loadDemoRealTimeStats();
+    loadDemoActivityTimeline();
+
+    // Render student table with demo data
+    renderEnhancedStudentTable(currentStudentData, false);
+    updateLastUpdateTime();
+
+    console.log("✅ Demo student data loaded");
+    return demoStudents;
+}
+
+async function loadRealTimeStatsWithFallback() {
     try {
-        const statsResponse = await apiClient.request("/educator/analytics/realtime");
+        console.log("🔄 Loading real-time stats...");
+        const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.REALTIME_STATS);
 
-        if (statsResponse && statsResponse.data) {
-            const stats = statsResponse.data;
-
-            // Update real-time statistics
-            if (document.getElementById("online-students")) {
-                setInner("online-students", stats.onlineStudents || "12");
-            }
-            if (document.getElementById("active-sessions")) {
-                setInner("active-sessions", stats.activeSessions || "8");
-            }
-            if (document.getElementById("avg-engagement")) {
-                setInner("avg-engagement", `${stats.avgEngagement || 78}%`);
-            }
-            if (document.getElementById("completion-today")) {
-                setInner("completion-today", stats.completionToday || "24");
-            }
-
-            // Update last sync time
-            updateLastUpdateTime();
+        if (response && (response.data || response.stats)) {
+            const stats = response.data || response.stats || response;
+            updateRealTimeStats(stats, true);
+            console.log("✅ Real real-time stats loaded:", stats);
+            return stats;
         } else {
-            throw new Error("No real-time stats received");
+            throw new Error("Invalid real-time stats format");
         }
     } catch (error) {
-        console.error("Failed to load real-time stats:", error);
-        // Fallback to demo data
-        loadDemoRealTimeStats();
+        console.error("❌ Failed to load real real-time stats:", error);
+        return loadDemoRealTimeStats();
+    }
+}
+
+function loadDemoRealTimeStats() {
+    console.log("🔄 Loading demo real-time stats...");
+    const demoStats = {
+        onlineStudents: 12,
+        activeSessions: 8,
+        avgEngagement: 78,
+        completionToday: 24,
+        totalActiveTime: 180,
+        averageSessionDuration: 45
+    };
+
+    updateRealTimeStats(demoStats, false);
+    console.log("✅ Demo real-time stats loaded");
+    return demoStats;
+}
+
+function updateRealTimeStats(stats, isRealData = false) {
+    // Update real-time statistics
+    if (document.getElementById("online-students")) {
+        setInner("online-students", stats.onlineStudents || 12);
+    }
+    if (document.getElementById("active-sessions")) {
+        setInner("active-sessions", stats.activeSessions || 8);
+    }
+    if (document.getElementById("avg-engagement")) {
+        setInner("avg-engagement", `${stats.avgEngagement || 78}%`);
+    }
+    if (document.getElementById("completion-today")) {
+        setInner("completion-today", stats.completionToday || 24);
+    }
+
+    // Update last sync time
+    updateLastUpdateTime();
+
+    // Show data source indicator in real-time section
+    const realTimeSection = document.querySelector('.real-time-stats-header');
+    if (realTimeSection) {
+        const indicator = isRealData
+            ? '<span style="color: var(--success); font-size: 0.75rem;">🟢 Live</span>'
+            : '<span style="color: var(--warning); font-size: 0.75rem;">🟡 Demo</span>';
+
+        // Add or update indicator
+        let existingIndicator = realTimeSection.querySelector('.data-indicator');
+        if (existingIndicator) {
+            existingIndicator.innerHTML = indicator;
+        } else {
+            realTimeSection.insertAdjacentHTML('beforeend', `<div class="data-indicator">${indicator}</div>`);
+        }
     }
 }
 
@@ -380,19 +691,73 @@ function loadDemoRealTimeStats() {
     setInner("completion-today", "24");
 }
 
-async function loadActivityTimeline() {
+async function loadActivityTimelineWithFallback() {
     try {
-        const activitiesResponse = await apiClient.request("/educator/analytics/recent-activity");
+        console.log("🔄 Loading activity timeline...");
+        const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.RECENT_ACTIVITY);
 
-        if (activitiesResponse && activitiesResponse.data) {
-            renderActivityTimeline(activitiesResponse.data);
+        if (response && (response.data || response.activities || Array.isArray(response))) {
+            const activities = response.data || response.activities || response;
+            renderActivityTimeline(Array.isArray(activities) ? activities : [], true);
+            console.log("✅ Real activity timeline loaded:", activities);
+            return activities;
         } else {
-            throw new Error("No activity data received");
+            throw new Error("Invalid activity data format");
         }
     } catch (error) {
-        console.error("Failed to load activity timeline:", error);
-        loadDemoActivityTimeline();
+        console.error("❌ Failed to load real activity timeline:", error);
+        return loadDemoActivityTimeline();
     }
+}
+
+function loadDemoActivityTimeline() {
+    console.log("🔄 Loading demo activity timeline...");
+    const demoActivities = [
+        {
+            id: "activity-1",
+            type: "completion",
+            studentName: "Ahmad Rizki",
+            action: "completed Module 2: Data Analysis",
+            timestamp: new Date(Date.now() - 300000).toISOString(),
+            icon: "✅"
+        },
+        {
+            id: "activity-2",
+            type: "login",
+            studentName: "Sari Dewi",
+            action: "logged in and started Module 3",
+            timestamp: new Date(Date.now() - 600000).toISOString(),
+            icon: "🔑"
+        },
+        {
+            id: "activity-3",
+            type: "submission",
+            studentName: "Budi Santoso",
+            action: "submitted Assignment 2",
+            timestamp: new Date(Date.now() - 1200000).toISOString(),
+            icon: "📝"
+        },
+        {
+            id: "activity-4",
+            type: "question",
+            studentName: "Maya Rajin",
+            action: "asked a question in Module 1",
+            timestamp: new Date(Date.now() - 1800000).toISOString(),
+            icon: "❓"
+        },
+        {
+            id: "activity-5",
+            type: "achievement",
+            studentName: "Andi Cerdas",
+            action: "earned 'Data Visualization Expert' badge",
+            timestamp: new Date(Date.now() - 3600000).toISOString(),
+            icon: "🏆"
+        }
+    ];
+
+    renderActivityTimeline(demoActivities, false);
+    console.log("✅ Demo activity timeline loaded");
+    return demoActivities;
 }
 
 function loadDemoActivityTimeline() {
@@ -407,7 +772,7 @@ function loadDemoActivityTimeline() {
     renderActivityTimeline(demoActivities);
 }
 
-function renderActivityTimeline(activities) {
+function renderActivityTimeline(activities, isRealData = false) {
     const timelineHTML = activities.map(activity => {
         const iconMap = {
             completion: "✅",
@@ -415,7 +780,8 @@ function renderActivityTimeline(activities) {
             submission: "📝",
             login: "👤",
             achievement: "🏆",
-            engagement: "📹"
+            engagement: "📹",
+            question: "❓"
         };
 
         const colorMap = {
@@ -424,22 +790,49 @@ function renderActivityTimeline(activities) {
             submission: "var(--primary)",
             login: "var(--gray-500)",
             achievement: "var(--secondary-dark)",
-            engagement: "var(--accent-dark)"
+            engagement: "var(--accent-dark)",
+            question: "var(--warning)"
         };
+
+        // Handle different data formats
+        const studentName = activity.studentName || activity.student || 'Unknown Student';
+        const actionText = activity.action || activity.description || 'Unknown action';
+        const timeText = activity.time || getRelativeTime(activity.timestamp) || 'Unknown time';
+        const activityType = activity.type || 'engagement';
+        const activityIcon = activity.icon || iconMap[activityType] || "📝";
 
         return `
             <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; border-bottom: 1px solid var(--accent); last-child:border-bottom: none;">
-                <div style="width: 32px; height: 32px; border-radius: 50%; background: ${colorMap[activity.type]}; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; flex-shrink: 0;">
-                    ${iconMap[activity.type]}
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: ${colorMap[activityType] || 'var(--gray-500)'}; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; flex-shrink: 0;">
+                    ${activityIcon}
                 </div>
                 <div style="flex: 1;">
-                    <div style="font-weight: 600; color: var(--gray-800); font-size: 0.875rem;">${activity.student}</div>
-                    <div style="color: var(--gray-600); font-size: 0.75rem;">${activity.action}</div>
+                    <div style="font-weight: 600; color: var(--gray-800); font-size: 0.875rem;">${studentName}</div>
+                    <div style="color: var(--gray-600); font-size: 0.75rem;">${actionText}</div>
                 </div>
-                <div style="color: var(--gray-500); font-size: 0.75rem; flex-shrink: 0;">${activity.time}</div>
+                <div style="color: var(--gray-500); font-size: 0.75rem; flex-shrink: 0;">${timeText}</div>
             </div>
         `;
     }).join('');
+
+    // Add data source indicator to activity timeline header
+    const activityContainer = document.getElementById("activity-timeline");
+    if (activityContainer) {
+        const dataIndicator = isRealData
+            ? '<span style="color: var(--success); font-size: 0.75rem;">🟢 Live</span>'
+            : '<span style="color: var(--warning); font-size: 0.75rem;">🟡 Demo</span>';
+
+        // Update header if it exists
+        const header = activityContainer.previousElementSibling;
+        if (header && header.classList.contains('activity-header')) {
+            let indicator = header.querySelector('.data-indicator');
+            if (indicator) {
+                indicator.innerHTML = dataIndicator;
+            } else {
+                header.insertAdjacentHTML('beforeend', `<div class="data-indicator">${dataIndicator}</div>`);
+            }
+        }
+    }
 
     setInner("activity-timeline", timelineHTML);
 }
@@ -454,8 +847,17 @@ function updateLastUpdateTime() {
     setInner("last-update-time", timeString);
 }
 
-function renderEnhancedStudentTable(students) {
+function renderEnhancedStudentTable(students, isRealData = false) {
+    // Add data source indicator
+    const dataSourceIndicator = isRealData
+        ? '<span style="color: var(--success); font-size: 0.75rem; background: var(--bg-light); padding: 0.25rem 0.5rem; border-radius: 4px;">🟢 Live Data</span>'
+        : '<span style="color: var(--warning); font-size: 0.75rem; background: var(--bg-light); padding: 0.25rem 0.5rem; border-radius: 4px;">🟡 Demo Data</span>';
+
     const tableHTML = `
+        <div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+            <h4 style="margin: 0; color: var(--gray-800);">Student Monitoring (${students.length} students)</h4>
+            <div>${dataSourceIndicator}</div>
+        </div>
         <table class="student-table">
             <thead>
                 <tr>
@@ -480,24 +882,24 @@ function renderEnhancedStudentTable(students) {
                             <td>
                                 <div style="display: flex; align-items: center; gap: 0.75rem;">
                                     <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--secondary); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 12px;">
-                                        ${student.name.split(' ').map(n => n[0]).join('').substring(0, 2)}
+                                        ${(student.name || 'Unknown').split(' ').map(n => n[0]).join('').substring(0, 2)}
                                     </div>
                                     <div>
-                                        <div style="font-weight: 600; color: var(--gray-800);">${student.name}</div>
-                                        <div style="font-size: 0.75rem; color: var(--gray-600);">${student.email}</div>
+                                        <div style="font-weight: 600; color: var(--gray-800);">${student.name || 'Unknown Student'}</div>
+                                        <div style="font-size: 0.75rem; color: var(--gray-600);">${student.email || 'No email'}</div>
                                     </div>
                                 </div>
                             </td>
                             <td>
-                                <div style="font-weight: 500; color: var(--gray-800);">Module ${student.currentModule || 1}</div>
+                                <div style="font-weight: 500; color: var(--gray-800);">Module ${student.currentModule || student.modules || 1}</div>
                                 <div style="font-size: 0.75rem; color: var(--gray-600);">${student.currentLesson || 'Introduction'}</div>
                             </td>
                             <td>
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                                     <div class="progress-mini" style="width: 80px;">
-                                        <div class="progress-mini-fill" style="width: ${student.progress}%"></div>
+                                        <div class="progress-mini-fill" style="width: ${student.progress || 0}%"></div>
                                     </div>
-                                    <span style="font-weight: 600; color: var(--primary); font-size: 0.875rem;">${student.progress}%</span>
+                                    <span style="font-weight: 600; color: var(--primary); font-size: 0.875rem;">${student.progress || 0}%</span>
                                 </div>
                                 <div style="font-size: 0.75rem; color: var(--gray-600);">${student.completedLessons || 0}/${student.totalLessons || 20} lessons</div>
                             </td>
@@ -514,7 +916,7 @@ function renderEnhancedStudentTable(students) {
                             </td>
                             <td>
                                 <div style="font-size: 0.875rem; color: var(--gray-800);">${getRelativeTime(student.lastActive)}</div>
-                                <div style="font-size: 0.75rem; color: var(--gray-600);">${new Date(student.lastActive).toLocaleDateString('id-ID')}</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-600);">${formatDate(student.lastActive)}</div>
                             </td>
                             <td>
                                 <span style="background: ${riskColor}; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">
@@ -526,7 +928,7 @@ function renderEnhancedStudentTable(students) {
                                     <button class="btn" onclick="viewStudentDetail('${student.id}')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: var(--primary);">
                                         👤 View
                                     </button>
-                                    <button class="btn" onclick="sendMessage('${student.id}')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: var(--info);">
+                                    <button class="btn" onclick="sendMessageToStudent('${student.id}')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: var(--info);">
                                         💬 Message
                                     </button>
                                 </div>
@@ -538,6 +940,16 @@ function renderEnhancedStudentTable(students) {
         </table>
     `;
     setInner("student-list", tableHTML);
+}
+
+// Helper function for date formatting
+function formatDate(dateString) {
+    if (!dateString) return 'Unknown';
+    try {
+        return new Date(dateString).toLocaleDateString('id-ID');
+    } catch (error) {
+        return 'Invalid date';
+    }
 }
 
 function renderStudentTable(students) {
