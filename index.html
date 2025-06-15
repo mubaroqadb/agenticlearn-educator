@@ -914,16 +914,403 @@
                     <span style="font-size: 0.75rem; color: var(--gray-600);">Last Login:</span>
                     <span style="font-weight: 600; color: var(--primary); font-size: 0.75rem;" id="last-login">Today 09:30</span>
                 </div>
-                <button class="btn" style="background: var(--primary); padding: 0.5rem 1rem; font-size: 0.875rem;">
-                    👤 Profile
-                </button>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <button class="btn" onclick="refreshAllDashboardData()" style="background: var(--success); padding: 0.5rem 1rem; font-size: 0.875rem;">
+                        🔄 Refresh All
+                    </button>
+                    <button class="btn" style="background: var(--primary); padding: 0.5rem 1rem; font-size: 0.875rem;">
+                        👤 Profile
+                    </button>
+                </div>
             </div>
         </header>
 
         <div class="container">
             <!-- Beranda Page -->
             <div id="page-beranda" class="page-content active">
-                <!-- Beranda content will be loaded here -->
+                <!-- Quick Stats Cards -->
+                <div class="grid" style="margin-bottom: 2rem;">
+                    <div class="metric-card">
+                        <div class="metric-value" id="total-students">45</div>
+                        <div class="metric-label">Total Students</div>
+                        <div class="metric-change positive">+3 this week</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="average-progress">78%</div>
+                        <div class="metric-label">Average Progress</div>
+                        <div class="metric-change positive">+5% this week</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="unread-messages">12</div>
+                        <div class="metric-label">Unread Messages</div>
+                        <div class="metric-change neutral">2 urgent</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="at-risk-students">3</div>
+                        <div class="metric-label">At-Risk Students</div>
+                        <div class="metric-change negative">Need attention</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <section class="card" style="margin-bottom: 2rem;">
+                    <h3 style="color: var(--gray-800); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>⚡</span> Quick Actions
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <button class="btn btn-primary" onclick="sendAnnouncement()" style="padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 1.5rem;">📢</span>
+                            <span>Send Announcement</span>
+                        </button>
+                        <button class="btn btn-success" onclick="createAssessment()" style="padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 1.5rem;">📝</span>
+                            <span>Create Assessment</span>
+                        </button>
+                        <button class="btn btn-info" onclick="viewReports()" style="padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 1.5rem;">📊</span>
+                            <span>View Reports</span>
+                        </button>
+                        <button class="btn btn-warning" onclick="startWeeklyPlanning()" style="padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 1.5rem;">📅</span>
+                            <span>Weekly Planning (D1-D6)</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Today's Schedule -->
+                <section class="card" style="margin-bottom: 2rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                        <h3 style="color: var(--gray-800); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>📅</span> Today's Schedule
+                        </h3>
+                        <span style="color: var(--gray-600); font-size: 0.875rem;" id="current-date">Monday, December 16, 2024</span>
+                    </div>
+                    <div id="todays-schedule">
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="background: var(--accent); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--primary);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <h4 style="margin: 0; color: var(--primary);">Digital Business Fundamentals</h4>
+                                    <span style="background: var(--primary); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Lecture</span>
+                                </div>
+                                <div style="display: flex; gap: 1rem; font-size: 0.875rem; color: var(--gray-600);">
+                                    <span>⏰ 09:00 - 10:30</span>
+                                    <span>📍 Room A101</span>
+                                    <span>👥 25 students</span>
+                                </div>
+                            </div>
+                            <div style="background: var(--accent); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--success);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <h4 style="margin: 0; color: var(--success);">Data Analytics Workshop</h4>
+                                    <span style="background: var(--success); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Workshop</span>
+                                </div>
+                                <div style="display: flex; gap: 1rem; font-size: 0.875rem; color: var(--gray-600);">
+                                    <span>⏰ 14:00 - 15:30</span>
+                                    <span>📍 Computer Lab</span>
+                                    <span>👥 20 students</span>
+                                </div>
+                            </div>
+                            <div style="background: var(--accent); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--warning);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <h4 style="margin: 0; color: var(--warning);">Office Hours</h4>
+                                    <span style="background: var(--warning); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Consultation</span>
+                                </div>
+                                <div style="display: flex; gap: 1rem; font-size: 0.875rem; color: var(--gray-600);">
+                                    <span>⏰ 16:00 - 17:00</span>
+                                    <span>📍 Office 302</span>
+                                    <span>👥 Open for all</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Recent Activity Feed -->
+                <section class="card" style="margin-bottom: 2rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                        <h3 style="color: var(--gray-800); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>🔔</span> Recent Activity Feed
+                        </h3>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span class="real-time-indicator" style="font-size: 0.75rem; color: var(--gray-600);">🔴 Live</span>
+                            <button class="btn" onclick="refreshActivityFeed()" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                                🔄 Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div id="activity-feed" style="max-height: 400px; overflow-y: auto;">
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--accent); border-radius: 8px;">
+                                <div style="width: 40px; height: 40px; background: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1rem; flex-shrink: 0;">
+                                    ✅
+                                </div>
+                                <div style="flex: 1;">
+                                    <h4 style="margin: 0; color: var(--gray-800); font-size: 0.875rem;">Maya Sari completed Assignment 3</h4>
+                                    <p style="margin: 0; color: var(--gray-600); font-size: 0.75rem;">Digital Business Strategy Analysis - Score: 92/100</p>
+                                </div>
+                                <div style="color: var(--gray-500); font-size: 0.75rem; flex-shrink: 0;">
+                                    2 minutes ago
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--accent); border-radius: 8px;">
+                                <div style="width: 40px; height: 40px; background: var(--warning); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1rem; flex-shrink: 0;">
+                                    ⚠️
+                                </div>
+                                <div style="flex: 1;">
+                                    <h4 style="margin: 0; color: var(--gray-800); font-size: 0.875rem;">Ahmad Rizki missed deadline</h4>
+                                    <p style="margin: 0; color: var(--gray-600); font-size: 0.75rem;">Data Visualization Project - Due: Yesterday</p>
+                                </div>
+                                <div style="color: var(--gray-500); font-size: 0.75rem; flex-shrink: 0;">
+                                    15 minutes ago
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--accent); border-radius: 8px;">
+                                <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1rem; flex-shrink: 0;">
+                                    💬
+                                </div>
+                                <div style="flex: 1;">
+                                    <h4 style="margin: 0; color: var(--gray-800); font-size: 0.875rem;">New message from Siti Nurhaliza</h4>
+                                    <p style="margin: 0; color: var(--gray-600); font-size: 0.75rem;">Question about Module 4 - Machine Learning Basics</p>
+                                </div>
+                                <div style="color: var(--gray-500); font-size: 0.75rem; flex-shrink: 0;">
+                                    1 hour ago
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--accent); border-radius: 8px;">
+                                <div style="width: 40px; height: 40px; background: var(--info); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1rem; flex-shrink: 0;">
+                                    📊
+                                </div>
+                                <div style="flex: 1;">
+                                    <h4 style="margin: 0; color: var(--gray-800); font-size: 0.875rem;">Weekly progress report generated</h4>
+                                    <p style="margin: 0; color: var(--gray-600); font-size: 0.75rem;">Class average: 78% (+5% from last week)</p>
+                                </div>
+                                <div style="color: var(--gray-500); font-size: 0.75rem; flex-shrink: 0;">
+                                    2 hours ago
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Student Performance Alerts -->
+                <section class="card" style="margin-bottom: 2rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                        <h3 style="color: var(--gray-800); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>🚨</span> Student Performance Alerts
+                        </h3>
+                        <button class="btn" onclick="loadStudentPerformanceAlerts()" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                            🔄 Refresh Alerts
+                        </button>
+                    </div>
+                    <div id="student-performance-alerts" style="max-height: 300px; overflow-y: auto;">
+                        <!-- Student alerts will be loaded here -->
+                    </div>
+                </section>
+
+                <!-- AI Insights Summary -->
+                <section class="card" style="margin-bottom: 2rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                        <h3 style="color: var(--gray-800); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>🤖</span> AI Insights Summary
+                        </h3>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn" onclick="refreshAIInsights()" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                                🔄 Refresh
+                            </button>
+                            <button class="btn btn-primary" onclick="viewDetailedInsights()" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                                📊 Detailed View
+                            </button>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                        <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--success);">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                                <span style="font-size: 1.5rem;">🎯</span>
+                                <h4 style="margin: 0; color: var(--success);">Learning Patterns</h4>
+                            </div>
+                            <p style="margin: 0; color: var(--gray-700); font-size: 0.875rem; line-height: 1.4;">
+                                Students are most active between 7-9 PM. Video content shows 85% higher engagement than text-based materials.
+                            </p>
+                            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--accent-dark);">
+                                <span style="font-size: 0.75rem; color: var(--gray-600);">Confidence: 92% • Last updated: 5 min ago</span>
+                            </div>
+                        </div>
+                        <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--warning);">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                                <span style="font-size: 1.5rem;">⚠️</span>
+                                <h4 style="margin: 0; color: var(--warning);">At-Risk Alert</h4>
+                            </div>
+                            <p style="margin: 0; color: var(--gray-700); font-size: 0.875rem; line-height: 1.4;">
+                                3 students showing declining engagement. Ahmad Rizki and 2 others need immediate intervention.
+                            </p>
+                            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--accent-dark);">
+                                <span style="font-size: 0.75rem; color: var(--gray-600);">Priority: High • Action required within 24h</span>
+                            </div>
+                        </div>
+                        <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; border-left: 4px solid var(--primary);">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                                <span style="font-size: 1.5rem;">📈</span>
+                                <h4 style="margin: 0; color: var(--primary);">Performance Trend</h4>
+                            </div>
+                            <p style="margin: 0; color: var(--gray-700); font-size: 0.875rem; line-height: 1.4;">
+                                Class average improved by 5% this week. Interactive quizzes show 15% better retention rates.
+                            </p>
+                            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--accent-dark);">
+                                <span style="font-size: 0.75rem; color: var(--gray-600);">Trend: Positive • Projected improvement: +8%</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- System Health Status -->
+                <section class="card" style="margin-bottom: 2rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                        <h3 style="color: var(--gray-800); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>🔧</span> System Health Status
+                        </h3>
+                        <div class="system-status-indicator" style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div style="width: 8px; height: 8px; background: var(--success); border-radius: 50%;"></div>
+                            <span style="font-size: 0.75rem; color: var(--success); font-weight: 600;">All Systems Operational</span>
+                        </div>
+                    </div>
+                    <div id="system-health-status" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <!-- System health status will be loaded here -->
+                    </div>
+                </section>
+
+                <!-- Upcoming Deadlines -->
+                <section class="card" style="margin-bottom: 2rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                        <h3 style="color: var(--gray-800); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>⏰</span> Upcoming Deadlines
+                        </h3>
+                        <button class="btn" onclick="manageDeadlines()" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                            📅 Manage All
+                        </button>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="background: var(--accent); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--error);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <h4 style="margin: 0; color: var(--error);">Data Visualization Project</h4>
+                                <span style="background: var(--error); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Due Tomorrow</span>
+                            </div>
+                            <div style="display: flex; gap: 1rem; font-size: 0.875rem; color: var(--gray-600);">
+                                <span>📚 Data Analytics Essentials</span>
+                                <span>👥 20 students</span>
+                                <span>📤 15 submitted</span>
+                            </div>
+                        </div>
+                        <div style="background: var(--accent); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--warning);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <h4 style="margin: 0; color: var(--warning);">Business Strategy Quiz</h4>
+                                <span style="background: var(--warning); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Due in 3 days</span>
+                            </div>
+                            <div style="display: flex; gap: 1rem; font-size: 0.875rem; color: var(--gray-600);">
+                                <span>📚 Digital Business Fundamentals</span>
+                                <span>👥 25 students</span>
+                                <span>📤 8 submitted</span>
+                            </div>
+                        </div>
+                        <div style="background: var(--accent); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--info);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <h4 style="margin: 0; color: var(--info);">Final Project Proposal</h4>
+                                <span style="background: var(--info); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Due in 1 week</span>
+                            </div>
+                            <div style="display: flex; gap: 1rem; font-size: 0.875rem; color: var(--gray-600);">
+                                <span>📚 Machine Learning Basics</span>
+                                <span>👥 18 students</span>
+                                <span>📤 3 submitted</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Student Performance Alerts -->
+                <section class="card">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                        <h3 style="color: var(--gray-800); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>🚨</span> Student Performance Alerts
+                        </h3>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn" onclick="viewAllAlerts()" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                                👁️ View All
+                            </button>
+                            <button class="btn btn-warning" onclick="createInterventionPlan()" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                                📋 Create Intervention
+                            </button>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="background: var(--secondary-light); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--error);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <div style="width: 40px; height: 40px; background: var(--error); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.875rem; font-weight: 600;">
+                                        AR
+                                    </div>
+                                    <div>
+                                        <h4 style="margin: 0; color: var(--error);">Ahmad Rizki</h4>
+                                        <p style="margin: 0; font-size: 0.75rem; color: var(--gray-600);">Student ID: 2024001</p>
+                                    </div>
+                                </div>
+                                <span style="background: var(--error); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">High Risk</span>
+                            </div>
+                            <div style="margin-bottom: 0.5rem;">
+                                <p style="margin: 0; font-size: 0.875rem; color: var(--gray-700);">
+                                    <strong>Issues:</strong> Missed 3 deadlines, 45% attendance, declining grades
+                                </p>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-error" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">📞 Contact</button>
+                                <button class="btn" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">📊 View Profile</button>
+                            </div>
+                        </div>
+                        <div style="background: var(--secondary-light); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--warning);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <div style="width: 40px; height: 40px; background: var(--warning); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.875rem; font-weight: 600;">
+                                        DF
+                                    </div>
+                                    <div>
+                                        <h4 style="margin: 0; color: var(--warning);">Dewi Fortuna</h4>
+                                        <p style="margin: 0; font-size: 0.75rem; color: var(--gray-600);">Student ID: 2024015</p>
+                                    </div>
+                                </div>
+                                <span style="background: var(--warning); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Medium Risk</span>
+                            </div>
+                            <div style="margin-bottom: 0.5rem;">
+                                <p style="margin: 0; font-size: 0.875rem; color: var(--gray-700);">
+                                    <strong>Issues:</strong> Low engagement in online sessions, needs additional support
+                                </p>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-warning" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">💬 Message</button>
+                                <button class="btn" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">📈 Progress</button>
+                            </div>
+                        </div>
+                        <div style="background: var(--secondary-light); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--info);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <div style="width: 40px; height: 40px; background: var(--info); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.875rem; font-weight: 600;">
+                                        BP
+                                    </div>
+                                    <div>
+                                        <h4 style="margin: 0; color: var(--info);">Budi Pratama</h4>
+                                        <p style="margin: 0; font-size: 0.75rem; color: var(--gray-600);">Student ID: 2024032</p>
+                                    </div>
+                                </div>
+                                <span style="background: var(--info); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Watch List</span>
+                            </div>
+                            <div style="margin-bottom: 0.5rem;">
+                                <p style="margin: 0; font-size: 0.875rem; color: var(--gray-700);">
+                                    <strong>Note:</strong> Recent improvement but still below class average
+                                </p>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-info" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">👍 Encourage</button>
+                                <button class="btn" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">📋 Monitor</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
 
             <!-- Analytics Page -->

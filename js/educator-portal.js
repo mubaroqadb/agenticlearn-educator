@@ -6,12 +6,21 @@ import { setInner, onClick } from "https://cdn.jsdelivr.net/gh/jscroot/lib@0.0.4
 import { redirect } from "https://cdn.jsdelivr.net/gh/jscroot/lib@0.0.4/url.js";
 
 // Dynamic API Configuration
-const API_BASE_URL = window.location.hostname.includes("localhost") ? "https://asia-southeast2-agenticai-462517.cloudfunctions.net/domyid/api/agenticlearn" : "https://asia-southeast2-agenticai-462517.cloudfunctions.net/domyid/api/agenticlearn"; // Will be Google Cloud endpoint
+const API_BASE_URL = window.location.hostname.includes("localhost")
+    ? "https://asia-southeast2-agenticai-462517.cloudfunctions.net/domyid/api/agenticlearn"
+    : "https://asia-southeast2-agenticai-462517.cloudfunctions.net/domyid/api/agenticlearn";
 
 // Get GitHub username for redirects
-const GITHUB_USERNAME = window.location.hostname.includes('github.io') 
-    ? window.location.hostname.split('.')[0] 
+const GITHUB_USERNAME = window.location.hostname.includes('github.io')
+    ? window.location.hostname.split('.')[0]
     : 'mubaroqadb';
+
+// Global state management
+let realTimeMonitoring = false;
+let monitoringInterval = null;
+let currentEducatorData = null;
+let currentStudentData = [];
+let currentAnalyticsData = null;
 
 async function initializeEducatorPortal() {
     const token = getCookie("login");
@@ -29,6 +38,10 @@ async function initializeEducatorPortal() {
         await loadClassData();
         await loadStudentList();
         await loadAIInsights();
+
+        // Load additional dashboard components
+        await loadStudentPerformanceAlerts();
+        await loadSystemHealthStatus();
 
         // Setup event listeners
         setupEventListeners();
@@ -230,40 +243,96 @@ function loadPageContent(pageName) {
 
 async function loadEducatorData() {
     try {
-        setInner("educator-name", "Dr. Sarah Educator");
+        // Try to load real educator data from API
+        const response = await apiClient.request("/educator/profile");
+        if (response && response.data) {
+            currentEducatorData = response.data;
+            setInner("educator-name", response.data.name || "Dr. Sarah Educator");
+
+            // Update sidebar footer with real educator info
+            const sidebarFooter = document.querySelector('.sidebar-footer');
+            if (sidebarFooter && response.data.name) {
+                sidebarFooter.innerHTML = `
+                    <div style="background: var(--accent); padding: 0.75rem; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 0.75rem; color: var(--gray-600); margin-bottom: 0.25rem;">Welcome back</div>
+                        <div style="font-weight: 600; color: var(--primary); font-size: 0.875rem;">${response.data.name}</div>
+                        <div style="font-size: 0.75rem; color: var(--gray-600);">${response.data.department || 'Educator'}</div>
+                    </div>
+                `;
+            }
+
+            UIComponents.showNotification("✅ Educator profile loaded successfully", "success");
+        } else {
+            throw new Error("No educator data received");
+        }
     } catch (error) {
         console.error("Failed to load educator data:", error);
-        setInner("educator-name", "Demo Educator");
+        // Fallback to demo data
+        setInner("educator-name", "Dr. Sarah Johnson");
+        UIComponents.showNotification("Using demo educator profile", "info");
     }
 }
 
 async function loadClassData() {
     try {
-        const classData = await apiClient.request("/courses");
-        setInner("total-students", classData.totalStudents || 45);
-        setInner("active-classes", classData.activeClasses || 3);
-        setInner("avg-progress", `${Math.round(classData.avgProgress || 72.5)}%`);
-        setInner("completion-rate", `${Math.round(classData.completionRate || 68)}%`);
+        // Load real class data from API
+        const classData = await apiClient.request("/educator/dashboard/stats");
+
+        if (classData && classData.data) {
+            const stats = classData.data;
+
+            // Update dashboard metrics with real data
+            setInner("total-students", stats.totalStudents || 45);
+            setInner("average-progress", `${Math.round(stats.averageProgress || 78)}%`);
+            setInner("unread-messages", stats.unreadMessages || 12);
+            setInner("at-risk-students", stats.atRiskStudents || 3);
+
+            // Update additional metrics if elements exist
+            if (document.getElementById("active-classes")) {
+                setInner("active-classes", stats.activeClasses || 3);
+            }
+            if (document.getElementById("completion-rate")) {
+                setInner("completion-rate", `${Math.round(stats.completionRate || 68)}%`);
+            }
+
+            UIComponents.showNotification("📊 Dashboard metrics updated with real data", "success");
+        } else {
+            throw new Error("No class data received");
+        }
     } catch (error) {
         console.error("Failed to load class data:", error);
+        // Fallback to demo data
         setInner("total-students", "45");
-        setInner("active-classes", "3");
-        setInner("avg-progress", "73%");
-        setInner("completion-rate", "68%");
+        setInner("average-progress", "78%");
+        setInner("unread-messages", "12");
+        setInner("at-risk-students", "3");
         UIComponents.showNotification("Using demo data for class statistics", "info");
     }
 }
 
 async function loadStudentList() {
     try {
-        // Load real-time student data
-        const students = await apiClient.request("/progress/class-1");
-        await loadRealTimeStats();
-        await loadActivityTimeline();
-        renderEnhancedStudentTable(students);
-        updateLastUpdateTime();
+        // Load real student data from API
+        const studentsResponse = await apiClient.request("/educator/students");
+
+        if (studentsResponse && studentsResponse.data) {
+            currentStudentData = studentsResponse.data;
+
+            // Load additional real-time data
+            await loadRealTimeStats();
+            await loadActivityTimeline();
+
+            // Render student table with real data
+            renderEnhancedStudentTable(currentStudentData);
+            updateLastUpdateTime();
+
+            UIComponents.showNotification(`📚 Loaded ${currentStudentData.length} students successfully`, "success");
+        } else {
+            throw new Error("No student data received");
+        }
     } catch (error) {
         console.error("Failed to load student list:", error);
+        // Fallback to demo data
         renderDemoStudentTable();
         loadDemoRealTimeStats();
         loadDemoActivityTimeline();
@@ -273,18 +342,34 @@ async function loadStudentList() {
 
 async function loadRealTimeStats() {
     try {
-        const stats = await apiClient.request("/analytics/realtime-stats");
+        const statsResponse = await apiClient.request("/educator/analytics/realtime");
 
-        setInner("online-students", stats.onlineStudents || "12");
-        setInner("active-sessions", stats.activeSessions || "8");
-        setInner("avg-engagement", stats.avgEngagement || "78%");
-        setInner("completion-today", stats.completionToday || "24");
+        if (statsResponse && statsResponse.data) {
+            const stats = statsResponse.data;
+
+            // Update real-time statistics
+            if (document.getElementById("online-students")) {
+                setInner("online-students", stats.onlineStudents || "12");
+            }
+            if (document.getElementById("active-sessions")) {
+                setInner("active-sessions", stats.activeSessions || "8");
+            }
+            if (document.getElementById("avg-engagement")) {
+                setInner("avg-engagement", `${stats.avgEngagement || 78}%`);
+            }
+            if (document.getElementById("completion-today")) {
+                setInner("completion-today", stats.completionToday || "24");
+            }
+
+            // Update last sync time
+            updateLastUpdateTime();
+        } else {
+            throw new Error("No real-time stats received");
+        }
     } catch (error) {
+        console.error("Failed to load real-time stats:", error);
         // Fallback to demo data
-        setInner("online-students", "12");
-        setInner("active-sessions", "8");
-        setInner("avg-engagement", "78%");
-        setInner("completion-today", "24");
+        loadDemoRealTimeStats();
     }
 }
 
@@ -297,9 +382,15 @@ function loadDemoRealTimeStats() {
 
 async function loadActivityTimeline() {
     try {
-        const activities = await apiClient.request("/analytics/recent-activity");
-        renderActivityTimeline(activities);
+        const activitiesResponse = await apiClient.request("/educator/analytics/recent-activity");
+
+        if (activitiesResponse && activitiesResponse.data) {
+            renderActivityTimeline(activitiesResponse.data);
+        } else {
+            throw new Error("No activity data received");
+        }
     } catch (error) {
+        console.error("Failed to load activity timeline:", error);
         loadDemoActivityTimeline();
     }
 }
@@ -588,24 +679,34 @@ function renderDemoStudentTable() {
 
 async function loadAIInsights() {
     try {
-        // Load real analytics data from API
-        await loadLearningPatterns();
-        await loadAtRiskStudents();
-        await loadContentEffectiveness();
-        await loadAIRecommendations();
+        // Load real AI analytics data from API
+        const aiInsightsResponse = await apiClient.request("/educator/ai/insights");
 
-        // Load advanced analytics charts
-        await loadAdvancedAnalytics();
+        if (aiInsightsResponse && aiInsightsResponse.data) {
+            currentAnalyticsData = aiInsightsResponse.data;
 
-        // Load communication center
-        await loadCommunicationCenter();
+            // Load all AI insights components
+            await loadLearningPatterns(currentAnalyticsData.learningPatterns);
+            await loadAtRiskStudents(currentAnalyticsData.atRiskStudents);
+            await loadContentEffectiveness(currentAnalyticsData.contentEffectiveness);
+            await loadAIRecommendations(currentAnalyticsData.recommendations);
 
-        UIComponents.showNotification("📊 AI Analytics loaded successfully", "success");
+            // Load advanced analytics charts
+            await loadAdvancedAnalytics(currentAnalyticsData.advanced);
+
+            // Load communication center
+            await loadCommunicationCenter();
+
+            UIComponents.showNotification("🤖 AI Analytics loaded successfully with real data", "success");
+        } else {
+            throw new Error("No AI insights data received");
+        }
     } catch (error) {
         console.error("Failed to load AI insights:", error);
+        // Fallback to demo data
         loadDemoAnalytics();
         loadDemoAdvancedAnalytics();
-        UIComponents.showNotification("Using demo analytics data", "info");
+        UIComponents.showNotification("Using demo AI analytics data", "info");
     }
 }
 
@@ -624,39 +725,88 @@ function loadDemoAdvancedAnalytics() {
     renderDemoCharts();
 }
 
-async function loadLearningPatterns() {
+async function loadLearningPatterns(patternsData = null) {
     try {
-        // Simulate API call to get learning patterns
-        const patterns = await apiClient.request("/analytics/learning-patterns");
+        let patterns;
 
-        setInner("peak-time", patterns.peakTime || "19:00-21:00 WIB");
-        setInner("mobile-access", patterns.mobileAccess || "85%");
-        setInner("session-duration", patterns.avgSessionDuration || "45 min");
-        setInner("learning-insights", patterns.insights || "Students are most active in evening hours. Mobile learning is preferred. Video content shows highest engagement rates.");
+        if (patternsData) {
+            // Use provided data from AI insights
+            patterns = patternsData;
+        } else {
+            // Load directly from API
+            const patternsResponse = await apiClient.request("/educator/analytics/learning-patterns");
+            patterns = patternsResponse?.data;
+        }
+
+        if (patterns) {
+            // Update learning patterns with real data
+            if (document.getElementById("peak-time")) {
+                setInner("peak-time", patterns.peakTime || "19:00-21:00 WIB");
+            }
+            if (document.getElementById("mobile-access")) {
+                setInner("mobile-access", `${patterns.mobileAccess || 85}%`);
+            }
+            if (document.getElementById("session-duration")) {
+                setInner("session-duration", patterns.avgSessionDuration || "45 min");
+            }
+            if (document.getElementById("learning-insights")) {
+                setInner("learning-insights", patterns.insights || "Students are most active in evening hours. Mobile learning is preferred. Video content shows highest engagement rates.");
+            }
+        } else {
+            throw new Error("No learning patterns data available");
+        }
     } catch (error) {
+        console.error("Failed to load learning patterns:", error);
         // Fallback to demo data
-        setInner("peak-time", "19:00-21:00 WIB");
-        setInner("mobile-access", "85%");
-        setInner("session-duration", "45 min");
-        setInner("learning-insights", "🕒 Peak activity: 19:00-21:00 WIB. 📱 85% mobile access. 📊 Video content most engaging.");
+        if (document.getElementById("peak-time")) setInner("peak-time", "19:00-21:00 WIB");
+        if (document.getElementById("mobile-access")) setInner("mobile-access", "85%");
+        if (document.getElementById("session-duration")) setInner("session-duration", "45 min");
+        if (document.getElementById("learning-insights")) setInner("learning-insights", "🕒 Peak activity: 19:00-21:00 WIB. 📱 85% mobile access. 📊 Video content most engaging.");
     }
 }
 
-async function loadAtRiskStudents() {
+async function loadAtRiskStudents(riskData = null) {
     try {
-        // Simulate API call to get at-risk students analysis
-        const riskAnalysis = await apiClient.request("/analytics/at-risk-students");
+        let riskAnalysis;
 
-        setInner("high-risk-count", riskAnalysis.highRisk || "3");
-        setInner("medium-risk-count", riskAnalysis.mediumRisk || "7");
-        setInner("intervention-count", riskAnalysis.interventionNeeded || "5");
-        setInner("risk-insights", riskAnalysis.insights || "3 students need immediate intervention. Focus on students with <30% progress and no activity in 7+ days.");
+        if (riskData) {
+            // Use provided data from AI insights
+            riskAnalysis = riskData;
+        } else {
+            // Load directly from API
+            const riskResponse = await apiClient.request("/educator/analytics/at-risk-students");
+            riskAnalysis = riskResponse?.data;
+        }
+
+        if (riskAnalysis) {
+            // Update at-risk student metrics with real data
+            if (document.getElementById("high-risk-count")) {
+                setInner("high-risk-count", riskAnalysis.highRisk || "3");
+            }
+            if (document.getElementById("medium-risk-count")) {
+                setInner("medium-risk-count", riskAnalysis.mediumRisk || "7");
+            }
+            if (document.getElementById("intervention-count")) {
+                setInner("intervention-count", riskAnalysis.interventionNeeded || "5");
+            }
+            if (document.getElementById("risk-insights")) {
+                setInner("risk-insights", riskAnalysis.insights || "3 students need immediate intervention. Focus on students with <30% progress and no activity in 7+ days.");
+            }
+
+            // Update at-risk students count in dashboard
+            if (document.getElementById("at-risk-students")) {
+                setInner("at-risk-students", riskAnalysis.highRisk || "3");
+            }
+        } else {
+            throw new Error("No at-risk students data available");
+        }
     } catch (error) {
+        console.error("Failed to load at-risk students:", error);
         // Fallback to demo data
-        setInner("high-risk-count", "3");
-        setInner("medium-risk-count", "7");
-        setInner("intervention-count", "5");
-        setInner("risk-insights", "⚠️ 3 high-risk students identified: Maya Rajin (25% progress), Andi Tertinggal (15% progress), Sari Lambat (20% progress). Immediate intervention recommended.");
+        if (document.getElementById("high-risk-count")) setInner("high-risk-count", "3");
+        if (document.getElementById("medium-risk-count")) setInner("medium-risk-count", "7");
+        if (document.getElementById("intervention-count")) setInner("intervention-count", "5");
+        if (document.getElementById("risk-insights")) setInner("risk-insights", "⚠️ 3 high-risk students identified: Maya Rajin (25% progress), Andi Tertinggal (15% progress), Sari Lambat (20% progress). Immediate intervention recommended.");
     }
 }
 
@@ -760,9 +910,158 @@ function setupEventListeners() {
     onClick("btn-ai-oversight", openAIOversight);
 }
 
-// Real-time monitoring state
-let realTimeMonitoring = false;
-let monitoringInterval = null;
+// Add new function to load student performance alerts
+async function loadStudentPerformanceAlerts() {
+    try {
+        const alertsResponse = await apiClient.request("/educator/analytics/student-alerts");
+
+        if (alertsResponse && alertsResponse.data) {
+            renderStudentAlerts(alertsResponse.data);
+            return alertsResponse.data;
+        } else {
+            throw new Error("No student alerts data received");
+        }
+    } catch (error) {
+        console.error("Failed to load student alerts:", error);
+        // Fallback to demo alerts
+        renderDemoStudentAlerts();
+        return null;
+    }
+}
+
+function renderStudentAlerts(alerts) {
+    const alertsContainer = document.getElementById("student-performance-alerts");
+    if (!alertsContainer) return;
+
+    const alertsHTML = alerts.map(alert => {
+        const alertTypeIcon = {
+            'high_risk': '🚨',
+            'missed_deadline': '⏰',
+            'low_engagement': '📉',
+            'improvement': '📈'
+        };
+
+        const alertTypeColor = {
+            'high_risk': 'var(--error)',
+            'missed_deadline': 'var(--warning)',
+            'low_engagement': 'var(--warning)',
+            'improvement': 'var(--success)'
+        };
+
+        return `
+            <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--accent); border-radius: 8px; border-left: 4px solid ${alertTypeColor[alert.type]}; margin-bottom: 0.5rem;">
+                <div style="font-size: 1.5rem;">${alertTypeIcon[alert.type]}</div>
+                <div style="flex: 1;">
+                    <h4 style="margin: 0; color: var(--gray-800); font-size: 0.875rem;">${alert.studentName}</h4>
+                    <p style="margin: 0; color: var(--gray-600); font-size: 0.75rem;">${alert.message}</p>
+                </div>
+                <div style="color: var(--gray-500); font-size: 0.75rem;">${alert.timeAgo}</div>
+            </div>
+        `;
+    }).join('');
+
+    alertsContainer.innerHTML = alertsHTML;
+}
+
+function renderDemoStudentAlerts() {
+    const demoAlerts = [
+        {
+            type: 'high_risk',
+            studentName: 'Maya Rajin',
+            message: 'Progress below 30% - needs immediate intervention',
+            timeAgo: '2 hours ago'
+        },
+        {
+            type: 'missed_deadline',
+            studentName: 'Ahmad Rizki',
+            message: 'Missed Data Visualization Project deadline',
+            timeAgo: '1 day ago'
+        },
+        {
+            type: 'low_engagement',
+            studentName: 'Sari Lambat',
+            message: 'No activity for 5 days',
+            timeAgo: '5 days ago'
+        }
+    ];
+
+    renderStudentAlerts(demoAlerts);
+}
+
+// Add system health monitoring function
+async function loadSystemHealthStatus() {
+    try {
+        const healthResponse = await apiClient.request("/educator/system/health");
+
+        if (healthResponse && healthResponse.data) {
+            renderSystemHealth(healthResponse.data);
+            return healthResponse.data;
+        } else {
+            throw new Error("No system health data received");
+        }
+    } catch (error) {
+        console.error("Failed to load system health:", error);
+        // Fallback to demo health status
+        renderDemoSystemHealth();
+        return null;
+    }
+}
+
+function renderSystemHealth(healthData) {
+    const healthContainer = document.getElementById("system-health-status");
+    if (!healthContainer) return;
+
+    const services = healthData.services || [];
+    const overallStatus = healthData.overallStatus || 'operational';
+
+    // Update overall status indicator
+    const statusIndicator = document.querySelector('.system-status-indicator');
+    if (statusIndicator) {
+        const statusColor = overallStatus === 'operational' ? 'var(--success)' :
+                           overallStatus === 'degraded' ? 'var(--warning)' : 'var(--error)';
+        const statusText = overallStatus === 'operational' ? 'All Systems Operational' :
+                          overallStatus === 'degraded' ? 'Some Issues Detected' : 'System Issues';
+
+        statusIndicator.innerHTML = `
+            <div style="width: 8px; height: 8px; background: ${statusColor}; border-radius: 50%;"></div>
+            <span style="font-size: 0.75rem; color: ${statusColor}; font-weight: 600;">${statusText}</span>
+        `;
+    }
+
+    // Update individual service status
+    const servicesHTML = services.map(service => {
+        const statusColor = service.status === 'operational' ? 'var(--success)' :
+                           service.status === 'degraded' ? 'var(--warning)' : 'var(--error)';
+
+        return `
+            <div style="background: var(--accent); padding: 1rem; border-radius: 8px; text-align: center;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                    <div style="width: 8px; height: 8px; background: ${statusColor}; border-radius: 50%;"></div>
+                    <span style="font-size: 0.875rem; font-weight: 600; color: var(--gray-800);">${service.name}</span>
+                </div>
+                <p style="margin: 0; font-size: 0.75rem; color: var(--gray-600);">${service.details}</p>
+            </div>
+        `;
+    }).join('');
+
+    healthContainer.innerHTML = servicesHTML;
+}
+
+function renderDemoSystemHealth() {
+    const demoHealth = {
+        overallStatus: 'operational',
+        services: [
+            { name: 'Backend API', status: 'operational', details: 'Response time: 120ms' },
+            { name: 'Database', status: 'operational', details: 'Connection: Stable' },
+            { name: 'AI Services', status: 'degraded', details: 'Load: 78% (High)' },
+            { name: 'Storage', status: 'operational', details: 'Usage: 45% of 1TB' }
+        ]
+    };
+
+    renderSystemHealth(demoHealth);
+}
+
+// Real-time monitoring state (moved from original location)
 
 function toggleRealTimeMonitoring() {
     realTimeMonitoring = !realTimeMonitoring;
@@ -785,11 +1084,38 @@ function startRealTimeUpdates() {
     // Update every 30 seconds
     monitoringInterval = setInterval(async () => {
         try {
+            // Update real-time data sources
             await loadRealTimeStats();
             await loadActivityTimeline();
+            await loadStudentPerformanceAlerts();
+            await loadSystemHealthStatus();
+
+            // Update dashboard metrics
+            await loadClassData();
+
             updateLastUpdateTime();
+
+            // Show subtle notification for successful update
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('id-ID', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            // Update any real-time indicators
+            const indicators = document.querySelectorAll('.real-time-indicator');
+            indicators.forEach(indicator => {
+                indicator.textContent = `🔴 Live • Last update: ${timeString}`;
+            });
+
         } catch (error) {
             console.error("Real-time update failed:", error);
+            // Show error indicator
+            const indicators = document.querySelectorAll('.real-time-indicator');
+            indicators.forEach(indicator => {
+                indicator.textContent = `⚠️ Connection issue`;
+                indicator.style.color = 'var(--warning)';
+            });
         }
     }, 30000);
 }
@@ -825,8 +1151,58 @@ function sendMessage(studentId) {
     }
 }
 
+// Enhanced refresh function for all dashboard data
+async function refreshAllDashboardData() {
+    UIComponents.showNotification("🔄 Refreshing all dashboard data...", "info");
+
+    try {
+        // Refresh all main data sources
+        await Promise.all([
+            loadEducatorData(),
+            loadClassData(),
+            loadStudentList(),
+            loadAIInsights(),
+            loadStudentPerformanceAlerts(),
+            loadSystemHealthStatus()
+        ]);
+
+        updateCarbonIndicator();
+        UIComponents.showNotification("✅ All dashboard data refreshed successfully!", "success");
+    } catch (error) {
+        console.error("Failed to refresh dashboard data:", error);
+        UIComponents.showNotification("❌ Some data failed to refresh. Check connection.", "error");
+    }
+}
+
+// Function to refresh AI insights specifically
+async function refreshAIInsights() {
+    UIComponents.showNotification("🤖 Refreshing AI insights...", "info");
+    try {
+        await loadAIInsights();
+        UIComponents.showNotification("✅ AI insights refreshed successfully!", "success");
+    } catch (error) {
+        UIComponents.showNotification("❌ Failed to refresh AI insights", "error");
+    }
+}
+
+// Function to refresh activity feed
+async function refreshActivityFeed() {
+    UIComponents.showNotification("🔄 Refreshing activity feed...", "info");
+    try {
+        await loadActivityTimeline();
+        updateLastUpdateTime();
+        UIComponents.showNotification("✅ Activity feed refreshed!", "success");
+    } catch (error) {
+        UIComponents.showNotification("❌ Failed to refresh activity feed", "error");
+    }
+}
+
 // Global functions for onclick handlers
 window.sendMessage = sendMessage;
+window.refreshAllDashboardData = refreshAllDashboardData;
+window.refreshAIInsights = refreshAIInsights;
+window.refreshActivityFeed = refreshActivityFeed;
+window.loadStudentPerformanceAlerts = loadStudentPerformanceAlerts;
 
 function exportStudentProgress() {
     const csvData = "Nama,Email,Progress,Status,Terakhir Aktif\n" +
