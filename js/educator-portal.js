@@ -763,8 +763,9 @@ class AdvancedAnalyticsManager {
             }
         } catch (error) {
             console.error("❌ Failed to load real analytics from MongoDB:", error);
-            UIComponents.showNotification("❌ Analytics service unavailable", "error");
-            // Return empty data instead of fake data
+            console.log("ℹ️ Advanced analytics endpoint not yet implemented in backend");
+            UIComponents.showNotification("ℹ️ Advanced analytics will be available when backend is updated", "info");
+            // Return null to indicate service not available (not fake data)
             return {
                 learning: null,
                 engagement: null,
@@ -956,6 +957,30 @@ class AdvancedAnalyticsManager {
 
     renderAdvancedAnalyticsDashboard() {
         const data = this.analyticsData;
+
+        // Check if data is available
+        if (!data || !data.learning) {
+            setInner("advanced-analytics-content", `
+                <div class="card" style="text-align: center; padding: 3rem;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+                    <h3 style="color: var(--gray-600); margin-bottom: 1rem;">Advanced Analytics Not Available</h3>
+                    <p style="color: var(--gray-500); margin-bottom: 2rem;">
+                        Advanced analytics features require backend implementation.<br>
+                        Please check BACKEND_IMPLEMENTATION.md for setup instructions.
+                    </p>
+                    <div style="background: var(--accent); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                        <strong>Required Endpoints:</strong><br>
+                        • /educator/analytics/advanced<br>
+                        • /educator/analytics/learning-patterns<br>
+                        • /educator/analytics/engagement
+                    </div>
+                    <button onclick="refreshAdvancedAnalytics()" class="btn" style="background: var(--primary);">
+                        🔄 Retry Connection
+                    </button>
+                </div>
+            `);
+            return;
+        }
 
         const dashboardHTML = `
             <!-- Learning Analytics Section -->
@@ -1243,8 +1268,9 @@ class CommunicationManager {
             };
         } catch (error) {
             console.error("❌ Failed to load real communication data from MongoDB:", error);
-            UIComponents.showNotification("❌ Communication service unavailable", "error");
-            // Return empty data instead of fake data
+            console.log("ℹ️ Communication endpoints not yet implemented in backend");
+            UIComponents.showNotification("ℹ️ Communication features will be available when backend is updated", "info");
+            // Return empty data to indicate service not available
             return {
                 messages: [],
                 notifications: [],
@@ -1478,6 +1504,30 @@ class CommunicationManager {
     }
 
     renderCommunicationDashboard() {
+        // Check if data is available
+        if (!this.messages || this.messages.length === 0) {
+            setInner("communication-content", `
+                <div class="card" style="text-align: center; padding: 3rem;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">💬</div>
+                    <h3 style="color: var(--gray-600); margin-bottom: 1rem;">Communication Center Not Available</h3>
+                    <p style="color: var(--gray-500); margin-bottom: 2rem;">
+                        Communication features require backend implementation.<br>
+                        Please check BACKEND_IMPLEMENTATION.md for setup instructions.
+                    </p>
+                    <div style="background: var(--accent); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                        <strong>Required Endpoints:</strong><br>
+                        • /educator/communication/messages<br>
+                        • /educator/communication/forums<br>
+                        • /educator/communication/video-sessions
+                    </div>
+                    <button onclick="loadEnhancedCommunicationPage()" class="btn" style="background: var(--primary);">
+                        🔄 Retry Connection
+                    </button>
+                </div>
+            `);
+            return;
+        }
+
         const unreadMessages = this.messages.filter(msg => msg.status === 'unread').length;
         const activeForums = this.forums.length;
         const upcomingVideos = this.videoSessions.filter(session => new Date(session.scheduled) > new Date()).length;
@@ -1716,8 +1766,9 @@ class ContentManagementSystem {
             };
         } catch (error) {
             console.error("❌ Failed to load real content data from MongoDB:", error);
-            UIComponents.showNotification("❌ Content service unavailable", "error");
-            // Return empty data instead of fake data
+            console.log("ℹ️ Content management endpoints not yet implemented in backend");
+            UIComponents.showNotification("ℹ️ Content management will be available when backend is updated", "info");
+            // Return empty data to indicate service not available
             return {
                 library: [],
                 resources: [],
@@ -1982,6 +2033,30 @@ class ContentManagementSystem {
     }
 
     renderContentManagementDashboard() {
+        // Check if data is available
+        if (!this.contentLibrary || this.contentLibrary.length === 0) {
+            setInner("content-management-content", `
+                <div class="card" style="text-align: center; padding: 3rem;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📚</div>
+                    <h3 style="color: var(--gray-600); margin-bottom: 1rem;">Content Management Not Available</h3>
+                    <p style="color: var(--gray-500); margin-bottom: 2rem;">
+                        Content management features require backend implementation.<br>
+                        Please check BACKEND_IMPLEMENTATION.md for setup instructions.
+                    </p>
+                    <div style="background: var(--accent); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                        <strong>Required Endpoints:</strong><br>
+                        • /educator/content/library<br>
+                        • /educator/content/resources<br>
+                        • /educator/content/curriculum
+                    </div>
+                    <button onclick="loadEnhancedContentManagementPage()" class="btn" style="background: var(--primary);">
+                        🔄 Retry Connection
+                    </button>
+                </div>
+            `);
+            return;
+        }
+
         const totalContent = this.contentLibrary.length;
         const publishedContent = this.contentLibrary.filter(content => content.status === 'published').length;
         const totalViews = this.contentLibrary.reduce((sum, content) => sum + (content.views || 0), 0);

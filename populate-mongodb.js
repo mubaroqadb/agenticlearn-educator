@@ -4,8 +4,10 @@
 // Connection: mongodb+srv://mubaroq:GH3Q7kgq9vXFdFc9@zhizafcreative.k9y3l3b.mongodb.net/
 // Database: agenticlearn
 
-// Run this script to populate MongoDB with real data
-// node populate-mongodb.js
+// INSTRUCTIONS:
+// 1. Install MongoDB driver: npm install mongodb
+// 2. Run this script: node populate-mongodb.js
+// 3. This will populate MongoDB with real data for AgenticAI backend
 
 const { MongoClient } = require('mongodb');
 
