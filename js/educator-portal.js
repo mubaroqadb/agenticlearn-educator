@@ -108,90 +108,76 @@ const UIComponents = {
 
 // ===== API CONFIGURATION =====
 
-// Enhanced API Configuration for Real Backend Integration
+// ✅ UPDATED - API Configuration per Backend Documentation
 const API_CONFIG = {
-    BASE_URL: "https://asia-southeast2-agenticai-462517.cloudfunctions.net/domyid/api/agenticlearn",
+    BASE_URL: "https://asia-southeast2-agenticai-462517.cloudfunctions.net/domyid",
     ENDPOINTS: {
-        // Available endpoints from backend
-        HEALTH_CHECK: "/health",
-        COURSES_LIST: "/courses",
+        // ✅ CORE ENDPOINTS - Per Backend Documentation
+        EDUCATOR_PROFILE: "/api/agenticlearn/educator/profile",
 
-        // Authentication (available)
-        AUTH_CHECK: "/auth/verify",
-        AUTH_LOGIN: "/auth/login",
+        // ✅ ANALYTICS & DASHBOARD - Per Backend Documentation
+        DASHBOARD_ANALYTICS: "/api/agenticlearn/educator/analytics/dashboard",
 
-        // Courses and Content (available)
-        COURSES: "/courses",
+        // ✅ STUDENT MANAGEMENT - Per Backend Documentation
+        STUDENTS_LIST: "/api/agenticlearn/educator/students/list",
+        STUDENT_DETAIL: "/api/agenticlearn/educator/student/detail",
 
-        // ARIA AI (available but need testing)
-        ARIA_CHAT: "/aria/chat",
-        ARIA_ANALYSIS: "/aria/analysis",
+        // ✅ ASSESSMENT MANAGEMENT - Per Backend Documentation
+        ASSESSMENTS_LIST: "/api/agenticlearn/educator/assessments/list",
+        ASSESSMENT_DETAIL: "/api/agenticlearn/educator/assessment/detail",
+        CREATE_ASSESSMENT: "/api/agenticlearn/educator/assessment/create",
+        UPDATE_ASSESSMENT: "/api/agenticlearn/educator/assessment/update/{id}",
+        DELETE_ASSESSMENT: "/api/agenticlearn/educator/assessment/delete/{id}",
+        ASSESSMENT_RESULTS: "/api/agenticlearn/educator/assessment/results/{id}",
+        GRADE_ASSESSMENT: "/api/agenticlearn/educator/assessment/grade",
 
-        // Educator-specific (need to be implemented or mapped)
-        EDUCATOR_PROFILE: "/educator/profile",
-        DASHBOARD_STATS: "/educator/dashboard/stats",
-        STUDENTS_LIST: "/educator/students",
-        REALTIME_STATS: "/educator/analytics/realtime",
+        // ✅ COMMUNICATION SYSTEM - Per Backend Documentation
+        MESSAGES_LIST: "/api/agenticlearn/educator/communication/messages/list",
+        SEND_MESSAGE: "/api/agenticlearn/educator/communication/send-message",
+        ANNOUNCEMENTS_LIST: "/api/agenticlearn/educator/communication/announcements/list",
+        CREATE_ANNOUNCEMENT: "/api/agenticlearn/educator/communication/announcement/create",
 
-        // AI & Analytics
-        AI_INSIGHTS: "/educator/ai/insights",
-        AI_RECOMMENDATIONS: "/educator/ai/recommendations",
-        AI_CONTENT_ANALYSIS: "/educator/ai/content-analysis",
-        AI_STUDENT_PREDICTIONS: "/educator/ai/student-predictions",
-        LEARNING_PATTERNS: "/educator/analytics/learning-patterns",
-        AT_RISK_STUDENTS: "/educator/analytics/at-risk-students",
-        CONTENT_EFFECTIVENESS: "/educator/analytics/content-effectiveness",
+        // ✅ NOTIFICATION SYSTEM - Per Backend Documentation
+        NOTIFICATIONS: "/api/agenticlearn/educator/notifications",
+        MARK_NOTIFICATION_READ: "/api/agenticlearn/notifications/mark-read",
 
-        // ARIA AI Integration
-        ARIA_AI_CHAT: "/educator/ai/aria/chat",
-        ARIA_AI_ANALYSIS: "/educator/ai/aria/analysis",
-        ARIA_AI_RECOMMENDATIONS: "/educator/ai/aria/recommendations",
+        // ✅ AI & ML INTEGRATION - Per Backend Documentation
+        AI_INSIGHTS: "/api/agenticlearn/educator/ai/insights",
+        AI_RECOMMENDATIONS: "/api/agenticlearn/educator/ai/recommendations",
+        AI_LEARNING_PATTERNS: "/api/agenticlearn/educator/ai/learning-patterns",
 
-        // Activity & Alerts
-        RECENT_ACTIVITY: "/educator/analytics/recent-activity",
-        STUDENT_ALERTS: "/educator/analytics/student-alerts",
-        SYSTEM_HEALTH: "/educator/system/health",
+        // ✅ CONTENT MANAGEMENT - Per Backend Documentation
+        CONTENT_MANAGEMENT: "/api/agenticlearn/educator/content/management",
+        DATA_EXPORT: "/api/agenticlearn/educator/data/export",
+        DATA_IMPORT: "/api/agenticlearn/educator/data/import",
+        DATA_POPULATE: "/api/agenticlearn/educator/data/populate",
 
-        // Student Management
-        STUDENT_DETAIL: "/educator/students/{id}",
-        STUDENT_PROGRESS: "/educator/students/{id}/progress",
+        // ✅ LEGACY ENDPOINTS - For backward compatibility
+        RECENT_ACTIVITY: "/api/agenticlearn/educator/analytics/recent-activity",
+        STUDENT_ALERTS: "/api/agenticlearn/educator/analytics/student-alerts",
+        SYSTEM_HEALTH: "/api/agenticlearn/educator/system/health",
+        REALTIME_STATS: "/api/agenticlearn/educator/analytics/realtime",
 
-        // Communication
-        SEND_MESSAGE: "/educator/communication/send",
-        ANNOUNCEMENTS: "/educator/communication/announcements",
+        // ✅ ARIA AI Integration - Updated paths
+        ARIA_AI_CHAT: "/api/agenticlearn/educator/ai/aria/chat",
+        ARIA_AI_ANALYSIS: "/api/agenticlearn/educator/ai/aria/analysis",
+        ARIA_AI_RECOMMENDATIONS: "/api/agenticlearn/educator/ai/aria/recommendations",
 
-        // Assessment Management
-        ASSESSMENTS_LIST: "/educator/assessments",
-        CREATE_ASSESSMENT: "/educator/assessments/create",
-        UPDATE_ASSESSMENT: "/educator/assessments/{id}",
-        DELETE_ASSESSMENT: "/educator/assessments/{id}",
-        ASSESSMENT_RESULTS: "/educator/assessments/{id}/results",
-        GRADE_SUBMISSION: "/educator/assessments/{id}/grade",
-        ASSESSMENT_ANALYTICS: "/educator/assessments/{id}/analytics",
-
-        // D7-D12: Advanced Analytics
-        ADVANCED_ANALYTICS: "/educator/analytics/advanced",
-        LEARNING_ANALYTICS: "/educator/analytics/learning",
-        ENGAGEMENT_ANALYTICS: "/educator/analytics/engagement",
-        PERFORMANCE_TRENDS: "/educator/analytics/performance-trends",
-        COMPARATIVE_ANALYTICS: "/educator/analytics/comparative",
-        PREDICTIVE_MODELS: "/educator/analytics/predictive",
-
-        // D13-D18: Communication Tools
-        STUDENT_MESSAGES: "/educator/communication/messages",
-        SEND_NOTIFICATION: "/educator/communication/notifications",
-        DISCUSSION_FORUMS: "/educator/communication/forums",
-        VIDEO_CONFERENCES: "/educator/communication/video",
-        PARENT_COMMUNICATION: "/educator/communication/parents",
-        BULK_MESSAGING: "/educator/communication/bulk",
-
-        // D19-D24: Content Management
-        CONTENT_LIBRARY: "/educator/content/library",
-        CREATE_CONTENT: "/educator/content/create",
-        CONTENT_ANALYTICS: "/educator/content/analytics",
-        RESOURCE_MANAGEMENT: "/educator/content/resources",
-        CURRICULUM_MAPPING: "/educator/content/curriculum",
-        CONTENT_SHARING: "/educator/content/sharing"
+        // ✅ FALLBACK ENDPOINTS - For demo mode
+        LEARNING_ANALYTICS: "/api/agenticlearn/educator/analytics/learning",
+        ENGAGEMENT_ANALYTICS: "/api/agenticlearn/educator/analytics/engagement",
+        PERFORMANCE_TRENDS: "/api/agenticlearn/educator/analytics/performance-trends",
+        COMPARATIVE_ANALYTICS: "/api/agenticlearn/educator/analytics/comparative",
+        PREDICTIVE_MODELS: "/api/agenticlearn/educator/analytics/predictive",
+        STUDENT_MESSAGES: "/api/agenticlearn/educator/communication/messages",
+        SEND_NOTIFICATION: "/api/agenticlearn/educator/communication/notifications",
+        DISCUSSION_FORUMS: "/api/agenticlearn/educator/communication/forums",
+        VIDEO_CONFERENCES: "/api/agenticlearn/educator/communication/video",
+        CONTENT_LIBRARY: "/api/agenticlearn/educator/content/library",
+        CREATE_CONTENT: "/api/agenticlearn/educator/content/create",
+        RESOURCE_MANAGEMENT: "/api/agenticlearn/educator/content/resources",
+        CURRICULUM_MAPPING: "/api/agenticlearn/educator/content/curriculum",
+        CONTENT_SHARING: "/api/agenticlearn/educator/content/sharing"
     }
 };
 
@@ -301,18 +287,16 @@ class EducatorAPIClient {
         this.setPasetoToken(token);
     }
 
-    // ✅ NEW - Notification methods
+    // ✅ UPDATED - Notification methods per backend documentation
     async getNotifications() {
-        return await this.request('/educator/communication/notifications');
+        return await this.request('/api/agenticlearn/educator/notifications');
     }
 
     async markNotificationRead(notificationId) {
-        return await this.request('/notifications/mark-read', {
+        return await this.request('/api/agenticlearn/notifications/mark-read', {
             method: 'POST',
             body: {
-                notification_id: notificationId,
-                user_id: 'educator_001',
-                user_type: 'educator'
+                notification_id: notificationId
             }
         });
     }
@@ -320,17 +304,18 @@ class EducatorAPIClient {
     async testConnection() {
         try {
             console.log("🔄 Testing AgenticAI backend connection...");
-            // Test with educator profile endpoint since it's working
-            const response = await this.request("/educator/profile");
+            // ✅ UPDATED - Use correct endpoint per backend documentation
+            const response = await this.request("/api/agenticlearn/educator/profile");
 
-            if (response && response.success && response.profile) {
+            if (response && response.success && (response.data || response.profile)) {
+                const profile = response.data || response.profile;
                 isBackendConnected = true;
                 console.log("✅ AgenticAI backend connection successful!");
-                console.log("👤 Connected as:", response.profile.name);
-                console.log("🏫 Department:", response.profile.department);
-                console.log("📊 Students mentored:", response.profile.students_mentored);
+                console.log("👤 Connected as:", profile.name);
+                console.log("🏫 Department:", profile.department);
+                console.log("📊 Students mentored:", profile.students_mentored);
 
-                UIComponents.showNotification(`✅ Connected as ${response.profile.name} - Real data active!`, "success");
+                UIComponents.showNotification(`✅ Connected as ${profile.name} - Real data active!`, "success");
                 return true;
             } else {
                 throw new Error("Invalid educator profile response");
@@ -513,6 +498,7 @@ class AssessmentManager {
             this.isLoading = true;
             console.log("🔄 Loading assessments...");
 
+            // ✅ UPDATED - Use correct endpoint per backend documentation
             const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.ASSESSMENTS_LIST);
 
             if (response && (response.data || response.assessments)) {
