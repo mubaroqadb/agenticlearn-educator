@@ -303,7 +303,7 @@ class EducatorAPIClient {
 
     // ✅ NEW - Notification methods
     async getNotifications() {
-        return await this.request('/educator/notifications');
+        return await this.request('/educator/communication/notifications');
     }
 
     async markNotificationRead(notificationId) {
