@@ -223,9 +223,10 @@ class EducatorAPIClient {
             ...options.headers
         };
 
-        // ✅ CORRECTED - Use 'Authorization: Bearer' per backend documentation
+        // ✅ BACKEND DOCUMENTATION - Use 'Authorization: Bearer' header
         if (this.pasetoToken) {
             headers['Authorization'] = `Bearer ${this.pasetoToken}`;
+            headers['Content-Type'] = 'application/json';
         }
 
         const config = {
@@ -539,6 +540,150 @@ class MathematicalCalculations {
 
 // Initialize mathematical calculation engine
 const mathEngine = new MathematicalCalculations();
+
+// ===== REAL DATA LOADING FUNCTIONS =====
+
+// ✅ UPDATED - Load Real Student Data from Backend
+async function loadRealStudentData() {
+    try {
+        console.log("🔄 Loading real student data from backend...");
+
+        // ✅ Use backend endpoint per documentation
+        const response = await educatorAPI.request('/api/agenticlearn/educator/students/list');
+
+        if (response && response.success && response.data) {
+            const students = response.data;
+            console.log("✅ Real student data loaded:", students);
+
+            // ✅ Transform backend data (already calculated, no hardcoding)
+            currentStudentData = students.map(student => ({
+                id: student.student_id,
+                name: student.name,
+                email: student.email,
+                // ✅ REAL CALCULATED VALUES from backend
+                progress: student.progress_percentage,           // Backend calculation: (completed/total)*100
+                completedLessons: student.completed_lessons,    // Real count from database
+                totalLessons: student.total_lessons,           // Real count from database
+                studyHours: student.total_study_hours,         // Backend calculation: SUM(minutes)/60
+                averageScore: student.average_score,           // Backend calculation: SUM(scores)/COUNT
+                engagementScore: student.engagement_score,     // Backend multi-factor calculation
+                riskLevel: student.risk_level,                 // Backend risk assessment
+                letterGrade: student.letter_grade,             // Backend grade calculation
+                daysSinceActive: student.days_since_active,    // Backend time calculation
+                // Status derived from risk level
+                status: student.risk_level === 'High' ? 'at-risk' :
+                       student.risk_level === 'Medium' ? 'warning' : 'active',
+                lastActive: student.last_active ? getRelativeTime(student.last_active) : 'Unknown',
+                enrollmentDate: student.enrollment_date,
+                // Metadata
+                source: student.source || 'calculated',
+                calculatedAt: new Date().toISOString()
+            }));
+
+            renderEnhancedStudentTable(currentStudentData, true);
+            updateLastUpdateTime();
+
+            console.log("✅ Real student data with backend calculations displayed");
+            UIComponents.showNotification(`✅ Loaded ${students.length} students with real calculations`, "success");
+            return currentStudentData;
+        } else {
+            throw new Error("Invalid response format from backend");
+        }
+    } catch (error) {
+        console.error("❌ Failed to load real student data:", error);
+        UIComponents.showNotification("⚠️ Backend unavailable, using fallback", "warning");
+        return loadFallbackStudentData();
+    }
+}
+
+// ✅ UPDATED - Load Real Dashboard Analytics from Backend
+async function loadRealDashboardAnalytics() {
+    try {
+        console.log("🔄 Loading real dashboard analytics from backend...");
+
+        // ✅ Use backend endpoint per documentation
+        const response = await educatorAPI.request('/api/agenticlearn/educator/analytics/dashboard');
+
+        if (response && response.success && response.data) {
+            const analytics = response.data;
+            console.log("✅ Real dashboard analytics loaded:", analytics);
+
+            // ✅ Update dashboard with REAL CALCULATED VALUES
+            updateDashboardMetrics({
+                totalStudents: analytics.overview.total_students,
+                activeStudents: analytics.overview.active_students,
+                averageProgress: Math.round(analytics.overview.completion_rate),
+                atRiskStudents: analytics.overview.at_risk_students,
+                highPerformers: analytics.overview.high_performers,
+                averageAssessmentScore: Math.round(analytics.overview.average_assessment_score)
+            }, true);
+
+            // Update trends if available
+            if (analytics.trends) {
+                updateTrendsCharts(analytics.trends);
+            }
+
+            console.log("✅ Real dashboard analytics displayed");
+            UIComponents.showNotification("✅ Dashboard updated with real calculations", "success");
+            return analytics;
+        } else {
+            throw new Error("Invalid analytics response format from backend");
+        }
+    } catch (error) {
+        console.error("❌ Failed to load real dashboard analytics:", error);
+        UIComponents.showNotification("⚠️ Using fallback analytics", "warning");
+        return loadFallbackDashboardAnalytics();
+    }
+}
+
+// ✅ FALLBACK - Minimal demo data only when backend fails
+function loadFallbackStudentData() {
+    console.log("🔄 Loading fallback student data...");
+
+    const fallbackStudents = [
+        {
+            id: "fallback-1",
+            name: "Demo Student",
+            email: "demo@student.com",
+            progress: 0,
+            completedLessons: 0,
+            totalLessons: 20,
+            studyHours: 0,
+            averageScore: 0,
+            engagementScore: 0,
+            riskLevel: "Unknown",
+            letterGrade: "N/A",
+            daysSinceActive: 0,
+            status: "demo",
+            lastActive: "Demo Mode",
+            source: "fallback"
+        }
+    ];
+
+    currentStudentData = fallbackStudents;
+    renderEnhancedStudentTable(fallbackStudents, false);
+    updateLastUpdateTime();
+
+    console.log("✅ Fallback student data loaded");
+    return fallbackStudents;
+}
+
+function loadFallbackDashboardAnalytics() {
+    console.log("🔄 Loading fallback dashboard analytics...");
+
+    const fallbackAnalytics = {
+        totalStudents: 0,
+        activeStudents: 0,
+        averageProgress: 0,
+        atRiskStudents: 0,
+        highPerformers: 0,
+        averageAssessmentScore: 0
+    };
+
+    updateDashboardMetrics(fallbackAnalytics, false);
+    console.log("✅ Fallback dashboard analytics loaded");
+    return fallbackAnalytics;
+}
 
 // ===== ARIA AI CLIENT =====
 
@@ -2926,27 +3071,52 @@ function loadDemoClassData() {
     return demoStats;
 }
 
+// ✅ UPDATED - Dashboard Metrics with Real Data (No Hardcoded Values)
 function updateDashboardMetrics(stats, isRealData = false) {
+    // ✅ REAL DATA - No hardcoded fallbacks, use 0 if no data
+    const totalStudents = stats.totalStudents || 0;
+    const averageProgress = Math.round(stats.averageProgress || 0);
+    const atRiskStudents = stats.atRiskStudents || 0;
+    const activeStudents = stats.activeStudents || 0;
+    const highPerformers = stats.highPerformers || 0;
+    const averageAssessmentScore = Math.round(stats.averageAssessmentScore || 0);
+
     // Update main dashboard metrics
-    setInner("total-students", stats.totalStudents || 45);
-    setInner("average-progress", `${Math.round(stats.averageProgress || 78)}%`);
-    setInner("unread-messages", stats.unreadMessages || 12);
-    setInner("at-risk-students", stats.atRiskStudents || 3);
+    setInner("total-students", totalStudents);
+    setInner("average-progress", `${averageProgress}%`);
+    setInner("at-risk-students", atRiskStudents);
 
     // Update additional metrics if elements exist
-    if (document.getElementById("active-classes")) {
-        setInner("active-classes", stats.activeClasses || 3);
+    if (document.getElementById("active-students")) {
+        setInner("active-students", activeStudents);
+    }
+    if (document.getElementById("high-performers")) {
+        setInner("high-performers", highPerformers);
+    }
+    if (document.getElementById("avg-assessment-score")) {
+        setInner("avg-assessment-score", `${averageAssessmentScore}%`);
     }
     if (document.getElementById("completion-rate")) {
-        setInner("completion-rate", `${Math.round(stats.completionRate || 68)}%`);
+        setInner("completion-rate", `${averageProgress}%`);
     }
     if (document.getElementById("engagement-rate")) {
-        setInner("engagement-rate", `${Math.round(stats.engagementRate || 85)}%`);
+        setInner("engagement-rate", `${Math.round(stats.engagementRate || 0)}%`);
     }
 
-    // Update real-time stats if available
-    if (document.getElementById("online-students")) {
-        setInner("online-students", stats.onlineStudents || 12);
+    // ✅ Add data source indicator
+    const dataIndicator = isRealData
+        ? '<span style="color: var(--success); font-size: 0.75rem;">🟢 Live Data</span>'
+        : '<span style="color: var(--warning); font-size: 0.75rem;">🟡 Demo Data</span>';
+
+    // Add indicator to dashboard header if exists
+    const dashboardHeader = document.querySelector('.dashboard-header');
+    if (dashboardHeader) {
+        let indicator = dashboardHeader.querySelector('.data-indicator');
+        if (indicator) {
+            indicator.innerHTML = dataIndicator;
+        } else {
+            dashboardHeader.insertAdjacentHTML('beforeend', `<div class="data-indicator">${dataIndicator}</div>`);
+        }
     }
     if (document.getElementById("active-sessions")) {
         setInner("active-sessions", stats.activeSessions || 8);
@@ -11954,18 +12124,39 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('❌ Failed to initialize portal:', error);
         UIComponents.showNotification('Failed to initialize portal. Using demo mode.', 'error');
 
-        // Fallback initialization
+        // ✅ UPDATED - Real data initialization with fallback
         try {
             initializeSidebar();
-            loadDemoEducatorData();
-            loadDemoClassData();
-            loadDemoStudentData();
+
+            // ✅ Try to load real data first
+            console.log("🚀 Initializing with real backend data...");
+
+            // Load real data in parallel
+            const dataPromises = [
+                loadRealDashboardAnalytics(),
+                loadRealStudentData(),
+                educatorAPI.testConnection()
+            ];
+
+            Promise.allSettled(dataPromises).then(results => {
+                const [analyticsResult, studentsResult, connectionResult] = results;
+
+                if (connectionResult.status === 'fulfilled' && connectionResult.value) {
+                    UIComponents.showNotification('✅ Portal loaded with real backend data', 'success');
+                } else {
+                    UIComponents.showNotification('⚠️ Portal loaded with limited connectivity', 'warning');
+                }
+            });
+
             setupEventListeners();
             updateCarbonIndicator();
-            UIComponents.showNotification('🌱 Portal loaded in demo mode', 'info');
+
         } catch (fallbackError) {
-            console.error('❌ Fallback initialization failed:', fallbackError);
-            UIComponents.showNotification('Critical error: Portal failed to load', 'error');
+            console.error('❌ Real data initialization failed, using fallback:', fallbackError);
+            // Final fallback to demo data
+            loadFallbackStudentData();
+            loadFallbackDashboardAnalytics();
+            UIComponents.showNotification('⚠️ Portal loaded in fallback mode', 'warning');
         }
     });
 });
@@ -11985,18 +12176,39 @@ if (document.readyState !== 'loading') {
         console.error('❌ Failed to initialize portal:', error);
         UIComponents.showNotification('Failed to initialize portal. Using demo mode.', 'error');
 
-        // Fallback initialization
+        // ✅ UPDATED - Real data initialization with fallback
         try {
             initializeSidebar();
-            loadDemoEducatorData();
-            loadDemoClassData();
-            loadDemoStudentData();
+
+            // ✅ Try to load real data first
+            console.log("🚀 Initializing with real backend data...");
+
+            // Load real data in parallel
+            const dataPromises = [
+                loadRealDashboardAnalytics(),
+                loadRealStudentData(),
+                educatorAPI.testConnection()
+            ];
+
+            Promise.allSettled(dataPromises).then(results => {
+                const [analyticsResult, studentsResult, connectionResult] = results;
+
+                if (connectionResult.status === 'fulfilled' && connectionResult.value) {
+                    UIComponents.showNotification('✅ Portal loaded with real backend data', 'success');
+                } else {
+                    UIComponents.showNotification('⚠️ Portal loaded with limited connectivity', 'warning');
+                }
+            });
+
             setupEventListeners();
             updateCarbonIndicator();
-            UIComponents.showNotification('🌱 Portal loaded in demo mode', 'info');
+
         } catch (fallbackError) {
-            console.error('❌ Fallback initialization failed:', fallbackError);
-            UIComponents.showNotification('Critical error: Portal failed to load', 'error');
+            console.error('❌ Real data initialization failed, using fallback:', fallbackError);
+            // Final fallback to demo data
+            loadFallbackStudentData();
+            loadFallbackDashboardAnalytics();
+            UIComponents.showNotification('⚠️ Portal loaded in fallback mode', 'warning');
         }
     });
 }
