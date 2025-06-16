@@ -213,12 +213,21 @@ let isBackendConnected = false;
 
 // ===== ENHANCED API CLIENT =====
 
-// Enhanced API Client with Real Backend Integration
+// ✅ UPDATED - Enhanced API Client with PASETO Authentication
 class EducatorAPIClient {
     constructor() {
         this.baseURL = API_CONFIG.BASE_URL;
-        this.token = null;
+        this.pasetoToken = this.getPasetoToken();
         this.isConnected = false;
+    }
+
+    getPasetoToken() {
+        const tokenNames = ['paseto_token', 'login', 'access_token', 'educator_token'];
+        for (const name of tokenNames) {
+            const token = getCookie(name);
+            if (token) return token;
+        }
+        return null;
     }
 
     async request(endpoint, options = {}) {
@@ -228,9 +237,9 @@ class EducatorAPIClient {
             ...options.headers
         };
 
-        // Add authentication token if available
-        if (this.token) {
-            headers['Authorization'] = `Bearer ${this.token}`;
+        // ✅ CORRECT - Use 'login' header with PASETO token (not Authorization Bearer)
+        if (this.pasetoToken) {
+            headers['login'] = this.pasetoToken;
         }
 
         const config = {
@@ -266,9 +275,21 @@ class EducatorAPIClient {
         }
     }
 
+    // ✅ UPDATED - Set PASETO token instead of generic token
+    setPasetoToken(pasetoToken) {
+        this.pasetoToken = pasetoToken;
+        authToken = pasetoToken;
+
+        // Store in multiple cookie names for compatibility
+        setCookie('paseto_token', pasetoToken);
+        setCookie('login', pasetoToken);
+        setCookie('educator_token', pasetoToken);
+        localStorage.setItem('paseto_token', pasetoToken);
+    }
+
+    // Legacy method for backward compatibility
     setToken(token) {
-        this.token = token;
-        authToken = token;
+        this.setPasetoToken(token);
     }
 
     async testConnection() {

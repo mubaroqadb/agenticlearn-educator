@@ -446,6 +446,222 @@
             display: block;
         }
 
+        /* ✅ ADDED - Student Cards Styling */
+        .student-card {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 16px;
+            border: 1px solid var(--accent);
+            transition: var(--transition);
+        }
+
+        .student-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .student-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .student-name {
+            margin: 0;
+            color: var(--gray-900);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .student-phone {
+            color: #666;
+            font-size: 0.9em;
+            margin: 4px 0;
+        }
+
+        .student-course {
+            color: var(--gray-700);
+            margin: 4px 0;
+        }
+
+        .student-progress {
+            margin: 12px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+        }
+
+        .student-meta {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+
+        .student-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            min-height: 36px;
+        }
+
+        .btn-secondary {
+            background: var(--gray-200);
+            color: var(--gray-800);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-300);
+        }
+
+        /* ✅ ADDED - Assessment Cards Styling */
+        .assessment-card {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 16px;
+            border: 1px solid var(--accent);
+            transition: var(--transition);
+        }
+
+        .assessment-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .assessment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .assessment-title {
+            margin: 0;
+            color: var(--gray-900);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .assessment-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .assessment-status.active {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .assessment-status.draft {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .assessment-status.completed {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .assessment-description {
+            color: var(--gray-700);
+            margin: 8px 0;
+        }
+
+        .assessment-meta {
+            display: flex;
+            gap: 16px;
+            margin: 8px 0;
+            font-size: 0.9rem;
+            color: var(--gray-600);
+        }
+
+        .assessment-stats {
+            display: flex;
+            gap: 16px;
+            margin: 8px 0;
+            font-size: 0.9rem;
+            color: var(--gray-600);
+        }
+
+        .assessment-deadline {
+            margin: 8px 0;
+            font-size: 0.9rem;
+            color: var(--error);
+        }
+
+        .assessment-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        /* ✅ ADDED - No Data Message */
+        .no-data-message {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray-600);
+        }
+
+        .no-data-message h3 {
+            margin-bottom: 0.5rem;
+            color: var(--gray-700);
+        }
+
+        /* ✅ ADDED - Loading States */
+        .loading-placeholder {
+            background: var(--accent);
+            border-radius: 4px;
+            height: 20px;
+            margin: 8px 0;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
         /* Carbon Indicator - Consistent with Student Frontend */
         .carbon-indicator {
             position: fixed;
@@ -1947,6 +2163,88 @@
         🌱 0.000g CO2
     </div>
 
+    <!-- ✅ UPDATED - Load Original File with PASETO Authentication -->
     <script src="./js/educator-portal.js"></script>
+
+    <!-- ✅ Authentication Check Script -->
+    <script>
+        // ✅ CORRECT - Authentication check on page load
+        function checkAuthentication() {
+            const token = window.educatorPortal ? window.educatorPortal.getPasetoToken() : null;
+            const educatorData = window.educatorPortal ? window.educatorPortal.getEducatorData() : null;
+
+            if (!token || !educatorData) {
+                console.log("🔐 No authentication found, redirecting to login...");
+                window.location.href = 'https://mubaroqadb.github.io/agenticlearn-auth/?type=educator';
+                return false;
+            }
+
+            // Display educator info in navigation
+            const navElements = {
+                'navEducatorName': educatorData.name,
+                'nav-educator-name': educatorData.name,
+                'educatorName': educatorData.name,
+                'educator-name': educatorData.name,
+                'navEducatorPhone': educatorData.phonenumber,
+                'nav-educator-phone': educatorData.phonenumber,
+                'educatorPhone': educatorData.phonenumber,
+                'educator-phone': educatorData.phonenumber
+            };
+
+            Object.entries(navElements).forEach(([id, value]) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.textContent = value;
+                }
+            });
+
+            console.log(`✅ Authenticated as: ${educatorData.name} (${educatorData.phonenumber})`);
+            return true;
+        }
+
+        // ✅ CORRECT - Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                if (window.educatorPortal) {
+                    window.educatorPortal.logout();
+                } else {
+                    // Fallback logout
+                    const tokenNames = ['paseto_token', 'login', 'educator_token', 'access_token'];
+                    tokenNames.forEach(name => {
+                        document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+                    });
+                    localStorage.clear();
+                    window.location.href = 'https://mubaroqadb.github.io/agenticlearn-auth/?type=educator';
+                }
+            }
+        }
+
+        // ✅ Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Wait for educatorPortal to be available
+            const checkPortal = setInterval(() => {
+                if (window.educatorPortal) {
+                    clearInterval(checkPortal);
+
+                    // Check authentication first
+                    if (checkAuthentication()) {
+                        // Load dashboard data
+                        loadEducatorDashboard();
+                    }
+                }
+            }, 100);
+
+            // Timeout after 5 seconds
+            setTimeout(() => {
+                clearInterval(checkPortal);
+                if (!window.educatorPortal) {
+                    console.error("❌ Educator portal failed to load");
+                    window.location.href = 'https://mubaroqadb.github.io/agenticlearn-auth/?type=educator';
+                }
+            }, 5000);
+        });
+
+        console.log("🎓 Educator Portal Authentication Script loaded");
+    </script>
 </body>
 </html>
