@@ -256,12 +256,21 @@ class EducatorAPIClient {
             console.log(`🔗 API Request: ${config.method} ${url}`);
             const response = await fetch(url, config);
 
+            const data = await response.json();
+
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                // ✅ ENHANCED - Handle new structured error format
+                const error = data.error || {};
+                throw new Error(`${error.code || 'API_ERROR'}: ${error.message || 'Request failed'}`);
             }
 
-            const data = await response.json();
             console.log(`✅ API Response: ${endpoint}`, data);
+
+            // ✅ NEW - Display cache status if available
+            if (data.cached) {
+                console.log('📦 Data loaded from cache');
+                displayCacheStatus(data);
+            }
 
             this.isConnected = true;
             isBackendConnected = true;
@@ -290,6 +299,22 @@ class EducatorAPIClient {
     // Legacy method for backward compatibility
     setToken(token) {
         this.setPasetoToken(token);
+    }
+
+    // ✅ NEW - Notification methods
+    async getNotifications() {
+        return await this.request('/educator/notifications');
+    }
+
+    async markNotificationRead(notificationId) {
+        return await this.request('/notifications/mark-read', {
+            method: 'POST',
+            body: {
+                notification_id: notificationId,
+                user_id: 'educator_001',
+                user_type: 'educator'
+            }
+        });
     }
 
     async testConnection() {
@@ -12334,6 +12359,92 @@ function importSharedContent(contentId) {
     UIComponents.showNotification(`📥 Importing shared content ${contentId}...`, "success");
 }
 
+// ✅ NEW - Notification System Functions
+async function loadNotifications() {
+    try {
+        console.log("🔄 Loading educator notifications...");
+        const response = await apiClient.getNotifications();
+
+        if (response.success) {
+            displayNotifications(response.data.notifications);
+            updateNotificationBadge(response.data.unread_count);
+        }
+    } catch (error) {
+        console.error('❌ Failed to load notifications:', error);
+        displayNotificationError();
+    }
+}
+
+function displayNotifications(notifications) {
+    const container = document.getElementById('notificationsContainer');
+    if (!container) return;
+
+    if (!notifications || notifications.length === 0) {
+        container.innerHTML = `
+            <div class="no-notifications">
+                <p>🔔 No notifications</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = notifications.map(notif => `
+        <div class="notification ${notif.read ? 'read' : 'unread'}" data-id="${notif.id}" onclick="markNotificationAsRead('${notif.id}')">
+            <div class="notification-header">
+                <h4>${notif.title}</h4>
+                <span class="priority ${notif.priority}">${notif.priority}</span>
+            </div>
+            <p>${notif.message}</p>
+            <time>${new Date(notif.created_at).toLocaleString()}</time>
+        </div>
+    `).join('');
+}
+
+function updateNotificationBadge(unreadCount) {
+    const badge = document.getElementById('notificationBadge');
+    if (badge) {
+        badge.textContent = unreadCount || 0;
+        badge.style.display = unreadCount > 0 ? 'inline' : 'none';
+    }
+}
+
+async function markNotificationAsRead(notificationId) {
+    try {
+        await apiClient.markNotificationRead(notificationId);
+        // Reload notifications to update UI
+        loadNotifications();
+    } catch (error) {
+        console.error('❌ Failed to mark notification as read:', error);
+    }
+}
+
+function displayNotificationError() {
+    const container = document.getElementById('notificationsContainer');
+    if (container) {
+        container.innerHTML = `
+            <div class="notification-error">
+                <p>❌ Failed to load notifications</p>
+                <button onclick="loadNotifications()" class="btn btn-sm">Retry</button>
+            </div>
+        `;
+    }
+}
+
+// ✅ NEW - Cache Status Display
+function displayCacheStatus(response) {
+    if (response.cached) {
+        console.log('📦 Data loaded from cache');
+        const cacheIndicator = document.getElementById('cacheStatus');
+        if (cacheIndicator) {
+            cacheIndicator.textContent = '📦 Cached';
+            cacheIndicator.style.display = 'inline';
+            setTimeout(() => {
+                cacheIndicator.style.display = 'none';
+            }, 3000);
+        }
+    }
+}
+
 // Global function assignments
 window.refreshAdvancedAnalytics = refreshAdvancedAnalytics;
 window.exportAnalyticsReport = exportAnalyticsReport;
@@ -12358,5 +12469,12 @@ window.editResource = editResource;
 window.downloadResource = downloadResource;
 window.editCurriculum = editCurriculum;
 window.importSharedContent = importSharedContent;
+
+// ✅ NEW - Notification function assignments
+window.loadNotifications = loadNotifications;
+window.displayNotifications = displayNotifications;
+window.updateNotificationBadge = updateNotificationBadge;
+window.markNotificationAsRead = markNotificationAsRead;
+window.displayCacheStatus = displayCacheStatus;
 
 console.log("🌱 AgenticLearn Educator Portal - Vanilla JavaScript Version Loaded");
