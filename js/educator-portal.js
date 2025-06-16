@@ -1132,6 +1132,433 @@ class AssessmentManager {
 // Initialize Assessment Manager
 const assessmentManager = new AssessmentManager();
 
+// ===== COMMUNICATION SYSTEM INTEGRATION =====
+
+// ✅ UPDATED - Load Real Messages from Backend
+async function loadRealMessages() {
+    try {
+        console.log("🔄 Loading real messages from backend...");
+
+        // ✅ Use backend endpoint per documentation
+        const response = await educatorAPI.request('/api/agenticlearn/educator/communication/messages/list');
+
+        if (response && response.success && response.data) {
+            const messages = response.data;
+            console.log("✅ Real messages loaded:", messages);
+
+            // ✅ Transform backend data (already calculated, no hardcoding)
+            const transformedMessages = messages.map(message => ({
+                id: message.message_id,
+                conversationId: message.conversation_id,
+                fromId: message.from_id,
+                fromName: message.from_name,
+                toId: message.to_id,
+                toName: message.to_name,
+                subject: message.subject,
+                content: message.content,
+                timestamp: message.timestamp,
+                status: message.status,
+                read: message.read,
+                messageType: message.message_type,
+                // Derived properties
+                time: getRelativeTime(message.timestamp),
+                unread: !message.read,
+                priority: message.priority || 'normal',
+                // Metadata
+                source: 'calculated',
+                calculatedAt: new Date().toISOString()
+            }));
+
+            renderMessages(transformedMessages, true);
+            console.log("✅ Real messages with backend data displayed");
+            UIComponents.showNotification(`✅ Loaded ${messages.length} messages`, "success");
+            return transformedMessages;
+        } else {
+            throw new Error("Invalid messages response format from backend");
+        }
+    } catch (error) {
+        console.error("❌ Failed to load real messages:", error);
+        UIComponents.showNotification("⚠️ Backend unavailable, using fallback messages", "warning");
+        return loadFallbackMessages();
+    }
+}
+
+// ✅ UPDATED - Load Real Announcements from Backend
+async function loadRealAnnouncements() {
+    try {
+        console.log("🔄 Loading real announcements from backend...");
+
+        // ✅ Use backend endpoint per documentation
+        const response = await educatorAPI.request('/api/agenticlearn/educator/communication/announcements/list');
+
+        if (response && response.success && response.data) {
+            const announcements = response.data;
+            console.log("✅ Real announcements loaded:", announcements);
+
+            // ✅ Transform backend data (already calculated, no hardcoding)
+            const transformedAnnouncements = announcements.map(announcement => ({
+                id: announcement.announcement_id,
+                title: announcement.title,
+                content: announcement.content,
+                courseId: announcement.course_id,
+                priority: announcement.priority,
+                createdAt: announcement.created_at,
+                expiresAt: announcement.expires_at,
+                // ✅ REAL CALCULATED VALUES from backend
+                readCount: announcement.read_count,           // Real count from database
+                totalRecipients: announcement.total_recipients, // Real count from database
+                readPercentage: announcement.read_percentage,   // Backend calculation: (read/total)*100
+                status: announcement.status,
+                // Derived properties
+                date: new Date(announcement.created_at).toLocaleDateString(),
+                timeAgo: getRelativeTime(announcement.created_at),
+                // Metadata
+                source: 'calculated',
+                calculatedAt: new Date().toISOString()
+            }));
+
+            renderAnnouncements(transformedAnnouncements, true);
+            console.log("✅ Real announcements with backend calculations displayed");
+            UIComponents.showNotification(`✅ Loaded ${announcements.length} announcements`, "success");
+            return transformedAnnouncements;
+        } else {
+            throw new Error("Invalid announcements response format from backend");
+        }
+    } catch (error) {
+        console.error("❌ Failed to load real announcements:", error);
+        UIComponents.showNotification("⚠️ Backend unavailable, using fallback announcements", "warning");
+        return loadFallbackAnnouncements();
+    }
+}
+
+// ✅ UPDATED - Send Real Message to Backend
+async function sendRealMessage(messageData) {
+    try {
+        console.log("🔄 Sending message via backend...", messageData);
+
+        // ✅ Use backend endpoint per documentation
+        const response = await educatorAPI.request('/api/agenticlearn/educator/communication/send-message', {
+            method: 'POST',
+            body: {
+                to_id: messageData.toId,
+                subject: messageData.subject,
+                content: messageData.content,
+                message_type: messageData.messageType || 'direct_message',
+                priority: messageData.priority || 'normal'
+            }
+        });
+
+        if (response && response.success) {
+            console.log("✅ Message sent successfully via backend");
+            UIComponents.showNotification("✅ Message sent successfully", "success");
+
+            // Refresh messages list
+            await loadRealMessages();
+            return true;
+        } else {
+            throw new Error("Invalid send message response from backend");
+        }
+    } catch (error) {
+        console.error("❌ Failed to send message:", error);
+        UIComponents.showNotification("❌ Failed to send message", "error");
+        return false;
+    }
+}
+
+// ✅ FALLBACK - Minimal communication data only when backend fails
+function loadFallbackMessages() {
+    console.log("🔄 Loading fallback messages...");
+
+    const fallbackMessages = [
+        {
+            id: "fallback-1",
+            fromName: "Demo Mode",
+            subject: "Backend Unavailable",
+            content: "Communication system is in fallback mode. Backend connection required for real messages.",
+            time: "Demo Mode",
+            unread: false,
+            priority: "info",
+            source: "fallback"
+        }
+    ];
+
+    renderMessages(fallbackMessages, false);
+    console.log("✅ Fallback messages loaded");
+    return fallbackMessages;
+}
+
+function loadFallbackAnnouncements() {
+    console.log("🔄 Loading fallback announcements...");
+
+    const fallbackAnnouncements = [
+        {
+            id: "fallback-1",
+            title: "Demo Mode Active",
+            content: "Announcement system is in fallback mode. Backend connection required for real announcements.",
+            priority: "info",
+            date: new Date().toLocaleDateString(),
+            readCount: 0,
+            totalRecipients: 0,
+            readPercentage: 0,
+            status: "demo",
+            source: "fallback"
+        }
+    ];
+
+    renderAnnouncements(fallbackAnnouncements, false);
+    console.log("✅ Fallback announcements loaded");
+    return fallbackAnnouncements;
+}
+
+// ✅ UPDATED - Real Communication Data Loading
+async function loadRealCommunicationData() {
+    try {
+        console.log("🔄 Loading real communication data from backend...");
+
+        // Load all communication data in parallel
+        const communicationPromises = [
+            loadRealMessages(),
+            loadRealAnnouncements()
+        ];
+
+        const results = await Promise.allSettled(communicationPromises);
+        const [messagesResult, announcementsResult] = results;
+
+        let successCount = 0;
+        if (messagesResult.status === 'fulfilled') successCount++;
+        if (announcementsResult.status === 'fulfilled') successCount++;
+
+        if (successCount > 0) {
+            UIComponents.showNotification(`✅ Communication data loaded (${successCount}/2 systems)`, "success");
+        } else {
+            throw new Error("All communication systems failed");
+        }
+
+        // Set default active tab
+        switchCommTab('messages');
+
+        console.log("✅ Real communication data loading completed");
+        return true;
+    } catch (error) {
+        console.error("❌ Failed to load real communication data:", error);
+        UIComponents.showNotification("⚠️ Communication in fallback mode", "warning");
+        return loadFallbackCommunicationData();
+    }
+}
+
+function loadFallbackCommunicationData() {
+    console.log("🔄 Loading fallback communication data...");
+
+    loadFallbackMessages();
+    loadFallbackAnnouncements();
+    switchCommTab('messages');
+
+    console.log("✅ Fallback communication data loaded");
+    return false;
+}
+
+// ✅ RENDER FUNCTIONS for Communication Data
+function renderMessages(messages, isRealData = false) {
+    const dataIndicator = isRealData
+        ? '<span style="color: var(--success); font-size: 0.75rem;">🟢 Live Data</span>'
+        : '<span style="color: var(--warning); font-size: 0.75rem;">🟡 Demo Data</span>';
+
+    const messagesHTML = `
+        <div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+            <h4 style="margin: 0; color: var(--gray-800);">Messages (${messages.length})</h4>
+            <div>${dataIndicator}</div>
+        </div>
+        ${messages.map(message => `
+            <div style="background: var(--white); border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; border-left: 4px solid ${message.unread ? 'var(--primary)' : 'var(--gray-300)'}; box-shadow: var(--shadow-sm);">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: var(--gray-800); margin-bottom: 0.25rem;">
+                            ${message.fromName}
+                            ${message.unread ? '<span style="background: var(--primary); color: white; padding: 0.125rem 0.375rem; border-radius: 3px; font-size: 0.625rem; margin-left: 0.5rem;">NEW</span>' : ''}
+                        </div>
+                        <div style="font-weight: 500; color: var(--gray-700); font-size: 0.875rem;">${message.subject}</div>
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--gray-500);">${message.time}</div>
+                </div>
+                <div style="color: var(--gray-600); font-size: 0.875rem; line-height: 1.4;">
+                    ${message.content.length > 150 ? message.content.substring(0, 150) + '...' : message.content}
+                </div>
+                <div style="margin-top: 0.75rem; display: flex; gap: 0.5rem;">
+                    <button class="btn" onclick="replyToMessage('${message.id}')" style="padding: 0.375rem 0.75rem; font-size: 0.75rem; background: var(--primary);">
+                        💬 Reply
+                    </button>
+                    <button class="btn" onclick="markAsRead('${message.id}')" style="padding: 0.375rem 0.75rem; font-size: 0.75rem; background: var(--info);">
+                        ✓ Mark Read
+                    </button>
+                </div>
+            </div>
+        `).join('')}
+    `;
+
+    setInner("comm-tab-messages", messagesHTML);
+}
+
+function renderAnnouncements(announcements, isRealData = false) {
+    const dataIndicator = isRealData
+        ? '<span style="color: var(--success); font-size: 0.75rem;">🟢 Live Data</span>'
+        : '<span style="color: var(--warning); font-size: 0.75rem;">🟡 Demo Data</span>';
+
+    const announcementsHTML = `
+        <div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+            <h4 style="margin: 0; color: var(--gray-800);">Announcements (${announcements.length})</h4>
+            <div>${dataIndicator}</div>
+        </div>
+        ${announcements.map(announcement => `
+            <div style="background: var(--white); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid var(--secondary); box-shadow: var(--shadow-sm);">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                    <div style="flex: 1;">
+                        <h4 style="margin: 0 0 0.5rem 0; color: var(--gray-800); display: flex; align-items: center; gap: 0.5rem;">
+                            📢 ${announcement.title}
+                            <span style="background: var(--${announcement.priority === 'high' ? 'error' : announcement.priority === 'medium' ? 'warning' : 'info'}); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; text-transform: capitalize;">
+                                ${announcement.priority}
+                            </span>
+                        </h4>
+                        <div style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 0.5rem;">
+                            Published: ${announcement.date} | Read by: ${announcement.readCount}/${announcement.totalRecipients} (${Math.round(announcement.readPercentage)}%)
+                        </div>
+                    </div>
+                </div>
+                <div style="color: var(--gray-700); font-size: 0.875rem; line-height: 1.5; margin-bottom: 1rem;">
+                    ${announcement.content}
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn" onclick="editAnnouncement('${announcement.id}')" style="padding: 0.5rem 1rem; background: var(--primary); font-size: 0.875rem;">
+                        ✏️ Edit
+                    </button>
+                    <button class="btn" onclick="viewAnnouncementStats('${announcement.id}')" style="padding: 0.5rem 1rem; background: var(--info); font-size: 0.875rem;">
+                        📊 Stats
+                    </button>
+                </div>
+            </div>
+        `).join('')}
+    `;
+
+    setInner("comm-tab-announcements", announcementsHTML);
+}
+
+// ✅ UPDATED - Load Real Notifications from Backend
+async function loadRealNotifications() {
+    try {
+        console.log("🔄 Loading real notifications from backend...");
+
+        // ✅ Use backend endpoint per documentation
+        const response = await educatorAPI.request('/api/agenticlearn/educator/notifications');
+
+        if (response && response.success && response.data) {
+            const notifications = response.data;
+            console.log("✅ Real notifications loaded:", notifications);
+
+            // ✅ Transform backend data (already calculated, no hardcoding)
+            const transformedNotifications = notifications.map(notification => ({
+                id: notification.notification_id,
+                title: notification.title,
+                message: notification.message,
+                type: notification.type,
+                priority: notification.priority,
+                read: notification.read,
+                createdAt: notification.created_at,
+                // Derived properties
+                timeAgo: getRelativeTime(notification.created_at),
+                icon: getNotificationIcon(notification.type),
+                // Metadata
+                source: 'calculated',
+                calculatedAt: new Date().toISOString()
+            }));
+
+            renderNotifications(transformedNotifications, true);
+            console.log("✅ Real notifications displayed");
+            UIComponents.showNotification(`✅ Loaded ${notifications.length} notifications`, "success");
+            return transformedNotifications;
+        } else {
+            throw new Error("Invalid notifications response format from backend");
+        }
+    } catch (error) {
+        console.error("❌ Failed to load real notifications:", error);
+        UIComponents.showNotification("⚠️ Backend unavailable, using fallback notifications", "warning");
+        return loadFallbackNotifications();
+    }
+}
+
+function loadFallbackNotifications() {
+    console.log("🔄 Loading fallback notifications...");
+
+    const fallbackNotifications = [
+        {
+            id: "fallback-1",
+            title: "Demo Mode Active",
+            message: "Notification system is in fallback mode. Backend connection required for real notifications.",
+            type: "info",
+            priority: "normal",
+            read: false,
+            timeAgo: "Demo Mode",
+            icon: "ℹ️",
+            source: "fallback"
+        }
+    ];
+
+    renderNotifications(fallbackNotifications, false);
+    console.log("✅ Fallback notifications loaded");
+    return fallbackNotifications;
+}
+
+function renderNotifications(notifications, isRealData = false) {
+    const dataIndicator = isRealData
+        ? '<span style="color: var(--success); font-size: 0.75rem;">🟢 Live Data</span>'
+        : '<span style="color: var(--warning); font-size: 0.75rem;">🟡 Demo Data</span>';
+
+    const notificationsHTML = `
+        <div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+            <h4 style="margin: 0; color: var(--gray-800);">Notifications (${notifications.length})</h4>
+            <div>${dataIndicator}</div>
+        </div>
+        ${notifications.map(notification => `
+            <div style="background: var(--white); border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; border-left: 4px solid ${notification.read ? 'var(--gray-300)' : 'var(--primary)'}; box-shadow: var(--shadow-sm);">
+                <div style="display: flex; align-items: start; gap: 0.75rem;">
+                    <div style="font-size: 1.25rem;">${notification.icon}</div>
+                    <div style="flex: 1;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                            <h5 style="margin: 0; color: var(--gray-800); font-weight: 600;">
+                                ${notification.title}
+                                ${!notification.read ? '<span style="background: var(--primary); color: white; padding: 0.125rem 0.375rem; border-radius: 3px; font-size: 0.625rem; margin-left: 0.5rem;">NEW</span>' : ''}
+                            </h5>
+                            <span style="font-size: 0.75rem; color: var(--gray-500);">${notification.timeAgo}</span>
+                        </div>
+                        <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem; line-height: 1.4;">
+                            ${notification.message}
+                        </p>
+                        ${!notification.read ? `
+                            <button class="btn" onclick="markNotificationAsRead('${notification.id}')" style="margin-top: 0.75rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; background: var(--primary);">
+                                ✓ Mark as Read
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        `).join('')}
+    `;
+
+    setInner("comm-tab-notifications", notificationsHTML);
+}
+
+function getNotificationIcon(type) {
+    const icons = {
+        'assignment': '📝',
+        'grade': '📊',
+        'message': '💬',
+        'announcement': '📢',
+        'system': '⚙️',
+        'warning': '⚠️',
+        'success': '✅',
+        'info': 'ℹ️'
+    };
+    return icons[type] || 'ℹ️';
+}
+
 // ===== D7-D12: ADVANCED ANALYTICS MANAGER =====
 
 class AdvancedAnalyticsManager {
@@ -5754,22 +6181,23 @@ function switchCommTab(tabName) {
     loadCommTabContent(tabName);
 }
 
+// ✅ UPDATED - Load real communication tab content
 function loadCommTabContent(tabName) {
     switch(tabName) {
         case 'messages':
-            loadDemoMessages();
+            loadRealMessages();
             break;
         case 'announcements':
-            loadDemoAnnouncements();
+            loadRealAnnouncements();
             break;
         case 'discussions':
-            loadDemoDiscussions();
+            loadFallbackDiscussions(); // TODO: Implement real discussions
             break;
         case 'notifications':
-            loadDemoNotifications();
+            loadRealNotifications(); // TODO: Implement real notifications
             break;
         case 'analytics':
-            loadDemoCommunicationAnalytics();
+            loadFallbackCommunicationAnalytics(); // TODO: Implement real analytics
             break;
     }
 }
@@ -6668,9 +7096,9 @@ function loadCommunicationPage() {
 
     setInner("page-communication", communicationHTML);
 
-    // Load communication data
+    // ✅ UPDATED - Load real communication data
     setTimeout(() => {
-        loadDemoCommunicationData();
+        loadRealCommunicationData();
         setupCommunicationEventListeners();
     }, 100);
 
