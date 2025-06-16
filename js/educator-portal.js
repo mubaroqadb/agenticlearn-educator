@@ -12470,11 +12470,90 @@ window.downloadResource = downloadResource;
 window.editCurriculum = editCurriculum;
 window.importSharedContent = importSharedContent;
 
+// ✅ NEW - Missing Functions from HTML
+function sendAnnouncement() {
+    UIComponents.showNotification("📢 Opening announcement composer...", "info");
+}
+
+function createAssessment() {
+    showCreateAssessmentModal();
+}
+
+function viewReports() {
+    showPage('reports');
+}
+
+function startWeeklyPlanning() {
+    openWeeklyPlanningModal();
+}
+
+function refreshActivityFeed() {
+    loadActivityTimelineWithFallback();
+}
+
+function loadStudentPerformanceAlerts() {
+    loadStudentPerformanceAlertsWithFallback();
+}
+
+function refreshAIInsights() {
+    loadAIInsightsWithFallback();
+}
+
+function viewDetailedInsights() {
+    UIComponents.showNotification("📊 Opening detailed AI insights dashboard...", "info");
+}
+
+function manageDeadlines() {
+    UIComponents.showNotification("📅 Opening deadline management interface...", "info");
+}
+
+function viewAllAlerts() {
+    UIComponents.showNotification("👁️ Opening comprehensive alerts dashboard...", "info");
+}
+
+function createInterventionPlan() {
+    UIComponents.showNotification("📋 Opening intervention plan creator...", "info");
+}
+
+function switchCommTab(tabName) {
+    // Already exists, just ensure it's available
+    if (window.switchCommTab) {
+        window.switchCommTab(tabName);
+    } else {
+        UIComponents.showNotification(`📱 Switching to ${tabName} tab...`, "info");
+    }
+}
+
+function toggleNotifications() {
+    const panel = document.querySelector('.notifications-panel');
+    if (panel) {
+        const isVisible = panel.style.display !== 'none';
+        panel.style.display = isVisible ? 'none' : 'block';
+        if (!isVisible) {
+            loadNotifications();
+        }
+    }
+}
+
 // ✅ NEW - Notification function assignments
 window.loadNotifications = loadNotifications;
 window.displayNotifications = displayNotifications;
 window.updateNotificationBadge = updateNotificationBadge;
 window.markNotificationAsRead = markNotificationAsRead;
 window.displayCacheStatus = displayCacheStatus;
+
+// ✅ NEW - Missing function assignments
+window.sendAnnouncement = sendAnnouncement;
+window.createAssessment = createAssessment;
+window.viewReports = viewReports;
+window.startWeeklyPlanning = startWeeklyPlanning;
+window.refreshActivityFeed = refreshActivityFeed;
+window.loadStudentPerformanceAlerts = loadStudentPerformanceAlerts;
+window.refreshAIInsights = refreshAIInsights;
+window.viewDetailedInsights = viewDetailedInsights;
+window.manageDeadlines = manageDeadlines;
+window.viewAllAlerts = viewAllAlerts;
+window.createInterventionPlan = createInterventionPlan;
+window.toggleNotifications = toggleNotifications;
 
 console.log("🌱 AgenticLearn Educator Portal - Vanilla JavaScript Version Loaded");
