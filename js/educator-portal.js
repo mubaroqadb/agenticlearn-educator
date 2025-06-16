@@ -849,88 +849,98 @@ class AssessmentManager {
     async loadAssessments() {
         try {
             this.isLoading = true;
-            console.log("🔄 Loading assessments...");
+            console.log("🔄 Loading real assessments from backend...");
 
-            // ✅ UPDATED - Use correct endpoint per backend documentation
-            const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.ASSESSMENTS_LIST);
+            // ✅ BACKEND DOCUMENTATION - Use correct endpoint
+            const response = await educatorAPI.request('/api/agenticlearn/educator/assessments/list');
 
-            if (response && (response.data || response.assessments)) {
-                this.assessments = response.data || response.assessments || response;
-                console.log("✅ Real assessments loaded:", this.assessments);
+            if (response && response.success && response.data) {
+                // ✅ Transform backend data (already calculated, no hardcoding)
+                this.assessments = response.data.map(assessment => ({
+                    id: assessment.assessment_id,
+                    title: assessment.title,
+                    description: assessment.description,
+                    type: assessment.type,
+                    status: assessment.status,
+                    dueDate: assessment.due_date,
+                    // ✅ REAL CALCULATED VALUES from backend
+                    totalQuestions: assessment.total_questions,      // Real count from database
+                    totalPoints: assessment.total_points,           // Real sum from database
+                    duration: assessment.duration_minutes,          // Real duration from database
+                    submissionsCount: assessment.submissions_count, // Real count from database
+                    averageScore: assessment.average_score,         // Backend calculation: SUM(scores)/COUNT
+                    completionRate: assessment.completion_rate,     // Backend calculation: (submitted/total)*100
+                    createdAt: assessment.created_at,
+                    // Metadata
+                    source: assessment.source || 'calculated',
+                    calculatedAt: new Date().toISOString()
+                }));
+
+                console.log("✅ Real assessments with backend calculations loaded:", this.assessments);
+                UIComponents.showNotification(`✅ Loaded ${this.assessments.length} assessments with real data`, "success");
                 return this.assessments;
             } else {
-                throw new Error("Invalid assessments data format");
+                throw new Error("Invalid assessments response format from backend");
             }
         } catch (error) {
             console.error("❌ Failed to load real assessments:", error);
-            return this.loadDemoAssessments();
+            UIComponents.showNotification("⚠️ Backend unavailable, using fallback assessments", "warning");
+            return this.loadFallbackAssessments();
         } finally {
             this.isLoading = false;
         }
     }
 
-    loadDemoAssessments() {
-        console.log("🔄 Loading demo assessments...");
+    // ✅ FALLBACK - Minimal assessments only when backend fails
+    loadFallbackAssessments() {
+        console.log("🔄 Loading fallback assessments...");
         this.assessments = [
             {
-                id: "assessment-1",
-                title: "Module 1: Data Science Fundamentals Quiz",
+                id: "fallback-1",
+                title: "Demo Assessment",
+                description: "Fallback assessment when backend unavailable",
                 type: "quiz",
-                status: "active",
+                status: "demo",
                 dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-                totalQuestions: 20,
-                duration: 60,
-                submissions: 12,
-                totalStudents: 45,
-                averageScore: 78,
-                createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
-            },
-            {
-                id: "assessment-2",
-                title: "Python Programming Assignment",
-                type: "assignment",
-                status: "draft",
-                dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
-                totalQuestions: 5,
-                duration: 180,
-                submissions: 0,
-                totalStudents: 45,
+                // ✅ MINIMAL VALUES - No hardcoded calculations
+                totalQuestions: 0,
+                totalPoints: 0,
+                duration: 0,
+                submissionsCount: 0,
                 averageScore: 0,
-                createdAt: new Date().toISOString()
-            },
-            {
-                id: "assessment-3",
-                title: "Data Visualization Project",
-                type: "project",
-                status: "completed",
-                dueDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-                totalQuestions: 1,
-                duration: 1440,
-                submissions: 42,
-                totalStudents: 45,
-                averageScore: 85,
-                createdAt: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString()
+                completionRate: 0,
+                createdAt: new Date().toISOString(),
+                source: "fallback"
             }
         ];
-        console.log("✅ Demo assessments loaded");
+        console.log("✅ Fallback assessments loaded");
         return this.assessments;
     }
 
     async createAssessment(assessmentData) {
         try {
-            console.log("🔄 Creating assessment...", assessmentData);
+            console.log("🔄 Creating assessment with backend...", assessmentData);
 
-            const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.CREATE_ASSESSMENT, {
+            // ✅ BACKEND DOCUMENTATION - Use correct endpoint
+            const response = await educatorAPI.request('/api/agenticlearn/educator/assessment/create', {
                 method: 'POST',
                 body: assessmentData
             });
 
-            if (response && response.data) {
-                this.assessments.unshift(response.data);
+            if (response && response.success && response.assessment_id) {
+                // ✅ Add created assessment to list
+                const newAssessment = {
+                    id: response.assessment_id,
+                    ...assessmentData,
+                    source: 'created',
+                    createdAt: new Date().toISOString()
+                };
+                this.assessments.unshift(newAssessment);
+
                 UIComponents.showNotification("✅ Assessment created successfully", "success");
-                return response.data;
+                return newAssessment;
             } else {
-                throw new Error("Invalid create assessment response");
+                throw new Error("Invalid create assessment response from backend");
             }
         } catch (error) {
             console.error("❌ Failed to create assessment:", error);
