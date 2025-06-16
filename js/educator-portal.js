@@ -12608,6 +12608,58 @@ window.updateNotificationBadge = updateNotificationBadge;
 window.markNotificationAsRead = markNotificationAsRead;
 window.displayCacheStatus = displayCacheStatus;
 
+// ✅ NEW - Student Management Functions
+function addNewStudent() {
+    UIComponents.showNotification("➕ Opening student registration form...", "info");
+}
+
+function exportStudentData() {
+    UIComponents.showNotification("📊 Exporting student data...", "info");
+}
+
+function viewStudentDetail(studentId) {
+    UIComponents.showNotification(`👤 Opening profile for student ${studentId}...`, "info");
+}
+
+function sendMessage(studentId) {
+    UIComponents.showNotification(`💬 Opening message composer for student ${studentId}...`, "info");
+}
+
+// ✅ NEW - Assessment Management Functions
+function createNewAssessment() {
+    UIComponents.showNotification("➕ Opening assessment builder...", "info");
+}
+
+function importAssessment() {
+    UIComponents.showNotification("📥 Opening assessment import dialog...", "info");
+}
+
+function filterAssessments(type) {
+    UIComponents.showNotification(`🔍 Filtering assessments by: ${type}`, "info");
+}
+
+function viewAssessmentResults(assessmentId) {
+    UIComponents.showNotification(`📊 Loading results for assessment ${assessmentId}...`, "info");
+}
+
+function editAssessment(assessmentId) {
+    UIComponents.showNotification(`✏️ Opening editor for assessment ${assessmentId}...`, "info");
+}
+
+function gradeAssessment(assessmentId) {
+    UIComponents.showNotification(`📝 Opening grading interface for assessment ${assessmentId}...`, "info");
+}
+
+function publishAssessment(assessmentId) {
+    UIComponents.showNotification(`🚀 Publishing assessment ${assessmentId}...`, "success");
+}
+
+function deleteAssessment(assessmentId) {
+    if (confirm('Are you sure you want to delete this assessment?')) {
+        UIComponents.showNotification(`🗑️ Deleting assessment ${assessmentId}...`, "warning");
+    }
+}
+
 // ✅ NEW - Missing function assignments
 window.sendAnnouncement = sendAnnouncement;
 window.createAssessment = createAssessment;
@@ -12621,5 +12673,21 @@ window.manageDeadlines = manageDeadlines;
 window.viewAllAlerts = viewAllAlerts;
 window.createInterventionPlan = createInterventionPlan;
 window.toggleNotifications = toggleNotifications;
+
+// ✅ NEW - Student Management function assignments
+window.addNewStudent = addNewStudent;
+window.exportStudentData = exportStudentData;
+window.viewStudentDetail = viewStudentDetail;
+window.sendMessage = sendMessage;
+
+// ✅ NEW - Assessment Management function assignments
+window.createNewAssessment = createNewAssessment;
+window.importAssessment = importAssessment;
+window.filterAssessments = filterAssessments;
+window.viewAssessmentResults = viewAssessmentResults;
+window.editAssessment = editAssessment;
+window.gradeAssessment = gradeAssessment;
+window.publishAssessment = publishAssessment;
+window.deleteAssessment = deleteAssessment;
 
 console.log("🌱 AgenticLearn Educator Portal - Vanilla JavaScript Version Loaded");
