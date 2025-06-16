@@ -3761,45 +3761,23 @@ function renderSystemHealthStatus(health, isRealData = false) {
     `);
 }
 
+// This function is deprecated - use loadAIInsightsWithFallback instead
 async function loadAIInsights() {
-    try {
-        // Load real AI analytics data from API
-        const aiInsightsResponse = await apiClient.request("/educator/ai/insights");
-
-        if (aiInsightsResponse && aiInsightsResponse.data) {
-            currentAnalyticsData = aiInsightsResponse.data;
-
-            // Load all AI insights components
-            await loadLearningPatterns(currentAnalyticsData.learningPatterns);
-            await loadAtRiskStudents(currentAnalyticsData.atRiskStudents);
-            await loadContentEffectiveness(currentAnalyticsData.contentEffectiveness);
-            await loadAIRecommendations(currentAnalyticsData.recommendations);
-
-            // Load advanced analytics charts
-            await loadAdvancedAnalytics(currentAnalyticsData.advanced);
-
-            // Load communication center
-            await loadCommunicationCenter();
-
-            UIComponents.showNotification("🤖 AI Analytics loaded successfully with real data", "success");
-        } else {
-            throw new Error("No AI insights data received");
-        }
-    } catch (error) {
-        console.error("Failed to load AI insights:", error);
-        // Fallback to demo data
-        loadDemoAnalytics();
-        loadDemoAdvancedAnalytics();
-        UIComponents.showNotification("Using demo AI analytics data", "info");
-    }
+    console.log("⚠️ loadAIInsights() is deprecated, using loadAIInsightsWithFallback()");
+    return await loadAIInsightsWithFallback();
 }
 
 async function loadAdvancedAnalytics() {
     try {
-        // Load analytics data from API
-        const analyticsData = await apiClient.request("/analytics/advanced");
-        renderAdvancedCharts(analyticsData);
+        // Load analytics data from AgenticAI API
+        const analyticsData = await educatorAPI.request("/educator/analytics/advanced");
+        if (analyticsData && analyticsData.success) {
+            renderAdvancedCharts(analyticsData.data);
+        } else {
+            throw new Error("Invalid analytics data");
+        }
     } catch (error) {
+        console.error("❌ Failed to load advanced analytics:", error);
         // Fallback to demo charts
         renderDemoCharts();
     }
@@ -3817,9 +3795,9 @@ async function loadLearningPatterns(patternsData = null) {
             // Use provided data from AI insights
             patterns = patternsData;
         } else {
-            // Load directly from API
-            const patternsResponse = await apiClient.request("/educator/analytics/learning-patterns");
-            patterns = patternsResponse?.data;
+            // Load directly from AgenticAI API
+            const patternsResponse = await educatorAPI.request("/educator/analytics/learning-patterns");
+            patterns = patternsResponse?.success ? patternsResponse.data : null;
         }
 
         if (patterns) {
@@ -3857,9 +3835,9 @@ async function loadAtRiskStudents(riskData = null) {
             // Use provided data from AI insights
             riskAnalysis = riskData;
         } else {
-            // Load directly from API
-            const riskResponse = await apiClient.request("/educator/analytics/at-risk-students");
-            riskAnalysis = riskResponse?.data;
+            // Load directly from AgenticAI API
+            const riskResponse = await educatorAPI.request("/educator/analytics/at-risk-students");
+            riskAnalysis = riskResponse?.success ? riskResponse.data : null;
         }
 
         if (riskAnalysis) {
@@ -3896,8 +3874,9 @@ async function loadAtRiskStudents(riskData = null) {
 
 async function loadContentEffectiveness() {
     try {
-        // Simulate API call to get content effectiveness data
-        const effectiveness = await apiClient.request("/analytics/content-effectiveness");
+        // Load content effectiveness data from AgenticAI API
+        const effectivenessResponse = await educatorAPI.request("/educator/analytics/content-effectiveness");
+        const effectiveness = effectivenessResponse?.success ? effectivenessResponse.data : null;
 
         setInner("top-content", effectiveness.topContent || "Video Tutorials");
         setInner("engagement-rate", effectiveness.engagementRate || "78%");
@@ -3914,8 +3893,9 @@ async function loadContentEffectiveness() {
 
 async function loadAIRecommendations() {
     try {
-        // Simulate API call to get AI recommendations
-        const recommendations = await apiClient.request("/analytics/ai-recommendations");
+        // Load AI recommendations from AgenticAI API
+        const recommendationsResponse = await educatorAPI.request("/educator/analytics/ai-recommendations");
+        const recommendations = recommendationsResponse?.success ? recommendationsResponse.data : null;
 
         const priorityActions = recommendations.priorityActions || [
             "Schedule intervention sessions for 3 high-risk students",
@@ -3997,7 +3977,7 @@ function setupEventListeners() {
 // Add new function to load student performance alerts
 async function loadStudentPerformanceAlerts() {
     try {
-        const alertsResponse = await apiClient.request("/educator/analytics/student-alerts");
+        const alertsResponse = await educatorAPI.request("/educator/analytics/student-alerts");
 
         if (alertsResponse && alertsResponse.data) {
             renderStudentAlerts(alertsResponse.data);
@@ -4072,10 +4052,55 @@ function renderDemoStudentAlerts() {
     renderStudentAlerts(demoAlerts);
 }
 
+// Enhanced function with fallback
+async function loadStudentPerformanceAlertsWithFallback() {
+    try {
+        console.log("🔄 Loading student performance alerts from AgenticAI...");
+        const alertsResponse = await educatorAPI.request("/educator/analytics/student-alerts");
+
+        if (alertsResponse && alertsResponse.success && alertsResponse.data) {
+            renderStudentAlerts(alertsResponse.data);
+            console.log("✅ Real student alerts loaded from AgenticAI");
+            return alertsResponse.data;
+        } else {
+            throw new Error("Invalid alerts data format");
+        }
+    } catch (error) {
+        console.error("❌ Failed to load real student alerts:", error);
+        return loadDemoStudentPerformanceAlerts();
+    }
+}
+
+function loadDemoStudentPerformanceAlerts() {
+    console.log("🔄 Loading demo student performance alerts...");
+    const demoAlerts = [
+        {
+            id: "alert-1",
+            studentName: "Maya Rajin",
+            type: "at-risk",
+            message: "Student has been inactive for 7 days",
+            severity: "high",
+            timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+        },
+        {
+            id: "alert-2",
+            studentName: "Budi Santoso",
+            type: "low-performance",
+            message: "Assignment scores below 70% average",
+            severity: "medium",
+            timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
+        }
+    ];
+
+    renderStudentAlerts(demoAlerts);
+    console.log("✅ Demo student alerts loaded");
+    return demoAlerts;
+}
+
 // Add system health monitoring function
 async function loadSystemHealthStatus() {
     try {
-        const healthResponse = await apiClient.request("/educator/system/health");
+        const healthResponse = await educatorAPI.request("/educator/system/health");
 
         if (healthResponse && healthResponse.data) {
             renderSystemHealth(healthResponse.data);
@@ -4145,6 +4170,36 @@ function renderDemoSystemHealth() {
     renderSystemHealth(demoHealth);
 }
 
+// Enhanced function with fallback
+async function loadSystemHealthStatusWithFallback() {
+    try {
+        console.log("🔄 Loading system health status from AgenticAI...");
+        const healthResponse = await educatorAPI.request("/educator/system/health");
+
+        if (healthResponse && healthResponse.success && healthResponse.data) {
+            renderSystemHealth(healthResponse.data);
+            console.log("✅ Real system health loaded from AgenticAI");
+            return healthResponse.data;
+        } else {
+            throw new Error("Invalid health data format");
+        }
+    } catch (error) {
+        console.error("❌ Failed to load real system health:", error);
+        return loadDemoSystemHealthStatus();
+    }
+}
+
+function loadDemoSystemHealthStatus() {
+    console.log("🔄 Loading demo system health status...");
+    renderDemoSystemHealth();
+    console.log("✅ Demo system health loaded");
+    return {
+        status: "healthy",
+        uptime: "99.9%",
+        lastCheck: new Date().toISOString()
+    };
+}
+
 // Real-time monitoring state (moved from original location)
 
 function toggleRealTimeMonitoring() {
@@ -4169,13 +4224,13 @@ function startRealTimeUpdates() {
     monitoringInterval = setInterval(async () => {
         try {
             // Update real-time data sources
-            await loadRealTimeStats();
-            await loadActivityTimeline();
-            await loadStudentPerformanceAlerts();
-            await loadSystemHealthStatus();
+            await loadRealTimeStatsWithFallback();
+            await loadActivityTimelineWithFallback();
+            await loadStudentPerformanceAlertsWithFallback();
+            await loadSystemHealthStatusWithFallback();
 
             // Update dashboard metrics
-            await loadClassData();
+            await loadClassDataWithFallback();
 
             updateLastUpdateTime();
 
@@ -4402,8 +4457,9 @@ async function viewStudentDetail(studentId) {
 
 async function loadStudentData(studentId) {
     try {
-        // Try to load from API
-        const student = await apiClient.request(`/students/${studentId}`);
+        // Try to load from AgenticAI API
+        const studentResponse = await educatorAPI.request(`/educator/students/${studentId}`);
+        const student = studentResponse?.success ? studentResponse.data : null;
         return student;
     } catch (error) {
         // Fallback to demo data
@@ -6072,8 +6128,8 @@ function loadStudentsPage() {
 
     // Load student data
     setTimeout(() => {
-        loadRealTimeStats();
-        loadActivityTimeline();
+        loadRealTimeStatsWithFallback();
+        loadActivityTimelineWithFallback();
         renderDemoStudentTable();
         updateLastUpdateTime();
     }, 100);
