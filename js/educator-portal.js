@@ -3749,30 +3749,32 @@ async function loadEducatorDataWithFallback() {
         }
     } catch (error) {
         console.error("❌ Failed to load real educator data:", error);
-        UIComponents.showNotification("⚠️ Using demo educator data", "warning");
-        return loadDemoEducatorData();
+        UIComponents.showNotification("⚠️ Backend unavailable, using minimal fallback", "warning");
+        return loadFallbackEducatorData();
     }
 }
 
-function loadDemoEducatorData() {
-    console.log("🔄 Loading demo educator data...");
-    const demoData = {
-        id: "educator-demo-1",
-        name: "Dr. Sarah Johnson",
-        fullName: "Dr. Sarah Johnson",
-        email: "sarah.johnson@agenticlearn.com",
-        department: "Computer Science",
-        title: "Senior Lecturer",
-        experience: "8 years",
-        specialization: ["Data Science", "Machine Learning", "AI Education"]
+// ✅ FALLBACK - Minimal educator data only when backend fails
+function loadFallbackEducatorData() {
+    console.log("🔄 Loading fallback educator data...");
+    const fallbackData = {
+        id: "fallback-educator",
+        name: "Educator (Offline)",
+        fullName: "Educator (Backend Unavailable)",
+        email: "offline@fallback.mode",
+        department: "Backend Required",
+        title: "Offline Mode",
+        experience: "N/A",
+        specialization: ["Backend Connection Required"],
+        source: "fallback"
     };
 
-    currentEducatorData = demoData;
-    setInner("educator-name", demoData.name);
-    updateSidebarEducatorInfo(demoData);
+    currentEducatorData = fallbackData;
+    setInner("educator-name", fallbackData.name);
+    updateSidebarEducatorInfo(fallbackData);
 
-    console.log("✅ Demo educator data loaded");
-    return demoData;
+    console.log("✅ Fallback educator data loaded");
+    return fallbackData;
 }
 
 function updateSidebarEducatorInfo(educatorData) {
@@ -3836,30 +3838,12 @@ async function loadClassDataWithFallback() {
         }
     } catch (error) {
         console.error("❌ Failed to load real dashboard stats from AgenticAI:", error);
-        UIComponents.showNotification("⚠️ Using demo data - AgenticAI stats unavailable", "warning");
-        return loadDemoClassData();
+        UIComponents.showNotification("⚠️ Backend unavailable, using minimal fallback", "warning");
+        return loadFallbackDashboardAnalytics();
     }
 }
 
-function loadDemoClassData() {
-    console.log("🔄 Loading demo class data...");
-    const demoStats = {
-        totalStudents: 45,
-        averageProgress: 78,
-        unreadMessages: 12,
-        atRiskStudents: 3,
-        activeClasses: 3,
-        completionRate: 68,
-        engagementRate: 85,
-        onlineStudents: 12,
-        activeSessions: 8,
-        completionToday: 24
-    };
-
-    updateDashboardMetrics(demoStats, false);
-    console.log("✅ Demo class data loaded");
-    return demoStats;
-}
+// ✅ REMOVED - loadDemoClassData replaced with loadFallbackDashboardAnalytics (already implemented above)
 
 // ✅ UPDATED - Dashboard Metrics with Real Data (No Hardcoded Values)
 function updateDashboardMetrics(stats, isRealData = false) {
@@ -3968,8 +3952,8 @@ async function loadStudentListWithFallback() {
         }
     } catch (error) {
         console.error("❌ Failed to load real student data:", error);
-        UIComponents.showNotification("⚠️ Using demo student data", "warning");
-        return loadDemoStudentData();
+        UIComponents.showNotification("⚠️ Backend unavailable, using minimal fallback", "warning");
+        return loadFallbackStudentData();
     }
 }
 
