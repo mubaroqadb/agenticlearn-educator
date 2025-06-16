@@ -1559,6 +1559,359 @@ function getNotificationIcon(type) {
     return icons[type] || 'ℹ️';
 }
 
+// ===== AI INTEGRATION SYSTEM =====
+
+// ✅ UPDATED - Load Real AI Insights from Backend
+async function loadRealAIInsights() {
+    try {
+        console.log("🔄 Loading real AI insights from backend...");
+
+        // ✅ Use backend endpoint per documentation
+        const response = await educatorAPI.request('/api/agenticlearn/educator/ai/insights');
+
+        if (response && response.success && response.data) {
+            const insights = response.data;
+            console.log("✅ Real AI insights loaded:", insights);
+
+            // ✅ Transform backend data (already calculated, no hardcoding)
+            const transformedInsights = {
+                learningPatterns: insights.learning_patterns || [],
+                atRiskStudents: insights.at_risk_students || [],
+                contentEffectiveness: insights.content_effectiveness || [],
+                engagementTrends: insights.engagement_trends || [],
+                performancePredictions: insights.performance_predictions || [],
+                // Metadata
+                generatedAt: insights.generated_at,
+                confidence: insights.confidence_score,
+                source: 'ai_calculated',
+                calculatedAt: new Date().toISOString()
+            };
+
+            renderAIInsights(transformedInsights, true);
+            console.log("✅ Real AI insights with backend calculations displayed");
+            UIComponents.showNotification("✅ AI insights loaded with real data", "success");
+            return transformedInsights;
+        } else {
+            throw new Error("Invalid AI insights response format from backend");
+        }
+    } catch (error) {
+        console.error("❌ Failed to load real AI insights:", error);
+        UIComponents.showNotification("⚠️ Backend unavailable, using fallback AI insights", "warning");
+        return loadFallbackAIInsights();
+    }
+}
+
+// ✅ UPDATED - Load Real AI Recommendations from Backend
+async function loadRealAIRecommendations() {
+    try {
+        console.log("🔄 Loading real AI recommendations from backend...");
+
+        // ✅ Use backend endpoint per documentation
+        const response = await educatorAPI.request('/api/agenticlearn/educator/ai/recommendations');
+
+        if (response && response.success && response.data) {
+            const recommendations = response.data;
+            console.log("✅ Real AI recommendations loaded:", recommendations);
+
+            // ✅ Transform backend data (already calculated, no hardcoding)
+            const transformedRecommendations = recommendations.map(rec => ({
+                id: rec.recommendation_id,
+                type: rec.type,
+                title: rec.title,
+                description: rec.description,
+                priority: rec.priority,
+                confidence: rec.confidence_score,
+                targetStudents: rec.target_students || [],
+                suggestedActions: rec.suggested_actions || [],
+                expectedImpact: rec.expected_impact,
+                createdAt: rec.created_at,
+                // Derived properties
+                priorityColor: getPriorityColor(rec.priority),
+                confidenceLevel: getConfidenceLevel(rec.confidence_score),
+                // Metadata
+                source: 'ai_calculated',
+                calculatedAt: new Date().toISOString()
+            }));
+
+            renderAIRecommendations(transformedRecommendations, true);
+            console.log("✅ Real AI recommendations displayed");
+            UIComponents.showNotification(`✅ Loaded ${recommendations.length} AI recommendations`, "success");
+            return transformedRecommendations;
+        } else {
+            throw new Error("Invalid AI recommendations response format from backend");
+        }
+    } catch (error) {
+        console.error("❌ Failed to load real AI recommendations:", error);
+        UIComponents.showNotification("⚠️ Backend unavailable, using fallback AI recommendations", "warning");
+        return loadFallbackAIRecommendations();
+    }
+}
+
+// ✅ UPDATED - Load Real Learning Patterns from Backend
+async function loadRealLearningPatterns() {
+    try {
+        console.log("🔄 Loading real learning patterns from backend...");
+
+        // ✅ Use backend endpoint per documentation
+        const response = await educatorAPI.request('/api/agenticlearn/educator/ai/learning-patterns');
+
+        if (response && response.success && response.data) {
+            const patterns = response.data;
+            console.log("✅ Real learning patterns loaded:", patterns);
+
+            // ✅ Transform backend data (already calculated, no hardcoding)
+            const transformedPatterns = patterns.map(pattern => ({
+                id: pattern.pattern_id,
+                patternType: pattern.pattern_type,
+                description: pattern.description,
+                frequency: pattern.frequency,
+                confidence: pattern.confidence_score,
+                affectedStudents: pattern.affected_students || [],
+                // ✅ REAL CALCULATED VALUES from backend
+                occurrenceRate: pattern.occurrence_rate,        // Backend calculation: (occurrences/total)*100
+                impactScore: pattern.impact_score,             // Backend ML calculation
+                trendDirection: pattern.trend_direction,       // Backend trend analysis
+                // Metadata
+                detectedAt: pattern.detected_at,
+                source: 'ai_calculated',
+                calculatedAt: new Date().toISOString()
+            }));
+
+            renderLearningPatterns(transformedPatterns, true);
+            console.log("✅ Real learning patterns displayed");
+            return transformedPatterns;
+        } else {
+            throw new Error("Invalid learning patterns response format from backend");
+        }
+    } catch (error) {
+        console.error("❌ Failed to load real learning patterns:", error);
+        return loadFallbackLearningPatterns();
+    }
+}
+
+// ✅ FALLBACK - Minimal AI data only when backend fails
+function loadFallbackAIInsights() {
+    console.log("🔄 Loading fallback AI insights...");
+
+    const fallbackInsights = {
+        learningPatterns: [],
+        atRiskStudents: [],
+        contentEffectiveness: [],
+        engagementTrends: [],
+        performancePredictions: [],
+        generatedAt: new Date().toISOString(),
+        confidence: 0,
+        source: 'fallback'
+    };
+
+    renderAIInsights(fallbackInsights, false);
+    console.log("✅ Fallback AI insights loaded");
+    return fallbackInsights;
+}
+
+function loadFallbackAIRecommendations() {
+    console.log("🔄 Loading fallback AI recommendations...");
+
+    const fallbackRecommendations = [
+        {
+            id: "fallback-1",
+            type: "system",
+            title: "Backend Connection Required",
+            description: "AI recommendation system requires backend connection for real insights.",
+            priority: "info",
+            confidence: 0,
+            targetStudents: [],
+            suggestedActions: ["Connect to backend for AI insights"],
+            expectedImpact: "N/A",
+            priorityColor: "var(--info)",
+            confidenceLevel: "N/A",
+            source: "fallback"
+        }
+    ];
+
+    renderAIRecommendations(fallbackRecommendations, false);
+    console.log("✅ Fallback AI recommendations loaded");
+    return fallbackRecommendations;
+}
+
+function loadFallbackLearningPatterns() {
+    console.log("🔄 Loading fallback learning patterns...");
+
+    const fallbackPatterns = [
+        {
+            id: "fallback-1",
+            patternType: "system",
+            description: "Learning pattern analysis requires backend connection.",
+            frequency: 0,
+            confidence: 0,
+            affectedStudents: [],
+            occurrenceRate: 0,
+            impactScore: 0,
+            trendDirection: "stable",
+            source: "fallback"
+        }
+    ];
+
+    renderLearningPatterns(fallbackPatterns, false);
+    console.log("✅ Fallback learning patterns loaded");
+    return fallbackPatterns;
+}
+
+// ✅ HELPER FUNCTIONS for AI System
+function getPriorityColor(priority) {
+    const colors = {
+        'high': 'var(--error)',
+        'medium': 'var(--warning)',
+        'low': 'var(--info)',
+        'info': 'var(--info)'
+    };
+    return colors[priority] || 'var(--gray-500)';
+}
+
+function getConfidenceLevel(confidence) {
+    if (confidence >= 0.8) return 'High';
+    if (confidence >= 0.6) return 'Medium';
+    if (confidence >= 0.4) return 'Low';
+    return 'Very Low';
+}
+
+// ✅ RENDER FUNCTIONS for AI System
+function renderAIInsights(insights, isRealData = false) {
+    const dataIndicator = isRealData
+        ? '<span style="color: var(--success); font-size: 0.75rem;">🟢 AI Live Data</span>'
+        : '<span style="color: var(--warning); font-size: 0.75rem;">🟡 AI Demo Data</span>';
+
+    const insightsHTML = `
+        <div style="margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 style="margin: 0; color: var(--gray-800);">🤖 AI Insights Dashboard</h3>
+                <div>${dataIndicator}</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                <!-- Learning Patterns Card -->
+                <div style="background: var(--white); border-radius: 12px; padding: 1.5rem; box-shadow: var(--shadow-sm); border-left: 4px solid var(--primary);">
+                    <h4 style="margin: 0 0 1rem 0; color: var(--gray-800); display: flex; align-items: center; gap: 0.5rem;">
+                        📊 Learning Patterns
+                        <span style="background: var(--primary); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">
+                            ${insights.learningPatterns.length}
+                        </span>
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">
+                        AI-detected learning behavior patterns across your students.
+                    </p>
+                    <button class="btn" onclick="viewLearningPatterns()" style="background: var(--primary); padding: 0.5rem 1rem;">
+                        View Patterns
+                    </button>
+                </div>
+
+                <!-- At-Risk Students Card -->
+                <div style="background: var(--white); border-radius: 12px; padding: 1.5rem; box-shadow: var(--shadow-sm); border-left: 4px solid var(--error);">
+                    <h4 style="margin: 0 0 1rem 0; color: var(--gray-800); display: flex; align-items: center; gap: 0.5rem;">
+                        ⚠️ At-Risk Students
+                        <span style="background: var(--error); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">
+                            ${insights.atRiskStudents.length}
+                        </span>
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">
+                        Students identified by AI as needing additional support.
+                    </p>
+                    <button class="btn" onclick="viewAtRiskStudents()" style="background: var(--error); padding: 0.5rem 1rem;">
+                        View Students
+                    </button>
+                </div>
+
+                <!-- Content Effectiveness Card -->
+                <div style="background: var(--white); border-radius: 12px; padding: 1.5rem; box-shadow: var(--shadow-sm); border-left: 4px solid var(--success);">
+                    <h4 style="margin: 0 0 1rem 0; color: var(--gray-800); display: flex; align-items: center; gap: 0.5rem;">
+                        📈 Content Effectiveness
+                        <span style="background: var(--success); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">
+                            ${insights.contentEffectiveness.length}
+                        </span>
+                    </h4>
+                    <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">
+                        AI analysis of content performance and engagement.
+                    </p>
+                    <button class="btn" onclick="viewContentEffectiveness()" style="background: var(--success); padding: 0.5rem 1rem;">
+                        View Analysis
+                    </button>
+                </div>
+            </div>
+
+            ${isRealData ? `
+                <div style="margin-top: 1.5rem; padding: 1rem; background: var(--success-light); border-radius: 8px; border-left: 4px solid var(--success);">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span style="color: var(--success); font-size: 1.25rem;">🤖</span>
+                        <strong style="color: var(--success-dark);">AI Analysis Active</strong>
+                    </div>
+                    <p style="margin: 0; color: var(--success-dark); font-size: 0.875rem;">
+                        Generated: ${new Date(insights.generatedAt).toLocaleString()} |
+                        Confidence: ${Math.round((insights.confidence || 0) * 100)}%
+                    </p>
+                </div>
+            ` : `
+                <div style="margin-top: 1.5rem; padding: 1rem; background: var(--warning-light); border-radius: 8px; border-left: 4px solid var(--warning);">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span style="color: var(--warning); font-size: 1.25rem;">⚠️</span>
+                        <strong style="color: var(--warning-dark);">AI Demo Mode</strong>
+                    </div>
+                    <p style="margin: 0; color: var(--warning-dark); font-size: 0.875rem;">
+                        Connect to backend for real AI insights and recommendations.
+                    </p>
+                </div>
+            `}
+        </div>
+    `;
+
+    setInner("ai-insights-container", insightsHTML);
+}
+
+function renderAIRecommendations(recommendations, isRealData = false) {
+    const dataIndicator = isRealData
+        ? '<span style="color: var(--success); font-size: 0.75rem;">🟢 AI Live Data</span>'
+        : '<span style="color: var(--warning); font-size: 0.75rem;">🟡 AI Demo Data</span>';
+
+    const recommendationsHTML = `
+        <div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+            <h4 style="margin: 0; color: var(--gray-800);">🎯 AI Recommendations (${recommendations.length})</h4>
+            <div>${dataIndicator}</div>
+        </div>
+        ${recommendations.map(rec => `
+            <div style="background: var(--white); border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; border-left: 4px solid ${rec.priorityColor}; box-shadow: var(--shadow-sm);">
+                <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 1rem;">
+                    <div style="flex: 1;">
+                        <h5 style="margin: 0 0 0.5rem 0; color: var(--gray-800); display: flex; align-items: center; gap: 0.5rem;">
+                            ${rec.title}
+                            <span style="background: ${rec.priorityColor}; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; text-transform: capitalize;">
+                                ${rec.priority}
+                            </span>
+                        </h5>
+                        <p style="margin: 0 0 1rem 0; color: var(--gray-600); font-size: 0.875rem; line-height: 1.4;">
+                            ${rec.description}
+                        </p>
+                    </div>
+                </div>
+
+                ${rec.suggestedActions.length > 0 ? `
+                    <div style="margin-bottom: 1rem;">
+                        <h6 style="margin: 0 0 0.5rem 0; color: var(--gray-700); font-size: 0.875rem;">Suggested Actions:</h6>
+                        <ul style="margin: 0; padding-left: 1.25rem; color: var(--gray-600); font-size: 0.875rem;">
+                            ${rec.suggestedActions.map(action => `<li style="margin-bottom: 0.25rem;">${action}</li>`).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
+
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--gray-500);">
+                    <span>Confidence: ${rec.confidenceLevel} (${Math.round((rec.confidence || 0) * 100)}%)</span>
+                    <span>Expected Impact: ${rec.expectedImpact}</span>
+                </div>
+            </div>
+        `).join('')}
+    `;
+
+    setInner("ai-recommendations-container", recommendationsHTML);
+}
+
 // ===== D7-D12: ADVANCED ANALYTICS MANAGER =====
 
 class AdvancedAnalyticsManager {
@@ -4196,8 +4549,8 @@ async function loadAIInsightsWithFallback() {
             )
         );
 
-        // Load traditional API data as backup
-        const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.AI_INSIGHTS);
+        // ✅ UPDATED - Load real AI data from backend
+        const response = await educatorAPI.request('/api/agenticlearn/educator/ai/insights');
 
         if (response && response.data) {
             currentAnalyticsData = response.data;
