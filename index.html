@@ -2307,13 +2307,32 @@
     <script>
         // ✅ CORRECT - Authentication check on page load
         function checkAuthentication() {
-            const token = window.educatorPortal ? window.educatorPortal.getPasetoToken() : null;
-            const educatorData = window.educatorPortal ? window.educatorPortal.getEducatorData() : null;
+            console.log("🔍 Checking authentication...");
 
-            if (!token || !educatorData) {
-                console.log("🔐 No authentication found, redirecting to login...");
+            // Check if educatorPortal is available
+            if (!window.educatorPortal) {
+                console.log("❌ window.educatorPortal not available yet");
+                return false;
+            }
+
+            const token = window.educatorPortal.getPasetoToken();
+            const educatorData = window.educatorPortal.getEducatorData();
+
+            console.log("🔍 Authentication check results:", {
+                token: token ? `${token.substring(0, 20)}...` : null,
+                educatorData: educatorData ? educatorData.name : null
+            });
+
+            if (!token) {
+                console.log("🔐 No authentication token found, redirecting to login...");
                 window.location.href = 'https://mubaroqadb.github.io/agenticlearn-auth/?type=educator';
                 return false;
+            }
+
+            // Token exists, but check if we have educator data
+            if (!educatorData) {
+                console.log("⚠️ Token found but no educator data, allowing access with token only");
+                // Don't redirect, just continue with token
             }
 
             // Display educator info in navigation
@@ -2378,29 +2397,41 @@
 
         // ✅ Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
+            console.log("🎓 DOM loaded, initializing educator portal...");
+
             // Wait for educatorPortal to be available
+            let attempts = 0;
+            const maxAttempts = 50; // 5 seconds with 100ms intervals
+
             const checkPortal = setInterval(() => {
+                attempts++;
+                console.log(`🔍 Checking for educatorPortal... (attempt ${attempts}/${maxAttempts})`);
+
                 if (window.educatorPortal) {
+                    console.log("✅ educatorPortal found, checking authentication...");
                     clearInterval(checkPortal);
 
-                    // Check authentication first
-                    if (checkAuthentication()) {
-                        // Load dashboard data
-                        loadEducatorDashboard();
-                        // Initialize notifications
-                        initializeNotifications();
-                    }
+                    // Small delay to ensure everything is loaded
+                    setTimeout(() => {
+                        if (checkAuthentication()) {
+                            console.log("✅ Authentication successful, loading dashboard...");
+                            // Load dashboard data
+                            if (window.loadEducatorDashboard) {
+                                loadEducatorDashboard();
+                            }
+                            // Initialize notifications
+                            if (window.initializeNotifications) {
+                                initializeNotifications();
+                            }
+                        }
+                    }, 500);
+                } else if (attempts >= maxAttempts) {
+                    console.error("❌ Educator portal failed to load after 5 seconds");
+                    clearInterval(checkPortal);
+                    // Don't redirect immediately, give user a chance to see what's happening
+                    alert("Failed to load educator portal. Please refresh the page or contact support.");
                 }
             }, 100);
-
-            // Timeout after 5 seconds
-            setTimeout(() => {
-                clearInterval(checkPortal);
-                if (!window.educatorPortal) {
-                    console.error("❌ Educator portal failed to load");
-                    window.location.href = 'https://mubaroqadb.github.io/agenticlearn-auth/?type=educator';
-                }
-            }, 5000);
         });
 
         console.log("🎓 Educator Portal Authentication Script loaded");

@@ -12445,6 +12445,72 @@ function displayCacheStatus(response) {
     }
 }
 
+// ✅ NEW - Create EducatorPortal Object for Authentication
+window.educatorPortal = {
+    getPasetoToken() {
+        const tokenNames = ['paseto_token', 'login', 'access_token', 'educator_token'];
+
+        // First check localStorage (more reliable for cross-domain)
+        const localToken = localStorage.getItem('paseto_token');
+        if (localToken) {
+            console.log(`✅ Found token in localStorage: ${localToken.substring(0, 20)}...`);
+            return localToken;
+        }
+
+        // Then check cookies
+        for (const name of tokenNames) {
+            const token = getCookie(name);
+            if (token) {
+                console.log(`✅ Found token in cookie: ${name} = ${token.substring(0, 20)}...`);
+                return token;
+            }
+        }
+
+        console.log("❌ No authentication token found in localStorage or cookies");
+        console.log("🔍 Available cookies:", document.cookie);
+        console.log("🔍 Available localStorage keys:", Object.keys(localStorage));
+        return null;
+    },
+
+    getEducatorData() {
+        // Check multiple possible keys for educator data
+        const possibleKeys = ['educator_data', 'user_data'];
+
+        for (const key of possibleKeys) {
+            const data = localStorage.getItem(key);
+            if (data) {
+                try {
+                    const parsed = JSON.parse(data);
+                    console.log(`✅ Found educator data in ${key}:`, parsed);
+                    return parsed;
+                } catch (error) {
+                    console.error(`❌ Failed to parse ${key}:`, error);
+                    localStorage.removeItem(key);
+                }
+            }
+        }
+
+        console.log("❌ No educator data found in localStorage");
+        console.log("🔍 Available localStorage keys:", Object.keys(localStorage));
+        return null;
+    },
+
+    logout() {
+        console.log("🔐 Logging out educator...");
+        const tokenNames = ['paseto_token', 'login', 'educator_token', 'access_token'];
+        tokenNames.forEach(name => {
+            document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+        });
+
+        localStorage.removeItem('paseto_token');
+        localStorage.removeItem('educator_data');
+        localStorage.removeItem('educator_phone');
+        localStorage.removeItem('educator_name');
+
+        window.location.href = 'https://mubaroqadb.github.io/agenticlearn-auth/?type=educator';
+    }
+};
+
 // Global function assignments
 window.refreshAdvancedAnalytics = refreshAdvancedAnalytics;
 window.exportAnalyticsReport = exportAnalyticsReport;
