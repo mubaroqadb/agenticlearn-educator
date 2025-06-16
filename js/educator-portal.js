@@ -223,9 +223,9 @@ class EducatorAPIClient {
             ...options.headers
         };
 
-        // ✅ CORRECT - Use 'login' header with PASETO token (not Authorization Bearer)
+        // ✅ CORRECTED - Use 'Authorization: Bearer' per backend documentation
         if (this.pasetoToken) {
-            headers['login'] = this.pasetoToken;
+            headers['Authorization'] = `Bearer ${this.pasetoToken}`;
         }
 
         const config = {
@@ -331,6 +331,214 @@ class EducatorAPIClient {
 
 // Initialize enhanced API client
 const educatorAPI = new EducatorAPIClient();
+
+// ===== MATHEMATICAL CALCULATION ENGINE =====
+
+class MathematicalCalculations {
+    constructor() {
+        this.calculationCache = new Map();
+        this.cacheTimeout = 5 * 60 * 1000; // 5 minutes
+    }
+
+    // ✅ STUDENT PROGRESS CALCULATION
+    calculateStudentProgress(completedLessons, totalLessons) {
+        if (totalLessons === 0) return 0;
+        const progress = Math.round((completedLessons / totalLessons) * 100);
+        return Math.min(100, Math.max(0, progress));
+    }
+
+    // ✅ CLASS COMPLETION RATE CALCULATION
+    calculateCompletionRate(completedStudents, totalStudents) {
+        if (totalStudents === 0) return 0;
+        return Math.round((completedStudents / totalStudents) * 100);
+    }
+
+    // ✅ ASSESSMENT AVERAGE CALCULATION
+    calculateAssessmentAverage(submissions) {
+        if (!submissions || submissions.length === 0) return 0;
+        const total = submissions.reduce((sum, submission) => sum + (submission.score || 0), 0);
+        return Math.round(total / submissions.length);
+    }
+
+    // ✅ ENGAGEMENT SCORE CALCULATION
+    calculateEngagementScore(loginFrequency, contentInteraction, assignmentTimeliness) {
+        const weights = { login: 0.3, interaction: 0.4, timeliness: 0.3 };
+        const score = (
+            (loginFrequency * weights.login) +
+            (contentInteraction * weights.interaction) +
+            (assignmentTimeliness * weights.timeliness)
+        ) * 100;
+        return Math.round(Math.min(100, Math.max(0, score)));
+    }
+
+    // ✅ RISK SCORE CALCULATION
+    calculateRiskScore(attendanceRate, assignmentDelayFactor, engagementScore) {
+        const riskScore = (
+            ((1 - attendanceRate) * 0.4) +
+            (assignmentDelayFactor * 0.3) +
+            ((1 - engagementScore / 100) * 0.3)
+        );
+        return Math.min(1, Math.max(0, riskScore));
+    }
+
+    // ✅ RISK LEVEL CLASSIFICATION
+    getRiskLevel(riskScore) {
+        if (riskScore >= 0.7) return "high";
+        if (riskScore >= 0.4) return "medium";
+        return "low";
+    }
+
+    // ✅ TIME-BASED CALCULATIONS
+    calculateDaysSinceLastActive(lastActiveTimestamp) {
+        if (!lastActiveTimestamp) return Infinity;
+        const now = new Date();
+        const lastActive = new Date(lastActiveTimestamp);
+        return Math.floor((now - lastActive) / (24 * 60 * 60 * 1000));
+    }
+
+    // ✅ GRADE CALCULATION
+    calculateLetterGrade(percentage) {
+        if (percentage >= 90) return 'A';
+        if (percentage >= 80) return 'B';
+        if (percentage >= 70) return 'C';
+        if (percentage >= 60) return 'D';
+        return 'F';
+    }
+
+    // ✅ STATISTICAL CALCULATIONS
+    calculateStatistics(values) {
+        if (!values || values.length === 0) {
+            return { mean: 0, median: 0, stdDev: 0, min: 0, max: 0 };
+        }
+
+        const sorted = [...values].sort((a, b) => a - b);
+        const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
+        const median = sorted.length % 2 === 0
+            ? (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2
+            : sorted[Math.floor(sorted.length / 2)];
+
+        const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
+        const stdDev = Math.sqrt(variance);
+
+        return {
+            mean: Math.round(mean * 100) / 100,
+            median: Math.round(median * 100) / 100,
+            stdDev: Math.round(stdDev * 100) / 100,
+            min: Math.min(...values),
+            max: Math.max(...values)
+        };
+    }
+
+    // ✅ CACHE MANAGEMENT
+    getCachedCalculation(key) {
+        const cached = this.calculationCache.get(key);
+        if (cached && (Date.now() - cached.timestamp) < this.cacheTimeout) {
+            return cached.value;
+        }
+        return null;
+    }
+
+    setCachedCalculation(key, value) {
+        this.calculationCache.set(key, {
+            value,
+            timestamp: Date.now()
+        });
+    }
+
+    // ✅ COMPREHENSIVE STUDENT METRICS CALCULATION
+    calculateStudentMetrics(studentData) {
+        const cacheKey = `student_metrics_${studentData.id}`;
+        const cached = this.getCachedCalculation(cacheKey);
+        if (cached) return cached;
+
+        const metrics = {
+            // Progress calculation
+            progress: this.calculateStudentProgress(
+                studentData.completed_lessons || 0,
+                studentData.total_lessons || 20
+            ),
+
+            // Grade calculation
+            averageScore: this.calculateAssessmentAverage(studentData.assessments || []),
+            letterGrade: this.calculateLetterGrade(
+                this.calculateAssessmentAverage(studentData.assessments || [])
+            ),
+
+            // Engagement calculation
+            engagementScore: this.calculateEngagementScore(
+                studentData.login_frequency || 0.5,
+                studentData.content_interaction || 0.6,
+                studentData.assignment_timeliness || 0.7
+            ),
+
+            // Risk assessment
+            riskScore: this.calculateRiskScore(
+                studentData.attendance_rate || 0.8,
+                studentData.assignment_delay_factor || 0.2,
+                this.calculateEngagementScore(
+                    studentData.login_frequency || 0.5,
+                    studentData.content_interaction || 0.6,
+                    studentData.assignment_timeliness || 0.7
+                )
+            ),
+
+            // Time calculations
+            daysSinceLastActive: this.calculateDaysSinceLastActive(studentData.last_active),
+
+            // Metadata
+            calculatedAt: new Date().toISOString(),
+            calculationSource: 'mathematical_engine'
+        };
+
+        metrics.riskLevel = this.getRiskLevel(metrics.riskScore);
+
+        this.setCachedCalculation(cacheKey, metrics);
+        return metrics;
+    }
+
+    // ✅ CLASS ANALYTICS CALCULATION
+    calculateClassAnalytics(studentsData) {
+        if (!studentsData || studentsData.length === 0) {
+            return {
+                totalStudents: 0,
+                averageProgress: 0,
+                completionRate: 0,
+                atRiskStudents: 0,
+                engagementRate: 0,
+                calculatedAt: new Date().toISOString()
+            };
+        }
+
+        const progressValues = studentsData.map(s => s.progress || 0);
+        const completedStudents = studentsData.filter(s => (s.progress || 0) >= 100).length;
+        const atRiskStudents = studentsData.filter(s => {
+            const riskScore = this.calculateRiskScore(
+                s.attendance_rate || 0.8,
+                s.assignment_delay_factor || 0.2,
+                s.engagement_score || 50
+            );
+            return riskScore >= 0.4;
+        }).length;
+
+        const stats = this.calculateStatistics(progressValues);
+
+        return {
+            totalStudents: studentsData.length,
+            averageProgress: Math.round(stats.mean),
+            completionRate: this.calculateCompletionRate(completedStudents, studentsData.length),
+            atRiskStudents,
+            engagementRate: Math.round(
+                studentsData.reduce((sum, s) => sum + (s.engagement_score || 50), 0) / studentsData.length
+            ),
+            progressStatistics: stats,
+            calculatedAt: new Date().toISOString(),
+            calculationSource: 'mathematical_engine'
+        };
+    }
+}
+
+// Initialize mathematical calculation engine
+const mathEngine = new MathematicalCalculations();
 
 // ===== ARIA AI CLIENT =====
 
