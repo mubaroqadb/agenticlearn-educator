@@ -749,35 +749,29 @@ class AdvancedAnalyticsManager {
     async loadAdvancedAnalytics() {
         try {
             this.isLoading = true;
-            console.log("🔄 Loading advanced analytics...");
+            console.log("🔄 Loading advanced analytics from MongoDB...");
 
-            const [
-                learningAnalytics,
-                engagementAnalytics,
-                performanceTrends,
-                comparativeAnalytics,
-                predictiveModels
-            ] = await Promise.all([
-                this.loadLearningAnalytics(),
-                this.loadEngagementAnalytics(),
-                this.loadPerformanceTrends(),
-                this.loadComparativeAnalytics(),
-                this.loadPredictiveModels()
-            ]);
+            // Load real data from MongoDB via Go Fiber API
+            const response = await educatorAPI.request("/educator/analytics/advanced");
 
-            this.analyticsData = {
-                learning: learningAnalytics,
-                engagement: engagementAnalytics,
-                performance: performanceTrends,
-                comparative: comparativeAnalytics,
-                predictive: predictiveModels
-            };
-
-            console.log("✅ Advanced analytics loaded:", this.analyticsData);
-            return this.analyticsData;
+            if (response && response.success && response.data) {
+                this.analyticsData = response.data;
+                console.log("✅ Real advanced analytics loaded from MongoDB:", this.analyticsData);
+                return this.analyticsData;
+            } else {
+                throw new Error("Invalid analytics response from MongoDB");
+            }
         } catch (error) {
-            console.error("❌ Failed to load advanced analytics:", error);
-            return this.loadDemoAnalytics();
+            console.error("❌ Failed to load real analytics from MongoDB:", error);
+            UIComponents.showNotification("❌ Analytics service unavailable", "error");
+            // Return empty data instead of fake data
+            return {
+                learning: null,
+                engagement: null,
+                performance: null,
+                comparative: null,
+                predictive: null
+            };
         } finally {
             this.isLoading = false;
         }
@@ -1221,21 +1215,26 @@ class CommunicationManager {
     async loadCommunicationData() {
         try {
             this.isLoading = true;
-            console.log("🔄 Loading communication data...");
+            console.log("🔄 Loading communication data from MongoDB...");
 
-            const [messages, notifications, forums, videoSessions] = await Promise.all([
-                this.loadMessages(),
-                this.loadNotifications(),
-                this.loadForums(),
-                this.loadVideoSessions()
+            // Load real data from MongoDB via Go Fiber API
+            const [messagesResponse, forumsResponse, videoSessionsResponse] = await Promise.all([
+                educatorAPI.request("/educator/communication/messages"),
+                educatorAPI.request("/educator/communication/forums"),
+                educatorAPI.request("/educator/communication/video-sessions")
             ]);
 
-            this.messages = messages;
-            this.notifications = notifications;
-            this.forums = forums;
-            this.videoSessions = videoSessions;
+            if (messagesResponse?.success) {
+                this.messages = messagesResponse.data;
+            }
+            if (forumsResponse?.success) {
+                this.forums = forumsResponse.data;
+            }
+            if (videoSessionsResponse?.success) {
+                this.videoSessions = videoSessionsResponse.data;
+            }
 
-            console.log("✅ Communication data loaded");
+            console.log("✅ Real communication data loaded from MongoDB");
             return {
                 messages: this.messages,
                 notifications: this.notifications,
@@ -1243,8 +1242,15 @@ class CommunicationManager {
                 videoSessions: this.videoSessions
             };
         } catch (error) {
-            console.error("❌ Failed to load communication data:", error);
-            return this.loadDemoCommunicationData();
+            console.error("❌ Failed to load real communication data from MongoDB:", error);
+            UIComponents.showNotification("❌ Communication service unavailable", "error");
+            // Return empty data instead of fake data
+            return {
+                messages: [],
+                notifications: [],
+                forums: [],
+                videoSessions: []
+            };
         } finally {
             this.isLoading = false;
         }
@@ -1686,21 +1692,22 @@ class ContentManagementSystem {
     async loadContentManagementData() {
         try {
             this.isLoading = true;
-            console.log("🔄 Loading content management data...");
+            console.log("🔄 Loading content management data from MongoDB...");
 
-            const [library, resources, curriculum, shared] = await Promise.all([
-                this.loadContentLibrary(),
-                this.loadResources(),
-                this.loadCurriculumMaps(),
-                this.loadSharedContent()
+            // Load real data from MongoDB via Go Fiber API
+            const [libraryResponse, resourcesResponse] = await Promise.all([
+                educatorAPI.request("/educator/content/library"),
+                educatorAPI.request("/educator/content/resources")
             ]);
 
-            this.contentLibrary = library;
-            this.resources = resources;
-            this.curriculumMaps = curriculum;
-            this.sharedContent = shared;
+            if (libraryResponse?.success) {
+                this.contentLibrary = libraryResponse.data;
+            }
+            if (resourcesResponse?.success) {
+                this.resources = resourcesResponse.data;
+            }
 
-            console.log("✅ Content management data loaded");
+            console.log("✅ Real content management data loaded from MongoDB");
             return {
                 library: this.contentLibrary,
                 resources: this.resources,
@@ -1708,8 +1715,15 @@ class ContentManagementSystem {
                 shared: this.sharedContent
             };
         } catch (error) {
-            console.error("❌ Failed to load content management data:", error);
-            return this.loadDemoContentData();
+            console.error("❌ Failed to load real content data from MongoDB:", error);
+            UIComponents.showNotification("❌ Content service unavailable", "error");
+            // Return empty data instead of fake data
+            return {
+                library: [],
+                resources: [],
+                curriculum: [],
+                shared: []
+            };
         } finally {
             this.isLoading = false;
         }
