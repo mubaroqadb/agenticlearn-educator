@@ -2473,7 +2473,7 @@
     </div>
 
     <!-- ✅ CLEAN VERSION - No fallback data, no demo data -->
-    <script src="./js/educator-portal-clean.js"></script>
+    <script type="module" src="./js/educator-portal-clean.js"></script>
 
     <!-- ✅ Authentication Check Script -->
     <script>
@@ -2586,15 +2586,9 @@
                     // Small delay to ensure everything is loaded
                     setTimeout(() => {
                         if (checkAuthentication()) {
-                            console.log("✅ Authentication successful, loading dashboard...");
-                            // Load dashboard data
-                            if (window.loadEducatorDashboard) {
-                                loadEducatorDashboard();
-                            }
-                            // Initialize notifications
-                            if (window.initializeNotifications) {
-                                initializeNotifications();
-                            }
+                            console.log("✅ Authentication successful, portal ready!");
+                            // Portal is already initialized via DOMContentLoaded
+                            // No additional initialization needed
                         }
                     }, 500);
                 } else if (attempts >= maxAttempts) {

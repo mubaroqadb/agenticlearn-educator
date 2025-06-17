@@ -7,18 +7,24 @@
 import('./core/mathematical-calculations.js').then(module => {
     window.mathCalculations = module.mathCalculations;
     console.log('✅ Mathematical Calculations Engine loaded');
+}).catch(error => {
+    console.error('❌ Failed to load Mathematical Calculations:', error);
 });
 
 // Import real-time monitoring system
 import('./core/real-time-monitoring.js').then(module => {
     window.realTimeMonitoring = module.realTimeMonitoring;
     console.log('✅ Real-time Monitoring System loaded');
+}).catch(error => {
+    console.error('❌ Failed to load Real-time Monitoring:', error);
 });
 
 // Import enhanced UI components
 import('./components/ui-components.js').then(module => {
     window.UIComponents = module.UIComponents;
     console.log('✅ Enhanced UI Components loaded');
+}).catch(error => {
+    console.error('❌ Failed to load UI Components:', error);
 });
 
 // ===== UTILITY FUNCTIONS =====
@@ -783,6 +789,11 @@ async function initializePortal() {
             // Load initial dashboard data
             await loadDashboardData();
 
+            // Mark portal as initialized
+            if (window.educatorPortal) {
+                window.educatorPortal.initialized = true;
+            }
+
             // Show success notification
             if (window.UIComponents) {
                 window.UIComponents.showNotification(
@@ -804,6 +815,16 @@ async function initializePortal() {
 
 window.showPage = showPage;
 window.educatorAPI = educatorAPI;
+window.educatorPortal = {
+    initialized: false,
+    api: educatorAPI,
+    showPage: showPage,
+    currentData: {
+        educator: currentEducatorData,
+        students: currentStudentData,
+        analytics: currentAnalyticsData
+    }
+};
 
 // ===== AUTO INITIALIZATION =====
 
