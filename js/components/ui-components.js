@@ -335,6 +335,253 @@ export class UIComponents {
             </div>
         `;
     }
+
+    // ===== ENHANCED FEATURES =====
+
+    static createModal(title, content, actions = [], options = {}) {
+        const modalId = `modal-${Date.now()}`;
+        const actionsHTML = actions.map(action => `
+            <button class="btn btn-${action.type || 'primary'}" onclick="${action.onclick}">
+                ${action.label}
+            </button>
+        `).join('');
+
+        const modal = `
+            <div id="${modalId}" class="modal-overlay" style="
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+                backdrop-filter: blur(2px);
+            ">
+                <div class="modal-content" style="
+                    background: white;
+                    border-radius: 8px;
+                    padding: 0;
+                    max-width: ${options.maxWidth || '600px'};
+                    max-height: 90vh;
+                    overflow-y: auto;
+                    box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
+                    animation: modalSlideIn 0.3s ease-out;
+                ">
+                    <div class="modal-header" style="
+                        padding: 1.5rem;
+                        border-bottom: 1px solid var(--gray-200);
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    ">
+                        <h3 style="margin: 0; color: var(--gray-800);">${title}</h3>
+                        <button onclick="UIComponents.closeModal('${modalId}')" style="
+                            background: none;
+                            border: none;
+                            font-size: 1.5rem;
+                            cursor: pointer;
+                            color: var(--gray-500);
+                        ">×</button>
+                    </div>
+                    <div class="modal-body" style="padding: 1.5rem;">
+                        ${content}
+                    </div>
+                    ${actions.length > 0 ? `
+                        <div class="modal-footer" style="
+                            padding: 1.5rem;
+                            border-top: 1px solid var(--gray-200);
+                            display: flex;
+                            gap: 0.5rem;
+                            justify-content: flex-end;
+                        ">
+                            ${actionsHTML}
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modal);
+        return modalId;
+    }
+
+    static closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.animation = 'modalSlideOut 0.3s ease-in';
+            setTimeout(() => {
+                if (modal.parentNode) {
+                    modal.parentNode.removeChild(modal);
+                }
+            }, 300);
+        }
+    }
+
+    static createTooltip(element, content, position = 'top') {
+        const tooltip = document.createElement('div');
+        tooltip.className = 'tooltip';
+        tooltip.innerHTML = content;
+        tooltip.style.cssText = `
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        `;
+
+        document.body.appendChild(tooltip);
+
+        element.addEventListener('mouseenter', () => {
+            const rect = element.getBoundingClientRect();
+            const tooltipRect = tooltip.getBoundingClientRect();
+
+            switch (position) {
+                case 'top':
+                    tooltip.style.left = `${rect.left + (rect.width - tooltipRect.width) / 2}px`;
+                    tooltip.style.top = `${rect.top - tooltipRect.height - 5}px`;
+                    break;
+                case 'bottom':
+                    tooltip.style.left = `${rect.left + (rect.width - tooltipRect.width) / 2}px`;
+                    tooltip.style.top = `${rect.bottom + 5}px`;
+                    break;
+                case 'left':
+                    tooltip.style.left = `${rect.left - tooltipRect.width - 5}px`;
+                    tooltip.style.top = `${rect.top + (rect.height - tooltipRect.height) / 2}px`;
+                    break;
+                case 'right':
+                    tooltip.style.left = `${rect.right + 5}px`;
+                    tooltip.style.top = `${rect.top + (rect.height - tooltipRect.height) / 2}px`;
+                    break;
+            }
+
+            tooltip.style.opacity = '1';
+        });
+
+        element.addEventListener('mouseleave', () => {
+            tooltip.style.opacity = '0';
+        });
+
+        return tooltip;
+    }
+
+    static createSkeletonLoader(lines = 3, width = '100%') {
+        const skeletonLines = Array.from({ length: lines }, (_, i) => `
+            <div style="
+                height: 1rem;
+                background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+                background-size: 200% 100%;
+                animation: skeleton-loading 1.5s infinite;
+                border-radius: 4px;
+                margin-bottom: 0.5rem;
+                width: ${i === lines - 1 ? '60%' : width};
+            "></div>
+        `).join('');
+
+        return `
+            <div class="skeleton-loader">
+                ${skeletonLines}
+            </div>
+        `;
+    }
+
+    static addGlobalStyles() {
+        if (!document.getElementById('ui-components-styles')) {
+            const styles = document.createElement('style');
+            styles.id = 'ui-components-styles';
+            styles.textContent = `
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+
+                @keyframes modalSlideIn {
+                    from { transform: scale(0.9); opacity: 0; }
+                    to { transform: scale(1); opacity: 1; }
+                }
+
+                @keyframes modalSlideOut {
+                    from { transform: scale(1); opacity: 1; }
+                    to { transform: scale(0.9); opacity: 0; }
+                }
+
+                @keyframes skeleton-loading {
+                    0% { background-position: -200% 0; }
+                    100% { background-position: 200% 0; }
+                }
+
+                .btn {
+                    padding: 0.5rem 1rem;
+                    border: none;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-weight: 500;
+                    transition: all 0.2s;
+                    text-decoration: none;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                }
+
+                .btn:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                }
+
+                .btn-primary {
+                    background: var(--primary);
+                    color: white;
+                }
+
+                .btn-secondary {
+                    background: var(--gray-500);
+                    color: white;
+                }
+
+                .btn-success {
+                    background: var(--success);
+                    color: white;
+                }
+
+                .btn-warning {
+                    background: var(--warning);
+                    color: white;
+                }
+
+                .btn-error {
+                    background: var(--error);
+                    color: white;
+                }
+
+                .btn-info {
+                    background: var(--info);
+                    color: white;
+                }
+            `;
+            document.head.appendChild(styles);
+        }
+    }
 }
+
+// Initialize global styles when module loads
+UIComponents.addGlobalStyles();
 
 export default UIComponents;

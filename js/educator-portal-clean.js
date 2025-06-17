@@ -1,4 +1,25 @@
 // Educator Portal - Clean Version (No Fallback Data)
+// Enhanced with Mathematical Calculations & Real-time Monitoring
+
+// ===== ENHANCED IMPORTS =====
+
+// Import mathematical calculations engine
+import('./core/mathematical-calculations.js').then(module => {
+    window.mathCalculations = module.mathCalculations;
+    console.log('✅ Mathematical Calculations Engine loaded');
+});
+
+// Import real-time monitoring system
+import('./core/real-time-monitoring.js').then(module => {
+    window.realTimeMonitoring = module.realTimeMonitoring;
+    console.log('✅ Real-time Monitoring System loaded');
+});
+
+// Import enhanced UI components
+import('./components/ui-components.js').then(module => {
+    window.UIComponents = module.UIComponents;
+    console.log('✅ Enhanced UI Components loaded');
+});
 
 // ===== UTILITY FUNCTIONS =====
 
@@ -119,12 +140,69 @@ class EducatorAPIClient {
 // Initialize API client
 const educatorAPI = new EducatorAPIClient();
 
+// ===== ENHANCED SYSTEM INITIALIZATION =====
+
+async function initializeEnhancedSystems() {
+    console.log('🔄 Initializing Enhanced Systems...');
+
+    try {
+        // Initialize Mathematical Calculations
+        if (window.mathCalculations) {
+            mathematicalCalculationsReady = true;
+            console.log('✅ Mathematical Calculations ready');
+        }
+
+        // Initialize Real-time Monitoring
+        if (window.realTimeMonitoring) {
+            const monitoringResult = await window.realTimeMonitoring.initialize();
+            if (monitoringResult) {
+                realTimeMonitoringActive = true;
+                console.log('✅ Real-time Monitoring active');
+
+                // Update UI with monitoring status
+                updateMonitoringStatus(true);
+            }
+        }
+
+        // Initialize Enhanced UI Components
+        if (window.UIComponents) {
+            console.log('✅ Enhanced UI Components ready');
+
+            // Show initialization success notification
+            window.UIComponents.showNotification(
+                'Enhanced systems initialized successfully!',
+                'success',
+                3000
+            );
+        }
+
+        console.log('✅ All Enhanced Systems initialized');
+        return true;
+    } catch (error) {
+        console.error('❌ Enhanced Systems initialization failed:', error);
+        showError('Failed to initialize enhanced systems: ' + error.message);
+        return false;
+    }
+}
+
+function updateMonitoringStatus(isActive) {
+    const statusElements = document.querySelectorAll('.monitoring-status, #monitoring-indicator');
+    statusElements.forEach(element => {
+        if (element) {
+            element.textContent = isActive ? '🟢 Live Monitoring' : '🔴 Monitoring Offline';
+            element.style.color = isActive ? '#059669' : '#dc2626';
+        }
+    });
+}
+
 // ===== GLOBAL STATE =====
 
 let currentEducatorData = null;
 let currentStudentData = [];
 let currentAnalyticsData = null;
 let isBackendConnected = false;
+let realTimeMonitoringActive = false;
+let mathematicalCalculationsReady = false;
 
 // ===== PAGE MANAGEMENT =====
 
@@ -281,16 +359,45 @@ async function loadReportsData() {
 
 function renderDashboard(data) {
     if (!data.overview) return;
-    
+
     const overview = data.overview;
-    
-    // Update metrics
-    setInner('total-students', overview.total_students || 0);
-    setInner('average-progress', `${overview.average_progress || 0}%`);
-    setInner('unread-messages', overview.unread_messages || 0);
-    setInner('at-risk-students', overview.at_risk_students || 0);
-    
-    console.log('✅ Dashboard rendered with real data');
+
+    // Enhanced metrics with mathematical calculations
+    if (window.mathCalculations && mathematicalCalculationsReady) {
+        // Calculate enhanced metrics
+        const totalStudents = overview.total_students || 0;
+        const activeStudents = overview.active_students || 0;
+        const averageProgress = overview.average_progress || 0;
+        const atRiskStudents = overview.at_risk_students || 0;
+
+        // Calculate engagement rate
+        const engagementRate = window.mathCalculations.calculatePercentage(activeStudents, totalStudents);
+
+        // Calculate risk percentage
+        const riskPercentage = window.mathCalculations.calculatePercentage(atRiskStudents, totalStudents);
+
+        // Update metrics with enhanced calculations
+        setInner('total-students', totalStudents);
+        setInner('average-progress', `${window.mathCalculations.formatNumber(averageProgress, 1)}%`);
+        setInner('unread-messages', overview.unread_messages || 0);
+        setInner('at-risk-students', `${atRiskStudents} (${window.mathCalculations.formatNumber(riskPercentage, 1)}%)`);
+
+        // Add engagement metric if element exists
+        const engagementElement = document.getElementById('engagement-rate');
+        if (engagementElement) {
+            engagementElement.textContent = `${window.mathCalculations.formatNumber(engagementRate, 1)}%`;
+        }
+
+        console.log('✅ Dashboard rendered with enhanced mathematical calculations');
+    } else {
+        // Fallback to basic rendering
+        setInner('total-students', overview.total_students || 0);
+        setInner('average-progress', `${overview.average_progress || 0}%`);
+        setInner('unread-messages', overview.unread_messages || 0);
+        setInner('at-risk-students', overview.at_risk_students || 0);
+
+        console.log('✅ Dashboard rendered with basic data');
+    }
 }
 
 function renderStudents(students) {
@@ -659,19 +766,31 @@ function showError(message) {
 // ===== INITIALIZATION =====
 
 async function initializePortal() {
-    console.log('🚀 Initializing Educator Portal...');
-    
+    console.log('🚀 Initializing Enhanced Educator Portal...');
+
     try {
+        // Initialize enhanced systems first
+        await initializeEnhancedSystems();
+
         // Test backend connection
         const connectionResult = await educatorAPI.testConnection();
-        
+
         if (connectionResult.success) {
             isBackendConnected = true;
             currentEducatorData = connectionResult.profile;
             console.log('✅ Portal initialized with backend connection');
-            
+
             // Load initial dashboard data
             await loadDashboardData();
+
+            // Show success notification
+            if (window.UIComponents) {
+                window.UIComponents.showNotification(
+                    `Welcome back, ${currentEducatorData?.name || 'Educator'}! Portal ready.`,
+                    'success',
+                    5000
+                );
+            }
         } else {
             throw new Error('Backend connection failed');
         }
