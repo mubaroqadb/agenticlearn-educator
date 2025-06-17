@@ -1,10 +1,13 @@
 # 🔍 Backend Assessment & Requirements for AgenticAI
+## Core Educator Portal (Beranda - Export)
 
 ## 📊 **CURRENT BACKEND STATUS ASSESSMENT**
 
-**SUMMARY: 5 Working, 1 Problematic, 24+ Missing Endpoints**
+**SCOPE: Core Educator Features Only (Admin features moved to separate admin panel)**
 
-### ✅ **WORKING ENDPOINTS (Real Data) - 5/30**
+**SUMMARY: 5 Working, 1 Problematic, 8 Core Missing Endpoints**
+
+### ✅ **WORKING ENDPOINTS (Real Data) - 5/13 Core Endpoints**
 
 #### 1. **Educator Profile** ✅
 - **Endpoint:** `/api/agenticlearn/educator/profile`
@@ -54,74 +57,57 @@
 
 ---
 
-### ❌ **MISSING ENDPOINTS (Need Implementation)**
+### ❌ **MISSING CORE EDUCATOR ENDPOINTS (Need Implementation)**
 
-#### 1. **ARIA AI Integration** ❌ (3 endpoints)
-- `/api/agenticlearn/educator/ai/aria/chat`
-- `/api/agenticlearn/educator/ai/aria/analysis`
-- `/api/agenticlearn/educator/ai/aria/recommendations`
-- **Status:** ❌ Not implemented
-- **Required:** ARIA AI chatbot integration
+#### 1. **Announcements System** ❌ (Priority 1)
+- `/api/agenticlearn/educator/communication/announcements/list`
+- `/api/agenticlearn/educator/communication/announcement/create`
+- **Status:** ❌ Not tested/implemented
+- **Required:** Real announcements database for Communication menu
 
-#### 2. **Advanced Analytics** ❌ (5 endpoints)
-- `/api/agenticlearn/educator/analytics/learning`
-- `/api/agenticlearn/educator/analytics/engagement`
-- `/api/agenticlearn/educator/analytics/performance-trends`
-- `/api/agenticlearn/educator/analytics/comparative`
-- `/api/agenticlearn/educator/analytics/predictive`
-- **Status:** ❌ Not implemented
-- **Required:** Detailed analytics calculations
+#### 2. **Notifications System** ❌ (Priority 1)
+- `/api/agenticlearn/educator/notifications`
+- `/api/agenticlearn/notifications/mark-read`
+- **Status:** ❌ Not tested/implemented
+- **Required:** Real notifications system for Communication menu
 
-#### 3. **Extended Communication** ❌ (4 endpoints)
-- `/api/agenticlearn/educator/communication/messages`
-- `/api/agenticlearn/educator/communication/forums`
-- `/api/agenticlearn/educator/communication/video`
-- `/api/agenticlearn/educator/communication/notifications`
-- **Status:** ❌ Not implemented
-- **Required:** Full communication suite
-
-#### 4. **Content Management** ❌ (5 endpoints)
-- `/api/agenticlearn/educator/content/library`
-- `/api/agenticlearn/educator/content/create`
-- `/api/agenticlearn/educator/content/resources`
-- `/api/agenticlearn/educator/content/curriculum`
-- `/api/agenticlearn/educator/content/sharing`
-- **Status:** ❌ Not implemented
-- **Required:** Complete content management system
-
-#### 5. **Real-time & Monitoring** ❌ (4 endpoints)
-- `/api/agenticlearn/educator/analytics/recent-activity`
-- `/api/agenticlearn/educator/analytics/student-alerts`
-- `/api/agenticlearn/educator/system/health`
-- `/api/agenticlearn/educator/analytics/realtime`
-- **Status:** ❌ Not implemented
-- **Required:** Real-time monitoring capabilities
-
-#### 6. **Assessment Management Extended** ❌ (3 endpoints)
+#### 3. **Assessment Management Extended** ❌ (Priority 2)
 - `/api/agenticlearn/educator/assessment/update/{id}`
 - `/api/agenticlearn/educator/assessment/delete/{id}`
 - `/api/agenticlearn/educator/assessment/results/{id}`
 - **Status:** ❌ Not implemented
-- **Required:** Full CRUD operations for assessments
+- **Required:** Full CRUD operations for Assessment menu
 
-#### 7. **Announcements System** ❌
-- `/api/agenticlearn/educator/communication/announcements/list`
-- `/api/agenticlearn/educator/communication/announcement/create`
-- **Status:** ❌ Not tested/implemented
-- **Required:** Real announcements database
-
-#### 8. **Notifications System** ❌
-- `/api/agenticlearn/educator/notifications`
-- `/api/agenticlearn/notifications/mark-read`
-- **Status:** ❌ Not tested/implemented
-- **Required:** Real notifications system
-
-#### 9. **Data Export/Import** ❌
+#### 4. **Data Export/Import** ❌ (Priority 2)
 - `/api/agenticlearn/educator/data/export`
 - `/api/agenticlearn/educator/data/import`
 - `/api/agenticlearn/educator/data/populate`
 - **Status:** ❌ Not implemented
-- **Required:** Multiple format support (CSV, PDF, Excel)
+- **Required:** Multiple format support for Reports & Export menu
+
+#### 5. **AI Recommendations Core** ❌ (Priority 2)
+- `/api/agenticlearn/educator/ai/recommendations`
+- `/api/agenticlearn/educator/ai/learning-patterns`
+- **Status:** ❌ Not implemented
+- **Required:** Core AI features for AI Recommendations menu
+
+#### 6. **Workflow Tools** ❌ (Priority 3)
+- `/api/agenticlearn/educator/workflow/d1-d24`
+- `/api/agenticlearn/educator/workflow/planning`
+- **Status:** ❌ Not implemented
+- **Required:** D1-D24 workflow tools for Workflow menu
+
+#### 7. **Advanced Analytics Core** ❌ (Priority 3)
+- `/api/agenticlearn/educator/analytics/learning`
+- `/api/agenticlearn/educator/analytics/engagement`
+- **Status:** ❌ Not implemented
+- **Required:** Enhanced analytics for Analytics menu
+
+#### 8. **Real-time Features** ❌ (Priority 3)
+- `/api/agenticlearn/educator/analytics/recent-activity`
+- `/api/agenticlearn/educator/analytics/student-alerts`
+- **Status:** ❌ Not implemented
+- **Required:** Real-time monitoring for Students menu
 
 ---
 
@@ -312,21 +298,22 @@ Expected Response:
 
 ---
 
-## 🚀 **IMPLEMENTATION PRIORITY**
+## 🚀 **IMPLEMENTATION PRIORITY (Core Educator Only)**
 
-### **Phase 1 (Critical - Week 1)**
-1. ✅ Fix Students List performance
-2. ✅ Implement Announcements system
-3. ✅ Implement Notifications system
+### **Phase 1 (Critical - Week 1) - Core Communication**
+1. 🚨 Fix Students List performance (timeout issues)
+2. 🚨 Implement Announcements system (Communication menu)
+3. 🚨 Implement Notifications system (Communication menu)
 
-### **Phase 2 (Important - Week 2)**
-4. ✅ Advanced Analytics implementation
-5. ✅ Content Management system
+### **Phase 2 (Important - Week 2) - Core Features**
+4. ✅ Assessment Management Extended (Assessment menu)
+5. ✅ Data Export/Import functionality (Reports & Export menu)
+6. ✅ AI Recommendations Core (AI Recommendations menu)
 
-### **Phase 3 (Enhancement - Week 3)**
-6. ✅ Data Export/Import functionality
-7. ✅ Performance optimizations
-8. ✅ Caching implementation
+### **Phase 3 (Enhancement - Week 3) - Advanced Features**
+7. ✅ Workflow Tools implementation (Workflow menu)
+8. ✅ Advanced Analytics Core (Analytics menu)
+9. ✅ Real-time Features (Students menu)
 
 ---
 
@@ -501,4 +488,50 @@ Import Requirements:
 
 ---
 
-**This comprehensive document provides AgenticAI backend team with clear requirements, priorities, and success criteria for completing the educator portal backend integration.**
+---
+
+## 📋 **CORE EDUCATOR MENU MAPPING**
+
+### **Frontend Menu → Backend Endpoints Required:**
+
+1. **🏠 Beranda** ✅
+   - `/api/agenticlearn/educator/profile` ✅ Working
+   - `/api/agenticlearn/educator/analytics/dashboard` ✅ Working
+
+2. **📊 Analytics** ✅ + ❌
+   - `/api/agenticlearn/educator/analytics/dashboard` ✅ Working
+   - `/api/agenticlearn/educator/analytics/learning` ❌ Missing
+   - `/api/agenticlearn/educator/analytics/engagement` ❌ Missing
+
+3. **👥 Students** ⚠️ + ❌
+   - `/api/agenticlearn/educator/students/list` ⚠️ Timeout Issues
+   - `/api/agenticlearn/educator/analytics/student-alerts` ❌ Missing
+   - `/api/agenticlearn/educator/analytics/recent-activity` ❌ Missing
+
+4. **💬 Communication** ✅ + ❌
+   - `/api/agenticlearn/educator/communication/messages/list` ✅ Working
+   - `/api/agenticlearn/educator/communication/announcements/list` ❌ Missing
+   - `/api/agenticlearn/educator/notifications` ❌ Missing
+
+5. **🔄 Workflow** ❌
+   - `/api/agenticlearn/educator/workflow/d1-d24` ❌ Missing
+   - `/api/agenticlearn/educator/workflow/planning` ❌ Missing
+
+6. **📝 Assessments** ✅ + ❌
+   - `/api/agenticlearn/educator/assessments/list` ✅ Working
+   - `/api/agenticlearn/educator/assessment/update/{id}` ❌ Missing
+   - `/api/agenticlearn/educator/assessment/delete/{id}` ❌ Missing
+   - `/api/agenticlearn/educator/assessment/results/{id}` ❌ Missing
+
+7. **🤖 AI Recommendations** ✅ + ❌
+   - `/api/agenticlearn/educator/ai/insights` ✅ Working
+   - `/api/agenticlearn/educator/ai/recommendations` ❌ Missing
+   - `/api/agenticlearn/educator/ai/learning-patterns` ❌ Missing
+
+8. **📋 Reports & Export** ❌
+   - `/api/agenticlearn/educator/data/export` ❌ Missing
+   - `/api/agenticlearn/educator/data/import` ❌ Missing
+
+---
+
+**This focused document provides AgenticAI backend team with clear requirements for core educator portal features only (admin features handled separately).**
