@@ -1,0 +1,367 @@
+/* AgenticLearn Educator Portal - Layout CSS */
+
+/* ===== SIDEBAR NAVIGATION ===== */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    background: var(--white);
+    border-right: 1px solid var(--accent);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+}
+
+.sidebar.collapsed {
+    transform: translateX(-280px);
+}
+
+.sidebar-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sidebar-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 3px;
+    padding: 0.5rem;
+}
+
+.sidebar-toggle span {
+    width: 20px;
+    height: 2px;
+    background: var(--gray-600);
+    transition: var(--transition);
+}
+
+.sidebar-menu {
+    flex: 1;
+    padding: 1rem 0;
+    overflow-y: auto;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1.5rem;
+    color: var(--gray-700);
+    text-decoration: none;
+    transition: var(--transition);
+    border-left: 3px solid transparent;
+    cursor: pointer;
+}
+
+.menu-item:hover {
+    background: var(--accent);
+    color: var(--gray-900);
+}
+
+.menu-item.active {
+    background: var(--bg-light);
+    color: var(--primary);
+    border-left-color: var(--primary);
+    font-weight: 600;
+}
+
+.menu-icon {
+    font-size: 1.25rem;
+    width: 24px;
+    text-align: center;
+}
+
+.menu-text {
+    font-size: 0.875rem;
+}
+
+.sidebar-footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--accent);
+}
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+    margin-left: 280px;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease;
+}
+
+.main-content.expanded {
+    margin-left: 0;
+}
+
+.header {
+    background: var(--white);
+    border-bottom: 1px solid var(--accent);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 3px;
+    padding: 0.5rem;
+}
+
+.mobile-menu-toggle span {
+    width: 20px;
+    height: 2px;
+    background: var(--gray-600);
+    transition: var(--transition);
+}
+
+/* ===== PAGE CONTENT ===== */
+.page-content {
+    display: none;
+}
+
+.page-content.active {
+    display: block;
+}
+
+/* ===== TABLES ===== */
+.student-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    background: var(--white);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.student-table th, .student-table td {
+    padding: 1rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--accent);
+}
+
+.student-table th {
+    background: var(--accent);
+    font-weight: 600;
+    color: var(--gray-800);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.student-table tr:hover {
+    background: var(--accent);
+}
+
+/* ===== PROGRESS BARS ===== */
+.progress-mini {
+    width: 100px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--accent-dark);
+}
+
+.progress-mini-fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+/* ===== STATUS STYLES ===== */
+.status-active {
+    color: var(--success);
+    font-weight: 600;
+    background: var(--accent);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+.status-inactive {
+    color: var(--gray-600);
+    font-weight: 500;
+    background: var(--gray-100);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+/* ===== ASSESSMENT CARDS ===== */
+.assessment-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1rem;
+    border: 1px solid var(--accent);
+    transition: var(--transition);
+}
+
+.assessment-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.assessment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.assessment-title {
+    margin: 0;
+    color: var(--gray-900);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.assessment-status {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.assessment-status.active {
+    background: var(--success);
+    color: white;
+}
+
+.assessment-status.draft {
+    background: var(--warning);
+    color: var(--gray-800);
+}
+
+.assessment-status.completed {
+    background: var(--info);
+    color: white;
+}
+
+.assessment-description {
+    color: var(--gray-600);
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+}
+
+.assessment-meta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.assessment-meta span {
+    font-size: 0.75rem;
+    color: var(--gray-600);
+    background: var(--accent);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+}
+
+.assessment-stats {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.assessment-stats span {
+    font-size: 0.75rem;
+    color: var(--gray-700);
+    font-weight: 500;
+}
+
+.assessment-deadline {
+    margin-bottom: 1rem;
+}
+
+.assessment-deadline span {
+    font-size: 0.875rem;
+    color: var(--gray-600);
+    font-weight: 500;
+}
+
+.assessment-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+/* ===== RESPONSIVE LAYOUT ===== */
+@media (max-width: 1024px) {
+    .sidebar {
+        transform: translateX(-280px);
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .mobile-menu-toggle {
+        display: flex;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: 1rem;
+    }
+    
+    .container {
+        padding: 1rem;
+    }
+    
+    .student-table {
+        font-size: 0.875rem;
+    }
+    
+    .student-table th, .student-table td {
+        padding: 0.5rem;
+    }
+    
+    .assessment-meta, .assessment-stats, .assessment-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+/* ===== CARBON INDICATOR ===== */
+.carbon-indicator {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    background: var(--primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    z-index: 1000;
+    box-shadow: var(--shadow-md);
+}
