@@ -1279,29 +1279,10 @@
                 <span class="menu-icon">📊</span>
                 <span class="menu-text">Reports & Export</span>
             </a>
-            <a href="#" class="menu-item" onclick="showPage('integrations')">
-                <span class="menu-icon">🔗</span>
-                <span class="menu-text">Integrations</span>
-            </a>
-            <a href="#" class="menu-item" onclick="showPage('security')">
-                <span class="menu-icon">🔐</span>
-                <span class="menu-text">Security & Auth</span>
-            </a>
-            <a href="#" class="menu-item" onclick="showPage('performance')">
-                <span class="menu-icon">⚡</span>
-                <span class="menu-text">Performance</span>
-            </a>
-            <a href="#" class="menu-item" onclick="showPage('advanced-analytics')">
-                <span class="menu-icon">🧠</span>
-                <span class="menu-text">Advanced Analytics</span>
-            </a>
-            <a href="#" class="menu-item" onclick="showPage('mobile')">
-                <span class="menu-icon">📱</span>
-                <span class="menu-text">Mobile & PWA</span>
-            </a>
-            <a href="#" class="menu-item" onclick="showPage('settings')">
-                <span class="menu-icon">⚙️</span>
-                <span class="menu-text">Settings</span>
+            <!-- ✅ MOVED TO ADMIN: Advanced features moved to admin-advanced-features.html -->
+            <a href="admin-advanced-features.html" class="menu-item" target="_blank">
+                <span class="menu-icon">🔧</span>
+                <span class="menu-text">Admin Panel</span>
             </a>
         </div>
 
@@ -1994,35 +1975,7 @@
                 <!-- Reports and export content will be loaded here -->
             </div>
 
-            <!-- Integrations Page -->
-            <div id="page-integrations" class="page-content">
-                <!-- Integrations content will be loaded here -->
-            </div>
-
-            <!-- Security & Authentication Page -->
-            <div id="page-security" class="page-content">
-                <!-- Security content will be loaded here -->
-            </div>
-
-            <!-- Performance Page -->
-            <div id="page-performance" class="page-content">
-                <!-- Performance content will be loaded here -->
-            </div>
-
-            <!-- Advanced Analytics Page -->
-            <div id="page-advanced-analytics" class="page-content">
-                <!-- Advanced analytics content will be loaded here -->
-            </div>
-
-            <!-- Mobile & PWA Page -->
-            <div id="page-mobile" class="page-content">
-                <!-- Mobile and PWA content will be loaded here -->
-            </div>
-
-            <!-- Settings Page -->
-            <div id="page-settings" class="page-content">
-                <!-- Settings content will be loaded here -->
-            </div>
+            <!-- ✅ MOVED TO ADMIN: Advanced pages moved to admin-advanced-features.html -->
         </div>
     </div>
 
@@ -2463,7 +2416,7 @@
                     <button class="tab-button" onclick="switchTab('progress')">📈 Progress</button>
                     <button class="tab-button" onclick="switchTab('assessments')">📝 Assessments</button>
                     <button class="tab-button" onclick="switchTab('communication')">💬 Communication</button>
-                    <button class="tab-button" onclick="switchTab('settings')">⚙️ Settings</button>
+                    <!-- ✅ MOVED TO ADMIN: Settings moved to admin panel -->
                 </div>
 
                 <!-- Tab Content -->
@@ -2483,9 +2436,7 @@
                     <!-- Communication content will be loaded here -->
                 </div>
 
-                <div id="tab-settings" class="tab-content">
-                    <!-- Settings content will be loaded here -->
-                </div>
+                <!-- ✅ MOVED TO ADMIN: Settings tab moved to admin panel -->
             </div>
         </div>
     </div>

@@ -3650,30 +3650,7 @@ function updatePageHeader(pageName) {
             title: 'Reports & Export',
             subtitle: 'Generate comprehensive reports and export data'
         },
-        integrations: {
-            title: 'Integrations',
-            subtitle: 'Manage external integrations and API connections'
-        },
-        security: {
-            title: 'Security & Authentication',
-            subtitle: 'Advanced security controls and authentication management'
-        },
-        performance: {
-            title: 'Performance Optimization',
-            subtitle: 'System performance monitoring and optimization tools'
-        },
-        'advanced-analytics': {
-            title: 'Advanced Analytics',
-            subtitle: 'Machine learning insights and predictive analytics'
-        },
-        mobile: {
-            title: 'Mobile & PWA',
-            subtitle: 'Mobile optimization and Progressive Web App features'
-        },
-        settings: {
-            title: 'Settings',
-            subtitle: 'Configure your preferences and system settings'
-        }
+        // ✅ MOVED TO ADMIN: Advanced pages moved to admin-advanced-features.html
     };
 
     if (pageInfo[pageName]) {
@@ -3708,23 +3685,14 @@ function loadPageContent(pageName) {
         case 'reports':
             loadReportsPage();
             break;
+        // ✅ MOVED TO ADMIN: Advanced pages moved to admin-advanced-features.html
         case 'integrations':
-            loadIntegrationsPage();
-            break;
         case 'security':
-            loadSecurityPage();
-            break;
         case 'performance':
-            loadPerformancePage();
-            break;
         case 'advanced-analytics':
-            loadAdvancedAnalyticsPage();
-            break;
         case 'mobile':
-            loadMobilePage();
-            break;
         case 'settings':
-            loadSettingsPage();
+            window.open('admin-advanced-features.html', '_blank');
             break;
     }
 }
