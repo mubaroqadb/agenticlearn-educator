@@ -20,29 +20,24 @@ export class DashboardModule {
 
     async loadDashboardData() {
         if (this.isLoading) return;
-        
+
         try {
             this.isLoading = true;
-            UIComponents.showLoading('dashboard-content', 'Loading dashboard analytics...');
-
             console.log('🔄 Loading dashboard analytics from backend...');
             const response = await apiClient.getDashboardAnalytics();
 
             if (response && response.success && response.data) {
                 this.data = response.data;
                 this.renderDashboard();
-                UIComponents.showNotification(SUCCESS_MESSAGES.DATA_LOADED, 'success');
                 console.log('✅ Dashboard analytics loaded successfully');
             } else {
                 throw new Error('Invalid dashboard response format');
             }
         } catch (error) {
-            console.error('❌ Failed to load dashboard analytics:', error);
-            this.renderFallbackDashboard();
-            UIComponents.showNotification('⚠️ Using fallback dashboard data', 'warning');
+            console.error('❌ Backend connection failed:', error);
+            this.renderError(error.message);
         } finally {
             this.isLoading = false;
-            UIComponents.hideLoading('dashboard-content');
         }
     }
 
@@ -202,35 +197,25 @@ export class DashboardModule {
         setInner('students-summary', studentsHTML);
     }
 
-    renderFallbackDashboard() {
-        const fallbackHTML = `
-            <div class="fallback-dashboard">
-                ${UIComponents.createAlert(
-                    'Dashboard is running in fallback mode. Some features may be limited.',
-                    'warning'
-                )}
-                
-                <div class="metrics-grid" style="
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                    gap: 1.5rem;
-                    margin-bottom: 2rem;
-                ">
-                    ${UIComponents.createMetricCard('Total Students', '0', null, '👥')}
-                    ${UIComponents.createMetricCard('Active Students', '0', null, '✅')}
-                    ${UIComponents.createMetricCard('Average Progress', '0%', null, '📈')}
-                    ${UIComponents.createMetricCard('Average Score', '0', null, '🏆')}
-                </div>
-                
-                ${UIComponents.createEmptyState(
-                    'Backend Connection Failed',
-                    'Unable to load real dashboard data. Please check your connection and try again.',
-                    { label: 'Retry Connection', onclick: 'dashboardModule.loadDashboardData()' }
-                )}
+    renderError(errorMessage) {
+        const errorHTML = `
+            <div class="error-state" style="
+                text-align: center;
+                padding: 3rem 2rem;
+                color: var(--error);
+            ">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">❌</div>
+                <h3 style="margin: 0 0 0.5rem 0; color: var(--error);">Backend Connection Failed</h3>
+                <p style="margin: 0 0 1.5rem 0; color: var(--gray-600);">
+                    ${errorMessage}
+                </p>
+                <button class="btn btn-primary" onclick="dashboardModule.loadDashboardData()">
+                    🔄 Retry Connection
+                </button>
             </div>
         `;
 
-        setInner('dashboard-content', fallbackHTML);
+        setInner('dashboard-content', errorHTML);
     }
 
     setupAutoRefresh() {

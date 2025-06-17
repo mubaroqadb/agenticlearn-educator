@@ -52,16 +52,10 @@ class AgenticLearnApp {
         const result = await apiClient.testConnection();
         
         if (result.success) {
-            UIComponents.showNotification(
-                `✅ Connected as ${result.profile.name} - Real data active!`,
-                'success'
-            );
+            console.log(`✅ Connected as ${result.profile.name}`);
             this.updateConnectionStatus(true, result.profile);
         } else {
-            UIComponents.showNotification(
-                '❌ Backend connection failed, using demo mode',
-                'error'
-            );
+            console.error('❌ Backend connection failed');
             this.updateConnectionStatus(false);
         }
     }
@@ -144,7 +138,6 @@ class AgenticLearnApp {
             
         } catch (error) {
             console.error(`❌ Failed to show page ${pageId}:`, error);
-            UIComponents.showNotification(`Failed to load ${pageId} page`, 'error');
         }
     }
 
@@ -231,8 +224,6 @@ class AgenticLearnApp {
         } else if (module && typeof module.initialize === 'function') {
             await module.initialize();
         }
-        
-        UIComponents.showNotification('Page refreshed', 'success');
     }
 
     saveMenuState() {
