@@ -3507,9 +3507,11 @@ async function initializeEducatorPortal() {
         const isConnected = await educatorAPI.testConnection();
         if (!isConnected) {
             console.log("⚠️ Backend connection failed, using demo mode");
+            isBackendConnected = false;
             UIComponents.showNotification("⚠️ Backend offline - Using demo data", "warning");
         } else {
             console.log("✅ Backend connection successful");
+            isBackendConnected = true;
             UIComponents.showNotification("✅ Connected to AgenticAI backend", "success");
         }
 
