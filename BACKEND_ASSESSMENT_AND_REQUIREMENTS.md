@@ -1,7 +1,31 @@
 # 🔍 Backend Assessment & Requirements for AgenticAI
 ## Core Educator Portal (Beranda - Export)
 
-## 📊 **CURRENT BACKEND STATUS ASSESSMENT**
+## � **IMPORTANT NOTICE FOR BACKEND TEAM**
+
+### **📋 FEATURE SEPARATION IMPLEMENTED:**
+
+#### **✅ CORE EDUCATOR FEATURES (This Document):**
+**Handled by:** Frontend Educator Portal
+**Backend Priority:** HIGH - Implement these endpoints first
+**Menu Scope:** Beranda → Analytics → Students → Communication → Workflow → Assessments → AI Recommendations → Reports & Export
+
+#### **🔧 ADMIN FEATURES (Separate Implementation):**
+**Handled by:** Frontend Admin Panel (separate files)
+**Backend Priority:** LOW - Can be implemented later
+**Menu Scope:**
+- 🔗 **Integration** (Third-party integrations)
+- 🔐 **Security & Auth** (Authentication settings)
+- ⚡ **Performance** (System monitoring)
+- 🧠 **Advanced Analytics** (ML insights)
+- 📱 **Mobile & PWA** (Mobile configuration)
+- ⚙️ **Settings** (System configuration)
+
+**➡️ Backend team should focus on CORE EDUCATOR endpoints first, admin features can be implemented in separate phase.**
+
+---
+
+## �📊 **CURRENT BACKEND STATUS ASSESSMENT**
 
 **SCOPE: Core Educator Features Only (Admin features moved to separate admin panel)**
 
@@ -490,6 +514,45 @@ Import Requirements:
 
 ---
 
+## 🎯 **IMPLEMENTATION GUIDANCE FOR BACKEND TEAM**
+
+### **📋 WHAT TO IMPLEMENT NOW (Core Educator):**
+```
+✅ PRIORITY 1 - Core Teaching Functions:
+- Student management endpoints
+- Communication system (messages, announcements, notifications)
+- Assessment management (CRUD operations)
+- Basic analytics and insights
+- Data export functionality
+
+✅ PRIORITY 2 - Enhanced Teaching Tools:
+- AI recommendations and learning patterns
+- Workflow tools (D1-D24 educator workflow)
+- Advanced analytics for teaching insights
+- Real-time student monitoring
+```
+
+### **⏳ WHAT TO IMPLEMENT LATER (Admin Features):**
+```
+❌ PRIORITY 3 - Admin Only Features:
+- System integrations (SendGrid, AWS S3, Google Analytics)
+- Security settings and authentication management
+- Performance monitoring and system health
+- Advanced ML analytics and predictive models
+- Mobile/PWA configuration
+- System-wide settings and maintenance mode
+
+Note: These features are handled by separate admin panel
+and can be implemented after core educator features are complete.
+```
+
+### **🔄 DEVELOPMENT WORKFLOW:**
+1. **Phase 1:** Complete core educator endpoints (this document)
+2. **Phase 2:** Test and optimize educator portal functionality
+3. **Phase 3:** Implement admin features (separate requirements)
+
+---
+
 ## 📋 **CORE EDUCATOR MENU MAPPING**
 
 ### **Frontend Menu → Backend Endpoints Required:**
@@ -534,4 +597,35 @@ Import Requirements:
 
 ---
 
-**This focused document provides AgenticAI backend team with clear requirements for core educator portal features only (admin features handled separately).**
+---
+
+## 📞 **COMMUNICATION TO BACKEND TEAM**
+
+### **🎯 KEY MESSAGES:**
+
+1. **Focus on Core Educator Features First**
+   - Implement the 13 core endpoints listed in this document
+   - These are needed for daily teaching activities
+
+2. **Admin Features Are Separate**
+   - Integration, Security, Performance, Advanced Analytics, Mobile, Settings
+   - These are handled by frontend admin panel (separate files)
+   - Can be implemented later as lower priority
+
+3. **Clear Separation of Concerns**
+   - Educator Portal = Teaching functions (HIGH priority)
+   - Admin Panel = System management (LOW priority)
+
+4. **Implementation Order**
+   - Phase 1: Fix students timeout + Communication
+   - Phase 2: Assessment CRUD + Export functionality
+   - Phase 3: Workflow + Advanced analytics
+
+### **🤝 COLLABORATION:**
+- Frontend educator team focuses on teaching features
+- Frontend admin team handles system management features
+- Backend team prioritizes educator endpoints first
+
+---
+
+**This focused document provides AgenticAI backend team with clear requirements for core educator portal features only. Admin features (Integration, Security, Performance, Advanced Analytics, Mobile, Settings) are handled by separate frontend admin panel and can be implemented as lower priority.**
