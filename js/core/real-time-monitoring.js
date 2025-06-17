@@ -1,9 +1,39 @@
 // ===== REAL-TIME MONITORING SYSTEM =====
 
-import { apiClient } from './api-client.js';
-import { mathCalculations } from './mathematical-calculations.js';
-import { UIComponents } from '../components/ui-components.js';
-import { formatDate, formatTime, showSuccess, showError } from './utils.js';
+// Note: This module will use global objects that are loaded dynamically
+// import { apiClient } from './api-client.js';
+// import { mathCalculations } from './mathematical-calculations.js';
+// import { UIComponents } from '../components/ui-components.js';
+// import { formatDate, formatTime, showSuccess, showError } from './utils.js';
+
+// ===== UTILITY FUNCTIONS =====
+
+function formatTime(timestamp) {
+    if (!timestamp) return 'Unknown';
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / (1000 * 60));
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins} minutes ago`;
+    if (diffMins < 1440) return `${Math.floor(diffMins / 60)} hours ago`;
+    return `${Math.floor(diffMins / 1440)} days ago`;
+}
+
+function showSuccess(message) {
+    console.log(`✅ ${message}`);
+    if (window.UIComponents) {
+        window.UIComponents.showNotification(message, 'success', 3000);
+    }
+}
+
+function showError(message) {
+    console.error(`❌ ${message}`);
+    if (window.UIComponents) {
+        window.UIComponents.showNotification(message, 'error', 5000);
+    }
+}
 
 export class RealTimeMonitoring {
     constructor() {
@@ -95,19 +125,25 @@ export class RealTimeMonitoring {
 
     async updateStudentData() {
         try {
-            const response = await apiClient.getStudentsList();
+            // Use global educatorAPI if available
+            if (!window.educatorAPI) {
+                console.warn('educatorAPI not available for student data update');
+                return;
+            }
+
+            const response = await window.educatorAPI.request('/api/agenticlearn/educator/students/list');
             if (response && response.success && response.data) {
                 const previousData = this.monitoringData.students;
                 this.monitoringData.students = response.data;
-                
+
                 // Detect changes and notify
                 this.detectStudentChanges(previousData, response.data);
-                
+
                 // Update UI if student page is active
                 if (this.isPageActive('students')) {
                     this.updateStudentUI(response.data);
                 }
-                
+
                 this.lastUpdate = new Date();
                 this.updateLastUpdateTime();
             }
@@ -133,10 +169,16 @@ export class RealTimeMonitoring {
 
     async updateAnalytics() {
         try {
-            const response = await apiClient.getDashboardAnalytics();
+            // Use global educatorAPI if available
+            if (!window.educatorAPI) {
+                console.warn('educatorAPI not available for analytics update');
+                return;
+            }
+
+            const response = await window.educatorAPI.request('/api/agenticlearn/educator/analytics/dashboard');
             if (response && response.success && response.data) {
                 this.monitoringData.analytics = response.data;
-                
+
                 // Update analytics UI if active
                 if (this.isPageActive('analytics') || this.isPageActive('beranda')) {
                     this.updateAnalyticsUI(response.data);
@@ -400,7 +442,11 @@ export class RealTimeMonitoring {
     }
 
     showNotification(message, type) {
-        UIComponents.showNotification(message, type, 5000);
+        if (window.UIComponents) {
+            window.UIComponents.showNotification(message, type, 5000);
+        } else {
+            console.log(`${type.toUpperCase()}: ${message}`);
+        }
     }
 
     getActivityColor(type) {
@@ -465,8 +511,11 @@ export class RealTimeMonitoring {
     async measureResponseTime() {
         const start = Date.now();
         try {
-            await apiClient.getDashboardAnalytics();
-            return Date.now() - start;
+            if (window.educatorAPI) {
+                await window.educatorAPI.request('/api/agenticlearn/educator/analytics/dashboard');
+                return Date.now() - start;
+            }
+            return -1;
         } catch (error) {
             return -1; // Error indicator
         }
