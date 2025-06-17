@@ -1977,45 +1977,45 @@ class AdvancedAnalyticsManager {
     async loadLearningAnalytics() {
         try {
             const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.LEARNING_ANALYTICS);
-            return response?.data || this.getDemoLearningAnalytics();
+            return response?.data || null;
         } catch (error) {
-            return this.getDemoLearningAnalytics();
+            return null;
         }
     }
 
     async loadEngagementAnalytics() {
         try {
             const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.ENGAGEMENT_ANALYTICS);
-            return response?.data || this.getDemoEngagementAnalytics();
+            return response?.data || null;
         } catch (error) {
-            return this.getDemoEngagementAnalytics();
+            return null;
         }
     }
 
     async loadPerformanceTrends() {
         try {
             const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.PERFORMANCE_TRENDS);
-            return response?.data || this.getDemoPerformanceTrends();
+            return response?.data || null;
         } catch (error) {
-            return this.getDemoPerformanceTrends();
+            return null;
         }
     }
 
     async loadComparativeAnalytics() {
         try {
             const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.COMPARATIVE_ANALYTICS);
-            return response?.data || this.getDemoComparativeAnalytics();
+            return response?.data || null;
         } catch (error) {
-            return this.getDemoComparativeAnalytics();
+            return null;
         }
     }
 
     async loadPredictiveModels() {
         try {
             const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.PREDICTIVE_MODELS);
-            return response?.data || this.getDemoPredictiveModels();
+            return response?.data || null;
         } catch (error) {
-            return this.getDemoPredictiveModels();
+            return null;
         }
     }
 
@@ -2474,9 +2474,9 @@ class CommunicationManager {
     async loadMessages() {
         try {
             const response = await educatorAPI.request(API_CONFIG.ENDPOINTS.STUDENT_MESSAGES);
-            return response?.data || this.getDemoMessages();
+            return response?.data || null;
         } catch (error) {
-            return this.getDemoMessages();
+            return null;
         }
     }
 
@@ -4022,9 +4022,7 @@ function loadDemoStudentData() {
 
     currentStudentData = demoStudents;
 
-    // Load demo supporting data
-    loadDemoRealTimeStats();
-    loadDemoActivityTimeline();
+    // ✅ REMOVED: Demo supporting data calls
 
     // Render student table with demo data
     renderEnhancedStudentTable(currentStudentData, false);
@@ -4049,7 +4047,7 @@ async function loadRealTimeStatsWithFallback() {
         }
     } catch (error) {
         console.error("❌ Failed to load real real-time stats:", error);
-        return loadDemoRealTimeStats();
+        return null;
     }
 }
 
@@ -4126,7 +4124,7 @@ async function loadActivityTimelineWithFallback() {
         }
     } catch (error) {
         console.error("❌ Failed to load real activity timeline:", error);
-        return loadDemoActivityTimeline();
+        return null;
     }
 }
 
@@ -4560,7 +4558,7 @@ async function loadAIInsightsWithFallback() {
     } catch (error) {
         console.error("❌ Failed to load real AI insights:", error);
         UIComponents.showNotification("⚠️ Using demo AI insights", "warning");
-        return loadDemoAIInsights();
+        return null;
     }
 }
 
@@ -4576,8 +4574,7 @@ function loadDemoAIInsights() {
     // Load demo content effectiveness
     loadContentEffectiveness();
 
-    // Load demo ARIA recommendations
-    loadDemoARIARecommendations();
+    // ✅ REMOVED: Demo ARIA recommendations
 
     console.log("✅ Demo AI insights loaded");
     return true;
@@ -4775,7 +4772,7 @@ async function loadARIARecommendations(ariaRecommendations) {
         console.log("✅ ARIA AI recommendations loaded");
     } catch (error) {
         console.error("❌ Failed to load ARIA recommendations:", error);
-        loadDemoARIARecommendations();
+        // ✅ REMOVED: Demo ARIA recommendations
     }
 }
 
@@ -4831,7 +4828,7 @@ async function loadStudentPerformanceAlertsWithFallback() {
         }
     } catch (error) {
         console.error("❌ Failed to load real student alerts:", error);
-        return loadDemoStudentPerformanceAlerts();
+        return null;
     }
 }
 
@@ -4925,7 +4922,7 @@ async function loadSystemHealthStatusWithFallback() {
         }
     } catch (error) {
         console.error("❌ Failed to load real system health:", error);
-        return loadDemoSystemHealthStatus();
+        return null;
     }
 }
 
@@ -5019,13 +5016,11 @@ async function loadAdvancedAnalytics() {
     } catch (error) {
         console.error("❌ Failed to load advanced analytics:", error);
         // Fallback to demo charts
-        renderDemoCharts();
+        // ✅ REMOVED: Demo charts fallback
     }
 }
 
-function loadDemoAdvancedAnalytics() {
-    renderDemoCharts();
-}
+// ✅ REMOVED: loadDemoAdvancedAnalytics function
 
 async function loadLearningPatterns(patternsData = null) {
     try {
@@ -5228,7 +5223,7 @@ async function loadStudentPerformanceAlerts() {
     } catch (error) {
         console.error("Failed to load student alerts:", error);
         // Fallback to demo alerts
-        renderDemoStudentAlerts();
+        // ✅ REMOVED: Demo student alerts
         return null;
     }
 }
@@ -5307,7 +5302,7 @@ async function loadStudentPerformanceAlertsWithFallback() {
         }
     } catch (error) {
         console.error("❌ Failed to load real student alerts:", error);
-        return loadDemoStudentPerformanceAlerts();
+        return null;
     }
 }
 
@@ -5351,7 +5346,7 @@ async function loadSystemHealthStatus() {
     } catch (error) {
         console.error("Failed to load system health:", error);
         // Fallback to demo health status
-        renderDemoSystemHealth();
+        // ✅ REMOVED: Demo system health
         return null;
     }
 }
@@ -5425,7 +5420,7 @@ async function loadSystemHealthStatusWithFallback() {
         }
     } catch (error) {
         console.error("❌ Failed to load real system health:", error);
-        return loadDemoSystemHealthStatus();
+        return null;
     }
 }
 
@@ -6455,7 +6450,7 @@ function updateAnalyticsTimeframe() {
 
     // Simulate data refresh for different timeframes
     setTimeout(() => {
-        renderDemoCharts();
+        // ✅ REMOVED: Demo charts refresh
         UIComponents.showNotification("📊 Charts refreshed with new timeframe data", "success");
     }, 1000);
 }
@@ -6486,18 +6481,11 @@ async function loadCommunicationCenter() {
         switchCommTab('messages');
     } catch (error) {
         console.error("Failed to load communication center:", error);
-        loadDemoCommunicationData();
+        // ✅ REMOVED: Demo communication data fallback
     }
 }
 
-function loadDemoCommunicationData() {
-    loadDemoMessages();
-    loadDemoAnnouncements();
-    loadDemoDiscussions();
-    loadDemoNotifications();
-    loadDemoCommunicationAnalytics();
-    switchCommTab('messages');
-}
+// ✅ REMOVED: loadDemoCommunicationData function
 
 function switchCommTab(tabName) {
     // Hide all tab contents
@@ -6546,7 +6534,7 @@ async function loadMessages() {
         const messages = await apiClient.request("/communication/messages");
         renderMessages(messages);
     } catch (error) {
-        loadDemoMessages();
+        // ✅ REMOVED: Demo messages fallback
     }
 }
 
@@ -7274,7 +7262,7 @@ function loadAnalyticsPage() {
         loadAtRiskStudents();
         loadContentEffectiveness();
         loadAIRecommendations();
-        renderDemoCharts();
+        // ✅ REMOVED: Demo charts call
     }, 100);
 
     UIComponents.showNotification("📊 Analytics & Insights loaded successfully!", "success");
@@ -7371,7 +7359,7 @@ function loadStudentsPage() {
     setTimeout(() => {
         loadRealTimeStatsWithFallback();
         loadActivityTimelineWithFallback();
-        renderDemoStudentTable();
+        // ✅ REMOVED: renderDemoStudentTable() - Use real student data instead
         updateLastUpdateTime();
     }, 100);
 
