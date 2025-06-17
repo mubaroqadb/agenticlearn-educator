@@ -108,6 +108,95 @@ export class EducatorAPIClient {
         return await this.request(`${API_CONFIG.ENDPOINTS.STUDENT_DETAIL}?student_id=${studentId}`);
     }
 
+    // ✅ COMMUNICATION METHODS
+
+    async getMessagesList() {
+        return await this.request(API_CONFIG.ENDPOINTS.MESSAGES_LIST);
+    }
+
+    async sendMessage(messageData) {
+        return await this.request(API_CONFIG.ENDPOINTS.SEND_MESSAGE, {
+            method: 'POST',
+            body: messageData
+        });
+    }
+
+    async getAnnouncementsList() {
+        return await this.request(API_CONFIG.ENDPOINTS.ANNOUNCEMENTS_LIST);
+    }
+
+    async createAnnouncement(announcementData) {
+        return await this.request(API_CONFIG.ENDPOINTS.CREATE_ANNOUNCEMENT, {
+            method: 'POST',
+            body: announcementData
+        });
+    }
+
+    async getNotifications() {
+        return await this.request(API_CONFIG.ENDPOINTS.NOTIFICATIONS);
+    }
+
+    // ✅ ASSESSMENT METHODS
+
+    async getAssessmentsList() {
+        return await this.request(API_CONFIG.ENDPOINTS.ASSESSMENTS_LIST);
+    }
+
+    async getAssessmentDetail(assessmentId) {
+        return await this.request(`${API_CONFIG.ENDPOINTS.ASSESSMENT_DETAIL}?assessment_id=${assessmentId}`);
+    }
+
+    async createAssessment(assessmentData) {
+        return await this.request(API_CONFIG.ENDPOINTS.CREATE_ASSESSMENT, {
+            method: 'POST',
+            body: assessmentData
+        });
+    }
+
+    async updateAssessment(assessmentData) {
+        return await this.request(API_CONFIG.ENDPOINTS.UPDATE_ASSESSMENT, {
+            method: 'PUT',
+            body: assessmentData
+        });
+    }
+
+    async deleteAssessment(assessmentId) {
+        return await this.request(`${API_CONFIG.ENDPOINTS.DELETE_ASSESSMENT}?assessment_id=${assessmentId}`, {
+            method: 'DELETE'
+        });
+    }
+
+    async getAssessmentResults(assessmentId) {
+        return await this.request(`${API_CONFIG.ENDPOINTS.ASSESSMENT_RESULTS}?assessment_id=${assessmentId}`);
+    }
+
+    async gradeAssessment(gradeData) {
+        return await this.request(API_CONFIG.ENDPOINTS.GRADE_ASSESSMENT, {
+            method: 'POST',
+            body: gradeData
+        });
+    }
+
+    // ✅ AI SYSTEM METHODS
+
+    async getAIInsights() {
+        return await this.request(API_CONFIG.ENDPOINTS.AI_INSIGHTS);
+    }
+
+    async getAIRecommendations() {
+        return await this.request(API_CONFIG.ENDPOINTS.AI_RECOMMENDATIONS);
+    }
+
+    async getLearningPatterns() {
+        return await this.request(API_CONFIG.ENDPOINTS.AI_LEARNING_PATTERNS);
+    }
+
+    // ✅ DATA EXPORT METHODS
+
+    async exportData(type, format) {
+        return await this.request(`${API_CONFIG.ENDPOINTS.DATA_EXPORT}?type=${type}&format=${format}`);
+    }
+
     async getMessages() {
         return await this.request(API_CONFIG.ENDPOINTS.MESSAGES_LIST);
     }
