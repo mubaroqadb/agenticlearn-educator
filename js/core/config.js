@@ -6,8 +6,8 @@ export const API_CONFIG = {
         // ✅ CORE ENDPOINTS - Per Backend Documentation
         EDUCATOR_PROFILE: "/api/agenticlearn/educator/profile",
 
-        // ✅ ANALYTICS & DASHBOARD - Per Backend Documentation  
-        DASHBOARD_ANALYTICS: "/api/agenticlearn/educator/dashboard/analytics",
+        // ✅ ANALYTICS & DASHBOARD - Working endpoint
+        DASHBOARD_ANALYTICS: "/api/agenticlearn/educator/analytics/dashboard",
 
         // ✅ STUDENT MANAGEMENT - Per Backend Documentation
         STUDENTS_LIST: "/api/agenticlearn/educator/students/list",
