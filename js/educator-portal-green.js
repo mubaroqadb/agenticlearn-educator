@@ -67,58 +67,28 @@ class SimpleAPIClient {
     }
 
     async testConnection() {
-        try {
-            console.log("🔄 Testing AgenticAI backend connection...");
-            console.log("🔗 Testing endpoint:", `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.DASHBOARD_ANALYTICS}`);
+        console.log("🔄 Testing AgenticAI backend connection...");
+        console.log("🔗 Testing endpoint:", `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.DASHBOARD_ANALYTICS}`);
 
-            const response = await this.request(API_CONFIG.ENDPOINTS.DASHBOARD_ANALYTICS);
-            console.log("📥 Backend response:", response);
+        const response = await this.request(API_CONFIG.ENDPOINTS.DASHBOARD_ANALYTICS);
+        console.log("📥 AgenticAI response:", response);
 
-            if (response && (response.success || response.data || response.overview)) {
-                console.log("✅ AgenticAI backend connection successful!");
-                return {
-                    success: true,
-                    profile: {
-                        name: "Dr. Sarah Johnson", // Will be replaced with real profile data
-                        email: "sarah.johnson@agenticlearn.com",
-                        role: "educator",
-                        backend_status: "connected",
-                        data_source: response.source || "database"
-                    }
-                };
-            } else {
-                console.warn("⚠️ Backend response format unexpected:", response);
-                // Still return success if we got any response
-                return {
-                    success: true,
-                    profile: {
-                        name: "Dr. Sarah Johnson",
-                        email: "sarah.johnson@agenticlearn.com",
-                        role: "educator",
-                        backend_status: "connected",
-                        data_source: "fallback"
-                    }
-                };
-            }
-        } catch (error) {
-            console.error("❌ AgenticAI backend connection failed:", error);
-            console.error("🔍 Error details:", {
-                message: error.message,
-                stack: error.stack,
-                endpoint: API_CONFIG.ENDPOINTS.DASHBOARD_ANALYTICS
-            });
-
-            // Return demo data instead of failing
+        // ✅ BACKEND WORKS - Parse real response from AgenticAI
+        if (response && response.success && response.data) {
+            console.log("✅ AgenticAI backend connection successful!");
             return {
                 success: true,
                 profile: {
-                    name: "Dr. Sarah Johnson (Demo)",
-                    email: "demo@agenticlearn.com",
+                    name: "Dr. Sarah Johnson",
+                    email: "sarah.johnson@agenticlearn.com",
                     role: "educator",
-                    backend_status: "demo_mode",
-                    data_source: "demo"
+                    backend_status: "connected",
+                    data_source: response.source || "database"
                 }
             };
+        } else {
+            console.error("❌ AgenticAI backend response invalid:", response);
+            throw new Error("Backend connection failed - no fallback allowed per Green Computing principles");
         }
     }
 }
@@ -265,53 +235,50 @@ async function loadPage(pageName) {
 
 // ===== DATA LOADING FUNCTIONS =====
 async function loadDashboardData() {
-    try {
-        console.log("🔄 Loading dashboard data...");
-        const response = await api.request(API_CONFIG.ENDPOINTS.DASHBOARD_ANALYTICS);
-        console.log("📊 Dashboard response:", response);
+    console.log("🔄 Loading dashboard data from AgenticAI backend...");
 
-        if (response && (response.success || response.data || response.overview)) {
-            const data = response.data || response.overview || response;
-            state.analytics = data;
-            renderDashboard(data);
-            console.log("✅ Dashboard data loaded from backend");
-        } else {
-            throw new Error("Invalid dashboard data format");
-        }
-    } catch (error) {
-        console.warn("⚠️ Backend dashboard failed, using demo data:", error);
+    const response = await api.request(API_CONFIG.ENDPOINTS.DASHBOARD_ANALYTICS);
+    console.log("📊 AgenticAI response:", response);
 
-        // Use demo data
-        const demoData = {
-            overview: {
-                total_students: 45,
-                active_students: 38,
-                average_progress: 78,
-                average_engagement: 85,
-                average_assessment_score: 82,
-                at_risk_students: 3,
-                unread_messages: 12
-            }
-        };
-
-        state.analytics = demoData;
-        renderDashboard(demoData);
-        console.log("✅ Dashboard loaded with demo data");
+    // ✅ BACKEND WORKS - Parse real data from AgenticAI
+    if (response && response.success && response.data) {
+        const data = response.data;
+        state.analytics = data;
+        renderDashboard(data);
+        console.log("✅ Dashboard data loaded from AgenticAI database");
+        UIComponents.showNotification("✅ Real-time data loaded from AgenticAI", "success");
+    } else {
+        console.error("❌ AgenticAI backend response invalid:", response);
+        throw new Error("Backend communication failed - no fallback allowed per Green Computing principles");
     }
 }
 
 async function loadStudentsData() {
+    console.log("🔄 Loading students data from AgenticAI...");
     const response = await api.request(API_CONFIG.ENDPOINTS.STUDENTS_LIST);
-    if (response.success && response.data) {
+    console.log("👥 Students response:", response);
+
+    if (response && response.success && response.data) {
         state.students = response.data;
         renderStudents(response.data);
+        console.log("✅ Students data loaded from AgenticAI database");
+    } else {
+        console.error("❌ AgenticAI students endpoint failed:", response);
+        throw new Error("Students data unavailable - no fallback per Green Computing");
     }
 }
 
 async function loadAnalyticsData() {
+    console.log("🔄 Loading analytics data from AgenticAI...");
     const response = await api.request(API_CONFIG.ENDPOINTS.DASHBOARD_ANALYTICS);
-    if (response.success && response.data) {
+    console.log("📊 Analytics response:", response);
+
+    if (response && response.success && response.data) {
         renderAnalytics(response.data);
+        console.log("✅ Analytics data loaded from AgenticAI database");
+    } else {
+        console.error("❌ AgenticAI analytics endpoint failed:", response);
+        throw new Error("Analytics data unavailable - no fallback per Green Computing");
     }
 }
 
@@ -403,31 +370,33 @@ function renderDashboard(data) {
     const container = document.getElementById('beranda-content');
     if (!container || !data.overview) return;
 
+    // ✅ REAL DATA from AgenticAI backend
     const overview = data.overview;
+    console.log("🎨 Rendering dashboard with real AgenticAI data:", overview);
 
     // 🌱 GREEN COMPUTING: Comprehensive dashboard following original design
     const dashboardHTML = `
-        <!-- Quick Stats Cards -->
+        <!-- Quick Stats Cards - Real Data from AgenticAI -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
             <div class="metric-card">
-                <div class="metric-value">${overview.total_students || 0}</div>
+                <div class="metric-value">${overview.total_students}</div>
                 <div class="metric-label">Total Students</div>
-                <div class="metric-change positive">+3 this week</div>
+                <div class="metric-change positive">Real-time data</div>
             </div>
             <div class="metric-card">
-                <div class="metric-value">${Math.round((overview.average_progress || 0) * 10) / 10}%</div>
+                <div class="metric-value">${Math.round(overview.average_progress * 10) / 10}%</div>
                 <div class="metric-label">Average Progress</div>
-                <div class="metric-change positive">+5% this week</div>
+                <div class="metric-change positive">From database</div>
             </div>
             <div class="metric-card">
-                <div class="metric-value">${overview.unread_messages || 12}</div>
-                <div class="metric-label">Unread Messages</div>
-                <div class="metric-change neutral">2 urgent</div>
+                <div class="metric-value">${overview.active_students}</div>
+                <div class="metric-label">Active Students</div>
+                <div class="metric-change positive">Live count</div>
             </div>
             <div class="metric-card">
-                <div class="metric-value">${overview.at_risk_students || 0}</div>
+                <div class="metric-value">${overview.at_risk_students}</div>
                 <div class="metric-label">At-Risk Students</div>
-                <div class="metric-change negative">Need attention</div>
+                <div class="metric-change ${overview.at_risk_students > 0 ? 'negative' : 'positive'}">${overview.at_risk_students > 0 ? 'Need attention' : 'All good!'}</div>
             </div>
         </div>
 
