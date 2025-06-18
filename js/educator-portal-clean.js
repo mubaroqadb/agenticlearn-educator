@@ -59,7 +59,7 @@ const API_CONFIG = {
     ENDPOINTS: {
         // ✅ WORKING ENDPOINTS - Per Backend Status Report
         EDUCATOR_PROFILE: "/api/agenticlearn/educator/profile",
-        DASHBOARD_ANALYTICS: "/api/agenticlearn/educator/dashboard/analytics", // ✅ FIXED PATH
+        DASHBOARD_ANALYTICS: "/api/agenticlearn/educator/analytics/dashboard", // ✅ FIXED PATH - Corrected to match backend
         STUDENTS_LIST: "/api/agenticlearn/educator/students/list", // ✅ PERFORMANCE FIXED <3s
         STUDENT_DETAIL: "/api/agenticlearn/educator/students/detail",
 
@@ -424,42 +424,83 @@ function renderDashboard(data) {
 
     const overview = data.overview;
 
-    // Enhanced metrics with mathematical calculations
-    if (window.mathCalculations && mathematicalCalculationsReady) {
-        // Calculate enhanced metrics
-        const totalStudents = overview.total_students || 0;
-        const activeStudents = overview.active_students || 0;
-        const averageProgress = overview.average_progress || 0;
-        const atRiskStudents = overview.at_risk_students || 0;
+    // Create comprehensive dashboard HTML
+    const dashboardHTML = `
+        <div class="dashboard-container" style="max-width: 1200px; margin: 0 auto; padding: 1rem;">
+            <div class="dashboard-header" style="margin-bottom: 2rem;">
+                <h2>🏠 Dashboard Overview</h2>
+                <p style="color: #6b7280;">Real-time analytics and insights from your AgenticAI backend</p>
+                <div style="font-size: 0.875rem; color: #059669; margin-top: 0.5rem;">
+                    ✅ Connected to database • Last updated: ${new Date().toLocaleTimeString()}
+                </div>
+            </div>
 
-        // Calculate engagement rate
-        const engagementRate = window.mathCalculations.calculatePercentage(activeStudents, totalStudents);
+            <div class="metrics-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                <div class="metric-card" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1.5rem; text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">👥</div>
+                    <div style="font-size: 2rem; font-weight: 700; color: #3b82f6; margin-bottom: 0.25rem;">
+                        ${overview.total_students || 0}
+                    </div>
+                    <div style="color: #6b7280; font-size: 0.875rem;">Total Students</div>
+                </div>
 
-        // Calculate risk percentage
-        const riskPercentage = window.mathCalculations.calculatePercentage(atRiskStudents, totalStudents);
+                <div class="metric-card" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1.5rem; text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">✅</div>
+                    <div style="font-size: 2rem; font-weight: 700; color: #059669; margin-bottom: 0.25rem;">
+                        ${overview.active_students || 0}
+                    </div>
+                    <div style="color: #6b7280; font-size: 0.875rem;">Active Students</div>
+                </div>
 
-        // Update metrics with enhanced calculations
-        setInner('total-students', totalStudents);
-        setInner('average-progress', `${window.mathCalculations.formatNumber(averageProgress, 1)}%`);
-        setInner('unread-messages', overview.unread_messages || 0);
-        setInner('at-risk-students', `${atRiskStudents} (${window.mathCalculations.formatNumber(riskPercentage, 1)}%)`);
+                <div class="metric-card" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1.5rem; text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📈</div>
+                    <div style="font-size: 2rem; font-weight: 700; color: #d97706; margin-bottom: 0.25rem;">
+                        ${Math.round((overview.average_progress || 0) * 10) / 10}%
+                    </div>
+                    <div style="color: #6b7280; font-size: 0.875rem;">Average Progress</div>
+                </div>
 
-        // Add engagement metric if element exists
-        const engagementElement = document.getElementById('engagement-rate');
-        if (engagementElement) {
-            engagementElement.textContent = `${window.mathCalculations.formatNumber(engagementRate, 1)}%`;
-        }
+                <div class="metric-card" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1.5rem; text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🎯</div>
+                    <div style="font-size: 2rem; font-weight: 700; color: #7c3aed; margin-bottom: 0.25rem;">
+                        ${Math.round((overview.average_engagement || 0) * 10) / 10}
+                    </div>
+                    <div style="color: #6b7280; font-size: 0.875rem;">Engagement Score</div>
+                </div>
 
-        console.log('✅ Dashboard rendered with enhanced mathematical calculations');
-    } else {
-        // Fallback to basic rendering
-        setInner('total-students', overview.total_students || 0);
-        setInner('average-progress', `${overview.average_progress || 0}%`);
-        setInner('unread-messages', overview.unread_messages || 0);
-        setInner('at-risk-students', overview.at_risk_students || 0);
+                <div class="metric-card" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1.5rem; text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🏆</div>
+                    <div style="font-size: 2rem; font-weight: 700; color: #dc2626; margin-bottom: 0.25rem;">
+                        ${Math.round((overview.average_assessment_score || 0) * 10) / 10}
+                    </div>
+                    <div style="color: #6b7280; font-size: 0.875rem;">Average Score</div>
+                </div>
 
-        console.log('✅ Dashboard rendered with basic data');
-    }
+                <div class="metric-card" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1.5rem; text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⚠️</div>
+                    <div style="font-size: 2rem; font-weight: 700; color: #dc2626; margin-bottom: 0.25rem;">
+                        ${overview.at_risk_students || 0}
+                    </div>
+                    <div style="color: #6b7280; font-size: 0.875rem;">At Risk Students</div>
+                </div>
+            </div>
+
+            <div class="dashboard-actions" style="text-align: center; margin-top: 2rem;">
+                <button onclick="refreshAllDashboardData()" style="background: #3b82f6; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.375rem; cursor: pointer; margin-right: 1rem;">
+                    🔄 Refresh Data
+                </button>
+                <button onclick="showPage('analytics')" style="background: #059669; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.375rem; cursor: pointer; margin-right: 1rem;">
+                    📊 View Analytics
+                </button>
+                <button onclick="showPage('students')" style="background: #d97706; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.375rem; cursor: pointer;">
+                    👥 Manage Students
+                </button>
+            </div>
+        </div>
+    `;
+
+    setInner('beranda-content', dashboardHTML);
+    console.log('✅ Dashboard rendered with real backend data');
 }
 
 function renderStudents(students) {
@@ -925,12 +966,10 @@ function toggleNotifications() {
     }
 }
 
-function showError(message) {
-    console.error('❌ Error:', message);
+function showSuccess(message) {
+    console.log('✅ Success:', message);
     if (window.UIComponents) {
-        window.UIComponents.showNotification(message, 'error', 5000);
-    } else {
-        alert('Error: ' + message);
+        window.UIComponents.showNotification(message, 'success', 3000);
     }
 }
 
@@ -941,6 +980,10 @@ window.refreshAllDashboardData = refreshAllDashboardData;
 window.loadNotifications = loadNotifications;
 window.toggleNotifications = toggleNotifications;
 window.showError = showError;
+window.showSuccess = showSuccess;
+window.exportData = exportData;
+window.exportAllData = exportAllData;
+window.exportAnalyticsData = exportAnalyticsData;
 window.educatorAPI = educatorAPI;
 window.educatorPortal = {
     initialized: false,
