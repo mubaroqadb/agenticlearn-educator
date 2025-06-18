@@ -362,6 +362,58 @@ body {
     color: var(--gray-800);
 }
 
+/* ===== DASHBOARD SPECIFIC ===== */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.dashboard-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.dashboard-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-header p {
+    color: var(--gray-600);
+    font-size: 1rem;
+}
+
+.connection-status {
+    font-size: 0.875rem;
+    color: var(--success);
+    margin-top: 0.5rem;
+    font-weight: 500;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.metric-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-actions {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.dashboard-actions .btn {
+    margin: 0 0.5rem;
+}
+
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
     .container {
@@ -371,11 +423,19 @@ body {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
+    .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
     .btn {
         width: 100%;
         margin: 0.25rem 0;
     }
     .student-actions {
         flex-direction: column;
+    }
+    .dashboard-actions .btn {
+        width: 100%;
+        margin: 0.5rem 0;
     }
 }

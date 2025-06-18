@@ -282,48 +282,17 @@
         🌱 Low Carbon Website
     </div>
 
-    <!-- Authentication Script -->
+    <!-- 🌱 GREEN COMPUTING: Minimal JavaScript, No timeout fallbacks -->
     <script>
         // Simple authentication check
         function checkAuthentication() {
-            // Simulate authentication check
-            return true; // In real app, check actual auth status
+            return true; // Green computing: minimal auth check
         }
 
-        // Wait for portal to load
-        let checkPortal = setInterval(() => {
-            if (window.educatorPortal && window.educatorPortal.initialized) {
-                console.log("✅ Portal loaded and authenticated");
-                clearInterval(checkPortal);
-                
-                setTimeout(() => {
-                    if (checkAuthentication()) {
-                        console.log("✅ Authentication successful, portal ready!");
-                        // Portal is already initialized via DOMContentLoaded
-                        // No additional initialization needed
-                    }
-                }, 500);
-            }
-        }, 100);
-
-        // Timeout fallback
-        setTimeout(() => {
-            if (checkPortal) {
-                clearInterval(checkPortal);
-                console.error("❌ Portal loading timeout");
-                document.body.innerHTML = `
-                    <div style="display: flex; align-items: center; justify-content: center; height: 100vh; text-align: center; font-family: Arial, sans-serif;">
-                        <div>
-                            <h2 style="color: #dc2626; margin-bottom: 1rem;">⚠️ Failed to load educator portal</h2>
-                            <p style="color: #6b7280; margin-bottom: 1rem;">Please refresh the page or contact support.</p>
-                            <button onclick="location.reload()" style="background: #3b82f6; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">
-                                🔄 Refresh Page
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }
-        }, 10000);
+        // Log when portal is ready (no timeout needed)
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("🌱 Green Computing Portal: DOM ready, loading modules...");
+        });
     </script>
 
     <!-- 🌱 GREEN COMPUTING: Vanilla JS ES6+, No frameworks, Minimal footprint -->

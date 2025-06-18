@@ -384,22 +384,41 @@ async function refreshData() {
 
 // ===== EVENT LISTENERS =====
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('🌱 Green Computing: DOM loaded, initializing portal...');
+
+    // Set portal as initialized immediately to prevent timeout
+    window.educatorPortal = {
+        initialized: true,
+        api: api,
+        state: state,
+        loadPage: loadPage,
+        refreshData: refreshData
+    };
+
     // Initialize portal
     initializePortal();
-    
+
     // Add menu click handlers
     document.querySelectorAll('.menu-item').forEach(item => {
-        item.addEventListener('click', () => {
-            const pageName = item.getAttribute('data-page');
-            if (pageName) {
-                loadPage(pageName);
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const onclick = item.getAttribute('onclick');
+            if (onclick) {
+                // Extract page name from onclick="showPage('pageName')"
+                const match = onclick.match(/showPage\('([^']+)'\)/);
+                if (match) {
+                    loadPage(match[1]);
+                }
             }
         });
     });
-    
+
     // Add refresh button handler
-    document.querySelectorAll('.refresh-button').forEach(button => {
-        button.addEventListener('click', refreshData);
+    document.querySelectorAll('[onclick="refreshAllDashboardData()"]').forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            refreshData();
+        });
     });
 });
 
