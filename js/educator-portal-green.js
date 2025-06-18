@@ -213,7 +213,21 @@ async function loadPage(pageName) {
             case 'analytics':
                 await loadAnalyticsData();
                 break;
-            // Add other pages as needed
+            case 'communication':
+                await loadCommunicationData();
+                break;
+            case 'assessments':
+                await loadAssessmentsData();
+                break;
+            case 'workflow':
+                await loadContentData();
+                break;
+            case 'ai-recommendations':
+                await loadAnalyticsData(); // Use analytics for AI recommendations
+                break;
+            case 'reports':
+                await loadReportsData();
+                break;
             default:
                 console.log(`No specific data loader for page: ${pageName}`);
         }
@@ -241,9 +255,74 @@ async function loadStudentsData() {
 }
 
 async function loadAnalyticsData() {
-    const response = await api.request(APP_CONFIG.API.ENDPOINTS.DASHBOARD_ANALYTICS);
+    const response = await api.request(API_CONFIG.ENDPOINTS.DASHBOARD_ANALYTICS);
     if (response.success && response.data) {
         renderAnalytics(response.data);
+    }
+}
+
+async function loadCommunicationData() {
+    const container = document.getElementById('communication-content');
+    if (container) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 2rem;">
+                <h3>📢 Communication Center</h3>
+                <p>Communication features will be implemented here</p>
+                <button class="btn" style="background: var(--primary);">Send Message</button>
+            </div>
+        `;
+    }
+}
+
+async function loadAssessmentsData() {
+    const container = document.getElementById('assessments-content');
+    if (container) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 2rem;">
+                <h3>📝 Assessments</h3>
+                <p>Assessment management features will be implemented here</p>
+                <button class="btn" style="background: var(--primary);">Create Assessment</button>
+            </div>
+        `;
+    }
+}
+
+async function loadContentData() {
+    const container = document.getElementById('content-content');
+    if (container) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 2rem;">
+                <h3>📚 Content Management</h3>
+                <p>Content management features will be implemented here</p>
+                <button class="btn" style="background: var(--primary);">Add Content</button>
+            </div>
+        `;
+    }
+}
+
+async function loadReportsData() {
+    const container = document.getElementById('reports-content');
+    if (container) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 2rem;">
+                <h3>📊 Reports</h3>
+                <p>Reporting features will be implemented here</p>
+                <button class="btn" style="background: var(--primary);">Generate Report</button>
+            </div>
+        `;
+    }
+}
+
+async function loadSettingsData() {
+    const container = document.getElementById('settings-content');
+    if (container) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 2rem;">
+                <h3>⚙️ Settings</h3>
+                <p>Settings and preferences will be implemented here</p>
+                <button class="btn" style="background: var(--primary);">Update Settings</button>
+            </div>
+        `;
     }
 }
 
@@ -274,61 +353,55 @@ function renderDashboard(data) {
 
     // 🌱 GREEN COMPUTING: Minimal DOM manipulation, efficient rendering
     const dashboardHTML = `
-        <div class="dashboard-container">
-            <div class="dashboard-header">
-                <h2>🏠 Dashboard Overview</h2>
-                <p>Real-time analytics from AgenticAI backend</p>
-                <div class="connection-status">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 1rem;">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h2 style="margin: 0 0 0.5rem 0; color: var(--gray-800);">🏠 Dashboard Overview</h2>
+                <p style="margin: 0 0 0.5rem 0; color: var(--gray-600);">Real-time analytics from AgenticAI backend</p>
+                <div style="font-size: 0.875rem; color: var(--success); font-weight: 500;">
                     ✅ Connected to database • Last updated: ${new Date().toLocaleTimeString()}
                 </div>
             </div>
 
-            <div class="metrics-grid">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
                 <div class="metric-card">
-                    <div class="metric-icon">👥</div>
                     <div class="metric-value">${overview.total_students || 0}</div>
                     <div class="metric-label">Total Students</div>
                 </div>
 
                 <div class="metric-card">
-                    <div class="metric-icon">✅</div>
                     <div class="metric-value">${overview.active_students || 0}</div>
                     <div class="metric-label">Active Students</div>
                 </div>
 
                 <div class="metric-card">
-                    <div class="metric-icon">📈</div>
                     <div class="metric-value">${Math.round((overview.average_progress || 0) * 10) / 10}%</div>
                     <div class="metric-label">Average Progress</div>
                 </div>
 
                 <div class="metric-card">
-                    <div class="metric-icon">🎯</div>
                     <div class="metric-value">${Math.round((overview.average_engagement || 0) * 10) / 10}</div>
                     <div class="metric-label">Engagement Score</div>
                 </div>
 
                 <div class="metric-card">
-                    <div class="metric-icon">🏆</div>
                     <div class="metric-value">${Math.round((overview.average_assessment_score || 0) * 10) / 10}</div>
                     <div class="metric-label">Average Score</div>
                 </div>
 
                 <div class="metric-card">
-                    <div class="metric-icon">⚠️</div>
                     <div class="metric-value">${overview.at_risk_students || 0}</div>
                     <div class="metric-label">At Risk Students</div>
                 </div>
             </div>
 
-            <div class="dashboard-actions">
-                <button onclick="refreshData()" class="btn btn-primary">
+            <div style="text-align: center; margin-top: 2rem;">
+                <button onclick="refreshData()" class="btn" style="background: var(--primary); margin: 0 0.5rem;">
                     🔄 Refresh Data
                 </button>
-                <button onclick="loadPage('analytics')" class="btn btn-secondary">
+                <button onclick="loadPage('analytics')" class="btn" style="background: var(--info); margin: 0 0.5rem;">
                     📊 View Analytics
                 </button>
-                <button onclick="loadPage('students')" class="btn btn-secondary">
+                <button onclick="loadPage('students')" class="btn" style="background: var(--warning); margin: 0 0.5rem;">
                     👥 Manage Students
                 </button>
             </div>
