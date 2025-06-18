@@ -234,6 +234,24 @@ body {
     letter-spacing: 0.5px;
 }
 
+.metric-change {
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-top: 0.25rem;
+}
+
+.metric-change.positive {
+    color: var(--success);
+}
+
+.metric-change.negative {
+    color: var(--error);
+}
+
+.metric-change.neutral {
+    color: var(--warning);
+}
+
 /* ===== LOADING STATES ===== */
 .loading-state {
     text-align: center;
