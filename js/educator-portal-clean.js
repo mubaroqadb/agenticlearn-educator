@@ -267,29 +267,32 @@ let mathematicalCalculationsReady = false;
 
 function showPage(pageName) {
     console.log(`📄 Switching to page: ${pageName}`);
-    
+
     // Hide all pages
     const pages = document.querySelectorAll('.page-content');
     pages.forEach(page => page.style.display = 'none');
-    
+
     // Show target page
     const targetPage = document.getElementById(`page-${pageName}`);
     if (targetPage) {
         targetPage.style.display = 'block';
     }
-    
+
     // Update menu active state
     const menuItems = document.querySelectorAll('.menu-item');
     menuItems.forEach(item => item.classList.remove('active'));
-    
+
     const activeMenuItem = document.querySelector(`[onclick="showPage('${pageName}')"]`);
     if (activeMenuItem) {
         activeMenuItem.classList.add('active');
     }
-    
+
     // Load page-specific data
     loadPageData(pageName);
 }
+
+// Make functions globally available
+window.showPage = showPage;
 
 async function loadPageData(pageName) {
     try {
@@ -895,14 +898,57 @@ async function initializePortal() {
     }
 }
 
+// ===== GLOBAL FUNCTIONS FOR HTML =====
+
+function refreshAllDashboardData() {
+    console.log('🔄 Refreshing all dashboard data...');
+    loadDashboardData().catch(error => {
+        console.error('❌ Failed to refresh dashboard:', error);
+        showError('Failed to refresh dashboard: ' + error.message);
+    });
+}
+
+function loadNotifications() {
+    console.log('🔔 Loading notifications...');
+    // Placeholder for notifications functionality
+    if (window.UIComponents) {
+        window.UIComponents.showNotification('Notifications feature coming soon!', 'info', 3000);
+    }
+}
+
+function toggleNotifications() {
+    console.log('🔔 Toggling notifications...');
+    // Placeholder for notifications toggle
+    const badge = document.getElementById('notificationBadge');
+    if (badge) {
+        badge.style.display = badge.style.display === 'none' ? 'block' : 'none';
+    }
+}
+
+function showError(message) {
+    console.error('❌ Error:', message);
+    if (window.UIComponents) {
+        window.UIComponents.showNotification(message, 'error', 5000);
+    } else {
+        alert('Error: ' + message);
+    }
+}
+
 // ===== WINDOW EXPORTS =====
 
 window.showPage = showPage;
+window.refreshAllDashboardData = refreshAllDashboardData;
+window.loadNotifications = loadNotifications;
+window.toggleNotifications = toggleNotifications;
+window.showError = showError;
 window.educatorAPI = educatorAPI;
 window.educatorPortal = {
     initialized: false,
     api: educatorAPI,
     showPage: showPage,
+    refreshAllDashboardData: refreshAllDashboardData,
+    loadNotifications: loadNotifications,
+    toggleNotifications: toggleNotifications,
     currentData: {
         educator: currentEducatorData,
         students: currentStudentData,
