@@ -283,28 +283,30 @@ async function loadAnalyticsData() {
 }
 
 async function loadCommunicationData() {
-    const container = document.getElementById('communication-content');
-    if (container) {
-        container.innerHTML = `
-            <div style="text-align: center; padding: 2rem;">
-                <h3>📢 Communication Center</h3>
-                <p>Communication features will be implemented here</p>
-                <button class="btn" style="background: var(--primary);">Send Message</button>
-            </div>
-        `;
+    console.log("🔄 Loading communication data from AgenticAI...");
+    const response = await api.request(API_CONFIG.ENDPOINTS.MESSAGES_LIST);
+    console.log("💬 Messages response:", response);
+
+    if (response && response.success && response.data) {
+        renderCommunication(response.data);
+        console.log("✅ Communication data loaded from AgenticAI database");
+    } else {
+        console.error("❌ AgenticAI communication endpoint failed:", response);
+        throw new Error("Communication data unavailable - no fallback per Green Computing");
     }
 }
 
 async function loadAssessmentsData() {
-    const container = document.getElementById('assessments-content');
-    if (container) {
-        container.innerHTML = `
-            <div style="text-align: center; padding: 2rem;">
-                <h3>📝 Assessments</h3>
-                <p>Assessment management features will be implemented here</p>
-                <button class="btn" style="background: var(--primary);">Create Assessment</button>
-            </div>
-        `;
+    console.log("🔄 Loading assessments data from AgenticAI...");
+    const response = await api.request(API_CONFIG.ENDPOINTS.ASSESSMENTS_LIST);
+    console.log("📝 Assessments response:", response);
+
+    if (response && response.success && response.data) {
+        renderAssessments(response.data);
+        console.log("✅ Assessments data loaded from AgenticAI database");
+    } else {
+        console.error("❌ AgenticAI assessments endpoint failed:", response);
+        throw new Error("Assessments data unavailable - no fallback per Green Computing");
     }
 }
 
@@ -509,27 +511,184 @@ function renderDashboard(data) {
 }
 
 function renderStudents(students) {
-    const container = document.getElementById('students-list');
+    const container = document.getElementById('students-content');
     if (!container) return;
-    
+
     if (!students || students.length === 0) {
         container.innerHTML = '<div class="empty-state">No students found</div>';
         return;
     }
-    
-    const studentsHTML = students.map(student => `
-        <div class="student-card">
-            <div class="student-name">${student.name}</div>
-            <div class="student-progress">
-                <div class="progress-bar">
-                    <div class="progress" style="width: ${student.progress}%"></div>
-                </div>
-                <div class="progress-text">${student.progress}%</div>
+
+    const studentsHTML = `
+        <div style="margin-bottom: 2rem;">
+            <h3 style="margin-bottom: 1rem;">👥 Students Management</h3>
+            <div style="display: grid; gap: 1rem;">
+                ${students.map(student => `
+                    <div class="card" style="padding: 1.5rem;">
+                        <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 1rem;">
+                            <div>
+                                <h4 style="margin: 0; color: var(--gray-800);">${student.name}</h4>
+                                <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">${student.email}</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 1.25rem; font-weight: bold; color: var(--primary);">${student.progress_percentage}%</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-500);">Progress</div>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                            <div style="text-align: center;">
+                                <div style="font-weight: bold; color: var(--success);">${student.average_score}</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-500);">Avg Score</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-weight: bold; color: var(--info);">${student.completed_lessons}/${student.total_lessons}</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-500);">Lessons</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-weight: bold; color: var(--warning);">${student.total_study_hours}h</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-500);">Study Time</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-weight: bold; color: ${student.risk_level === 'Low' ? 'var(--success)' : 'var(--error)'};">${student.risk_level}</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-500);">Risk Level</div>
+                            </div>
+                        </div>
+                        <div style="background: var(--accent); padding: 0.75rem; border-radius: 6px;">
+                            <div style="font-size: 0.875rem; color: var(--gray-700);">
+                                Last active: ${new Date(student.last_active).toLocaleDateString()}
+                                (${student.days_since_active} days ago)
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
             </div>
         </div>
-    `).join('');
-    
+    `;
+
     container.innerHTML = studentsHTML;
+}
+
+function renderCommunication(messages) {
+    const container = document.getElementById('communication-content');
+    if (!container) return;
+
+    if (!messages || messages.length === 0) {
+        container.innerHTML = '<div class="empty-state">No messages found</div>';
+        return;
+    }
+
+    const messagesHTML = `
+        <div style="margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0;">💬 Communication Center</h3>
+                <button class="btn" style="background: var(--primary); padding: 0.75rem 1.5rem;">
+                    ✉️ Send New Message
+                </button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                ${messages.map(message => `
+                    <div class="card" style="padding: 1.5rem;">
+                        <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 1rem;">
+                            <div style="flex: 1;">
+                                <h4 style="margin: 0 0 0.25rem 0; color: var(--gray-800);">${message.subject}</h4>
+                                <div style="display: flex; gap: 1rem; font-size: 0.875rem; color: var(--gray-600);">
+                                    <span>From: ${message.from_name}</span>
+                                    <span>To: ${message.to_name}</span>
+                                    <span>${new Date(message.timestamp).toLocaleDateString()}</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                <span style="background: ${message.read ? 'var(--success)' : 'var(--warning)'}; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">
+                                    ${message.read ? 'Read' : 'Unread'}
+                                </span>
+                                <span style="background: var(--info); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">
+                                    ${message.message_type}
+                                </span>
+                            </div>
+                        </div>
+                        <div style="background: var(--accent); padding: 1rem; border-radius: 6px; border-left: 4px solid var(--primary);">
+                            <p style="margin: 0; color: var(--gray-700); line-height: 1.5;">
+                                ${message.content}
+                            </p>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+
+    container.innerHTML = messagesHTML;
+}
+
+function renderAssessments(assessments) {
+    const container = document.getElementById('assessments-content');
+    if (!container) return;
+
+    if (!assessments || assessments.length === 0) {
+        container.innerHTML = '<div class="empty-state">No assessments found</div>';
+        return;
+    }
+
+    const assessmentsHTML = `
+        <div style="margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0;">📝 Assessment Management</h3>
+                <button class="btn" style="background: var(--success); padding: 0.75rem 1.5rem;">
+                    ➕ Create New Assessment
+                </button>
+            </div>
+            <div style="display: grid; gap: 1rem;">
+                ${assessments.map(assessment => `
+                    <div class="card" style="padding: 1.5rem;">
+                        <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 1rem;">
+                            <div style="flex: 1;">
+                                <h4 style="margin: 0 0 0.5rem 0; color: var(--gray-800);">${assessment.title}</h4>
+                                <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">${assessment.description}</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="background: ${assessment.status === 'active' ? 'var(--success)' : 'var(--warning)'}; color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.75rem; text-transform: uppercase;">
+                                    ${assessment.status}
+                                </span>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                            <div style="text-align: center;">
+                                <div style="font-weight: bold; color: var(--primary);">${assessment.total_questions}</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-500);">Questions</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-weight: bold; color: var(--info);">${assessment.total_points}</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-500);">Total Points</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-weight: bold; color: var(--warning);">${assessment.duration_minutes}min</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-500);">Duration</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-weight: bold; color: var(--success);">${assessment.submissions_count}</div>
+                                <div style="font-size: 0.75rem; color: var(--gray-500);">Submissions</div>
+                            </div>
+                        </div>
+                        <div style="background: var(--accent); padding: 0.75rem; border-radius: 6px; display: flex; justify-content: between; align-items: center;">
+                            <div style="font-size: 0.875rem; color: var(--gray-700);">
+                                Due: ${new Date(assessment.due_date).toLocaleDateString()}
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn" style="background: var(--info); padding: 0.5rem 1rem; font-size: 0.875rem;">
+                                    📊 View Results
+                                </button>
+                                <button class="btn" style="background: var(--primary); padding: 0.5rem 1rem; font-size: 0.875rem;">
+                                    ✏️ Edit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+
+    container.innerHTML = assessmentsHTML;
 }
 
 function renderAnalytics(data) {
