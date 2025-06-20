@@ -908,4 +908,8 @@ export class AIRecommendationsModule {
 
 // Create and export singleton instance
 export const aiModule = new AIRecommendationsModule();
+
+// Make it globally available for onclick handlers
+window.aiModule = aiModule;
+
 export default aiModule;

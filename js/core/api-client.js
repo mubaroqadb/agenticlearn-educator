@@ -187,6 +187,10 @@ export class EducatorAPIClient {
         return await this.request(API_CONFIG.ENDPOINTS.AI_RECOMMENDATIONS);
     }
 
+    async getAILearningPatterns() {
+        return await this.request(API_CONFIG.ENDPOINTS.AI_LEARNING_PATTERNS);
+    }
+
     async getLearningPatterns() {
         return await this.request(API_CONFIG.ENDPOINTS.AI_LEARNING_PATTERNS);
     }

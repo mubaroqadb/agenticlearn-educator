@@ -458,14 +458,14 @@ export class CommunicationManager {
             const response = await apiClient.sendMessage(formData);
 
             if (response && response.success) {
-                showSuccess('Message sent successfully!');
+                UIComponents.showNotification('Message sent successfully!', 'success');
                 document.getElementById('send-message-form').reset();
                 await this.loadMessages();
                 this.renderCommunicationInterface();
             }
         } catch (error) {
             console.error('❌ Failed to send message:', error);
-            showError('Failed to send message: ' + error.message);
+            UIComponents.showNotification('Failed to send message: ' + error.message, 'error');
         }
     }
 
@@ -489,14 +489,14 @@ export class CommunicationManager {
             const response = await apiClient.createAnnouncement(formData);
 
             if (response && response.success) {
-                showSuccess('Announcement created successfully!');
+                UIComponents.showNotification('Announcement created successfully!', 'success');
                 document.getElementById('create-announcement-form').reset();
                 await this.loadAnnouncements();
                 this.renderCommunicationInterface();
             }
         } catch (error) {
             console.error('❌ Failed to create announcement:', error);
-            showError('Failed to create announcement: ' + error.message);
+            UIComponents.showNotification('Failed to create announcement: ' + error.message, 'error');
         }
     }
 

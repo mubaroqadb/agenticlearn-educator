@@ -981,4 +981,8 @@ export class WorkflowModule {
 
 // Create and export singleton instance
 export const workflowModule = new WorkflowModule();
+
+// Make it globally available for onclick handlers
+window.workflowModule = workflowModule;
+
 export default workflowModule;

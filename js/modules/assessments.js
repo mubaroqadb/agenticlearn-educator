@@ -711,13 +711,13 @@ export class AssessmentManager {
             const response = await apiClient.createAssessment(formData);
 
             if (response && response.success) {
-                showSuccess('Assessment created successfully!');
+                UIComponents.showNotification('Assessment created successfully!', 'success');
                 await this.loadAssessments();
                 this.switchView('list');
             }
         } catch (error) {
             console.error('❌ Failed to create assessment:', error);
-            showError('Failed to create assessment: ' + error.message);
+            UIComponents.showNotification('Failed to create assessment: ' + error.message, 'error');
         }
     }
 
@@ -761,7 +761,7 @@ export class AssessmentManager {
             this.switchView('results');
         } catch (error) {
             console.error('❌ Failed to load assessment results:', error);
-            showError('Failed to load assessment results: ' + error.message);
+            UIComponents.showNotification('Failed to load assessment results: ' + error.message, 'error');
         }
     }
 
@@ -773,12 +773,12 @@ export class AssessmentManager {
             this.currentView = 'edit';
             this.renderAssessmentInterface();
             this.populateEditForm();
-            showSuccess('Assessment loaded for editing');
+            UIComponents.showNotification('Assessment loaded for editing', 'success');
         } catch (error) {
             console.error('❌ Failed to load assessment for editing:', error);
             // Fallback: switch to create view
             this.switchView('create');
-            showSuccess('Edit mode activated (demo version)');
+            UIComponents.showNotification('Edit mode activated (demo version)', 'info');
         }
     }
 
@@ -806,7 +806,7 @@ export class AssessmentManager {
             const response = await apiClient.createAssessment(duplicateData);
 
             if (response && response.success) {
-                showSuccess('Assessment duplicated successfully!');
+                UIComponents.showNotification('Assessment duplicated successfully!', 'success');
                 await this.loadAssessments();
                 this.renderAssessmentInterface();
             } else {
@@ -824,7 +824,7 @@ export class AssessmentManager {
                     document.getElementById('assessment-points').value = assessment.total_points;
                     document.getElementById('assessment-duration').value = assessment.duration_minutes;
                 }, 100);
-                showSuccess('Assessment data loaded for duplication');
+                UIComponents.showNotification('Assessment data loaded for duplication', 'success');
             }
         }
     }
@@ -839,13 +839,13 @@ export class AssessmentManager {
             const response = await apiClient.deleteAssessment(assessmentId);
 
             if (response && response.success) {
-                showSuccess('Assessment deleted successfully!');
+                UIComponents.showNotification('Assessment deleted successfully!', 'success');
                 await this.loadAssessments();
                 this.renderAssessmentInterface();
             }
         } catch (error) {
             console.error('❌ Failed to delete assessment:', error);
-            showError('Failed to delete assessment: ' + error.message);
+            UIComponents.showNotification('Failed to delete assessment: ' + error.message, 'error');
         }
     }
 
@@ -883,7 +883,7 @@ export class AssessmentManager {
                 item.id = `question-${index + 1}`;
             });
         } else {
-            showError('At least one question is required');
+            UIComponents.showNotification('At least one question is required', 'warning');
         }
     }
 
@@ -931,17 +931,17 @@ export class AssessmentManager {
         try {
             const response = await apiClient.getAssessmentResults(assessmentId);
             if (response && response.success && response.data) {
-                this.currentResults = response.data;
-                return this.currentResults;
+                this.assessmentResults = response.data;
+                return this.assessmentResults;
             } else {
                 // Generate mock results for demo
-                this.currentResults = this.generateMockResults(assessmentId);
-                return this.currentResults;
+                this.assessmentResults = this.generateMockResults(assessmentId);
+                return this.assessmentResults;
             }
         } catch (error) {
             console.error('Failed to load assessment results:', error);
-            this.currentResults = this.generateMockResults(assessmentId);
-            return this.currentResults;
+            this.assessmentResults = this.generateMockResults(assessmentId);
+            return this.assessmentResults;
         }
     }
 
@@ -951,16 +951,49 @@ export class AssessmentManager {
 
         return {
             assessment_id: assessmentId,
-            assessment_title: assessment.title,
-            total_submissions: 15,
-            average_score: 78.5,
-            highest_score: 95,
-            lowest_score: 45,
-            completion_rate: 88.2,
-            submissions: [
-                { student_name: 'Alice Johnson', score: 95, submitted_at: '2024-01-15T10:30:00Z', status: 'completed' },
-                { student_name: 'Bob Smith', score: 82, submitted_at: '2024-01-15T11:45:00Z', status: 'completed' },
-                { student_name: 'Carol Davis', score: 76, submitted_at: '2024-01-15T14:20:00Z', status: 'completed' }
+            title: assessment.title,
+            total_students: 3,
+            submitted: 3,
+            completion_rate: 100,
+            average_score: 84.3,
+            analytics: {
+                highest_score: 95,
+                lowest_score: 76,
+                median_score: 82,
+                pass_rate: 100
+            },
+            grade_distribution: {
+                A: 1,
+                B: 2,
+                C: 0,
+                D: 0,
+                F: 0
+            },
+            detailed_results: [
+                {
+                    student_name: 'Ahmad Mahasiswa',
+                    score: 85,
+                    percentage: 85,
+                    letter_grade: 'B',
+                    submitted_at: '2024-01-15T10:30:00Z',
+                    time_taken_minutes: 45
+                },
+                {
+                    student_name: 'Siti Nurhaliza',
+                    score: 82,
+                    percentage: 82,
+                    letter_grade: 'B',
+                    submitted_at: '2024-01-15T11:45:00Z',
+                    time_taken_minutes: 52
+                },
+                {
+                    student_name: 'Budi Santoso',
+                    score: 95,
+                    percentage: 95,
+                    letter_grade: 'A',
+                    submitted_at: '2024-01-15T14:20:00Z',
+                    time_taken_minutes: 38
+                }
             ]
         };
     }

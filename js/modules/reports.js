@@ -902,4 +902,8 @@ student_004,David Wilson,45.8,52.3,41.2,High`;
 
 // Create and export singleton instance
 export const reportsModule = new ReportsModule();
+
+// Make it globally available for onclick handlers
+window.reportsModule = reportsModule;
+
 export default reportsModule;
