@@ -265,8 +265,9 @@ export class EducatorAPIClient {
             console.log("🔄 Testing AgenticAI backend connection...");
             const response = await this.getProfile();
 
-            if (response && response.success && response.data) {
-                const profile = response.data;
+            if (response && response.success) {
+                // Backend returns profile directly, not in data property
+                const profile = response.profile || response.data;
                 this.isConnected = true;
                 console.log("✅ AgenticAI backend connection successful!");
                 console.log("👤 Connected as:", profile.name);
