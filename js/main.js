@@ -6,7 +6,7 @@ import { dashboardModule } from './modules/dashboard.js';
 import { studentModule } from './modules/students.js';
 import { assessmentModule } from './modules/assessments.js';
 import { communicationModule } from './modules/communication.js';
-import { aiSystemModule } from './modules/ai-system.js';
+import { aiModule } from './modules/ai-recommendations.js';
 import { workflowModule } from './modules/workflow.js';
 import { reportsModule } from './modules/reports.js';
 import { MENU_CONFIG, APP_CONFIG } from './core/config.js';
@@ -30,7 +30,7 @@ class AgenticLearnApp {
         this.modules.set('students', studentModule);
         this.modules.set('assessments', assessmentModule);
         this.modules.set('communication', communicationModule);
-        this.modules.set('ai-recommendations', aiSystemModule);
+        this.modules.set('ai-recommendations', aiModule);
         this.modules.set('workflow', workflowModule);
         this.modules.set('reports', reportsModule);
 
