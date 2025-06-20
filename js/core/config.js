@@ -13,14 +13,14 @@ export const API_CONFIG = {
         STUDENTS_LIST: "/api/agenticlearn/educator/students/list",
         STUDENT_DETAIL: "/api/agenticlearn/educator/students/detail",
 
-        // ✅ ASSESSMENT MANAGEMENT - FIXED endpoints
+        // ✅ ASSESSMENT MANAGEMENT - CORRECTED endpoints per backend
         ASSESSMENTS_LIST: "/api/agenticlearn/educator/assessments/list",
-        ASSESSMENT_DETAIL: "/api/agenticlearn/educator/assessments/detail",
-        CREATE_ASSESSMENT: "/api/agenticlearn/educator/assessments/create",
-        UPDATE_ASSESSMENT: "/api/agenticlearn/educator/assessments/update",
-        DELETE_ASSESSMENT: "/api/agenticlearn/educator/assessments/delete",
-        ASSESSMENT_RESULTS: "/api/agenticlearn/educator/assessments/results",
-        GRADE_ASSESSMENT: "/api/agenticlearn/educator/assessments/grade",
+        ASSESSMENT_DETAIL: "/api/agenticlearn/educator/assessment/detail",
+        CREATE_ASSESSMENT: "/api/agenticlearn/educator/assessment/create",
+        UPDATE_ASSESSMENT: "/api/agenticlearn/educator/assessment/update",
+        DELETE_ASSESSMENT: "/api/agenticlearn/educator/assessment/delete",
+        ASSESSMENT_RESULTS: "/api/agenticlearn/educator/assessment/results",
+        GRADE_ASSESSMENT: "/api/agenticlearn/educator/assessment/grade",
 
         // ✅ COMMUNICATION SYSTEM - Per Backend Documentation
         MESSAGES_LIST: "/api/agenticlearn/educator/communication/messages/list",

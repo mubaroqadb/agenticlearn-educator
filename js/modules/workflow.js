@@ -652,18 +652,17 @@ export class WorkflowModule {
 
             if (response && response.success && response.data) {
                 this.executions = response.data;
+                console.log('✅ Workflow executions loaded from backend:', this.executions);
+                this.renderExecutionHistory();
+                UIComponents.showNotification('Execution history loaded successfully', 'success');
             } else {
-                // Generate mock execution data
-                this.executions = this.generateMockExecutions();
+                throw new Error('No workflow execution data received from backend');
             }
-
-            this.renderExecutionHistory();
-            UIComponents.showNotification('Execution history loaded successfully', 'success');
         } catch (error) {
-            console.error('Failed to load executions:', error);
-            this.executions = this.generateMockExecutions();
+            console.error('❌ Failed to load workflow executions from backend:', error);
+            this.executions = [];
             this.renderExecutionHistory();
-            UIComponents.showNotification('Execution history loaded (demo data)', 'info');
+            UIComponents.showNotification('Failed to load execution history: ' + error.message, 'error');
         }
     }
 

@@ -56,13 +56,16 @@ export class AIRecommendationsModule {
         try {
             const response = await apiClient.getAIInsights();
             if (response && response.success && response.data) {
-                this.insights = response.data;
+                // Transform backend AI data to frontend format
+                this.insights = this.transformAIInsights(response.data);
+                console.log('✅ AI insights loaded from backend:', this.insights);
             } else {
-                this.insights = this.generateMockInsights();
+                throw new Error('No AI insights data received from backend');
             }
         } catch (error) {
-            console.error('Failed to load insights:', error);
-            this.insights = this.generateMockInsights();
+            console.error('❌ Failed to load AI insights from backend:', error);
+            UIComponents.showNotification('Failed to load AI insights: ' + error.message, 'error');
+            this.insights = [];
         }
     }
 
@@ -70,13 +73,16 @@ export class AIRecommendationsModule {
         try {
             const response = await apiClient.getAIRecommendations();
             if (response && response.success && response.data) {
-                this.recommendations = response.data;
+                // Transform backend AI recommendations to frontend format
+                this.recommendations = this.transformAIRecommendations(response.data);
+                console.log('✅ AI recommendations loaded from backend:', this.recommendations);
             } else {
-                this.recommendations = this.generateMockRecommendations();
+                throw new Error('No AI recommendations data received from backend');
             }
         } catch (error) {
-            console.error('Failed to load recommendations:', error);
-            this.recommendations = this.generateMockRecommendations();
+            console.error('❌ Failed to load AI recommendations from backend:', error);
+            UIComponents.showNotification('Failed to load AI recommendations: ' + error.message, 'error');
+            this.recommendations = [];
         }
     }
 
@@ -84,13 +90,16 @@ export class AIRecommendationsModule {
         try {
             const response = await apiClient.getAILearningPatterns();
             if (response && response.success && response.data) {
-                this.learningPatterns = response.data;
+                // Transform backend learning patterns to frontend format
+                this.learningPatterns = this.transformLearningPatterns(response.data);
+                console.log('✅ AI learning patterns loaded from backend:', this.learningPatterns);
             } else {
-                this.learningPatterns = this.generateMockPatterns();
+                throw new Error('No learning patterns data received from backend');
             }
         } catch (error) {
-            console.error('Failed to load learning patterns:', error);
-            this.learningPatterns = this.generateMockPatterns();
+            console.error('❌ Failed to load learning patterns from backend:', error);
+            UIComponents.showNotification('Failed to load learning patterns: ' + error.message, 'error');
+            this.learningPatterns = [];
         }
     }
 
@@ -244,87 +253,196 @@ export class AIRecommendationsModule {
         setInner('ai-stats', statsHTML);
     }
 
-    generateMockInsights() {
-        return [
-            {
-                insight_id: 'insight_001',
-                title: 'Low Engagement in Digital Literacy Course',
-                description: 'Students show 23% lower engagement in afternoon sessions compared to morning sessions.',
+    // Transform backend AI data to frontend format
+    transformAIInsights(backendData) {
+        const insights = [];
+
+        // Transform student predictions to insights
+        if (backendData.student_predictions) {
+            backendData.student_predictions.forEach((prediction, index) => {
+                insights.push({
+                    insight_id: `insight_student_${prediction.student_id}`,
+                    title: `Student Performance Prediction: ${prediction.student_name}`,
+                    description: `Success probability: ${prediction.success_probability}%. Learning style match: ${prediction.learning_style_match}%. Predicted completion: ${prediction.predicted_completion_date}`,
+                    category: 'performance',
+                    priority: prediction.success_probability < 70 ? 'high' : prediction.success_probability < 85 ? 'medium' : 'low',
+                    confidence: prediction.success_probability,
+                    impact_score: prediction.learning_style_match / 10,
+                    created_at: backendData.generated_at,
+                    status: 'new'
+                });
+            });
+        }
+
+        // Transform learning patterns to insights
+        if (backendData.learning_patterns) {
+            insights.push({
+                insight_id: 'insight_patterns_001',
+                title: 'Learning Pattern Analysis',
+                description: `Peak learning hours: ${backendData.learning_patterns.peak_learning_hours.join(', ')}. Most effective content: ${backendData.learning_patterns.most_effective_content_type}. Average attention span: ${backendData.learning_patterns.average_attention_span}`,
                 category: 'engagement',
-                priority: 'high',
-                confidence: 87.5,
-                impact_score: 8.2,
-                created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+                priority: 'medium',
+                confidence: 90,
+                impact_score: 8.5,
+                created_at: backendData.generated_at,
                 status: 'new'
-            },
-            {
-                insight_id: 'insight_002',
-                title: 'Assessment Difficulty Mismatch',
-                description: 'Current assessments may be too challenging for 40% of students based on completion patterns.',
-                category: 'performance',
-                priority: 'medium',
-                confidence: 92.1,
-                impact_score: 7.8,
-                created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-                status: 'reviewed'
-            }
-        ];
-    }
+            });
+        }
 
-    generateMockRecommendations() {
-        return [
-            {
-                recommendation_id: 'rec_001',
-                title: 'Implement Micro-Learning Sessions',
-                description: 'Break down complex topics into 10-15 minute focused sessions to improve retention.',
+        // Transform course optimization to insights
+        if (backendData.course_optimization) {
+            insights.push({
+                insight_id: 'insight_optimization_001',
+                title: 'Course Optimization Opportunities',
+                description: `${backendData.course_optimization.engagement_bottlenecks.length} lessons need optimization. Priority: ${backendData.course_optimization.optimization_priority}`,
                 category: 'content',
-                priority: 'high',
-                confidence: 89.3,
-                expected_impact: 'Increase completion rate by 15-20%',
-                effort_required: 'Medium',
-                timeline: '2-3 weeks',
-                status: 'new',
-                created_at: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString()
-            },
-            {
-                recommendation_id: 'rec_002',
-                title: 'Personalized Learning Paths',
-                description: 'Create adaptive learning paths based on individual student performance and preferences.',
-                category: 'workflow',
-                priority: 'medium',
-                confidence: 84.7,
-                expected_impact: 'Improve student satisfaction by 25%',
-                effort_required: 'High',
-                timeline: '4-6 weeks',
-                status: 'reviewed',
-                created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
-            }
-        ];
+                priority: backendData.course_optimization.optimization_priority,
+                confidence: 85,
+                impact_score: 7.8,
+                created_at: backendData.generated_at,
+                status: 'new'
+            });
+        }
+
+        return insights;
     }
 
-    generateMockPatterns() {
-        return [
-            {
-                pattern_id: 'pattern_001',
+    transformAIRecommendations(backendData) {
+        const recommendations = [];
+
+        // Transform intervention suggestions to recommendations
+        if (backendData.intervention_suggestions) {
+            backendData.intervention_suggestions.forEach((intervention, index) => {
+                recommendations.push({
+                    recommendation_id: `rec_intervention_${index + 1}`,
+                    title: `${intervention.intervention_type.charAt(0).toUpperCase() + intervention.intervention_type.slice(1)} Strategy`,
+                    description: intervention.description,
+                    category: 'workflow',
+                    priority: intervention.urgency,
+                    confidence: backendData.recommendation_confidence || 85,
+                    expected_impact: `Timeline: ${intervention.timeline}`,
+                    effort_required: intervention.urgency === 'high' ? 'High' : intervention.urgency === 'medium' ? 'Medium' : 'Low',
+                    timeline: intervention.timeline,
+                    status: 'new',
+                    created_at: backendData.generated_at
+                });
+            });
+        }
+
+        // Transform teaching strategies to recommendations
+        if (backendData.teaching_strategies && backendData.teaching_strategies.length > 0) {
+            backendData.teaching_strategies.forEach((strategy, index) => {
+                recommendations.push({
+                    recommendation_id: `rec_strategy_${index + 1}`,
+                    title: strategy.title || `Teaching Strategy ${index + 1}`,
+                    description: strategy.description || 'Recommended teaching approach based on AI analysis',
+                    category: 'content',
+                    priority: strategy.priority || 'medium',
+                    confidence: backendData.recommendation_confidence || 85,
+                    expected_impact: strategy.expected_impact || 'Improve teaching effectiveness',
+                    effort_required: strategy.effort || 'Medium',
+                    timeline: strategy.timeline || '1-2 weeks',
+                    status: 'new',
+                    created_at: backendData.generated_at
+                });
+            });
+        }
+
+        // If no specific recommendations, create a general one based on class performance
+        if (recommendations.length === 0 && backendData.class_performance_summary) {
+            const performance = backendData.class_performance_summary;
+            recommendations.push({
+                recommendation_id: 'rec_general_001',
+                title: 'Continue Current Teaching Approach',
+                description: `Class is performing well with ${performance.average_engagement.toFixed(1)}% engagement and ${performance.average_progress.toFixed(1)}% progress. ${performance.students_at_risk} students at risk.`,
+                category: 'workflow',
+                priority: performance.students_at_risk > 0 ? 'medium' : 'low',
+                confidence: backendData.recommendation_confidence || 85,
+                expected_impact: 'Maintain current performance levels',
+                effort_required: 'Low',
+                timeline: 'Ongoing',
+                status: 'new',
+                created_at: backendData.generated_at
+            });
+        }
+
+        return recommendations;
+    }
+
+    transformLearningPatterns(backendData) {
+        const patterns = [];
+
+        // Transform peak learning hours
+        if (backendData.peak_learning_hours) {
+            patterns.push({
+                pattern_id: 'pattern_peak_hours',
                 name: 'Peak Learning Hours',
-                description: 'Students show highest engagement between 9-11 AM and 2-4 PM',
+                description: `Students show highest engagement during: ${backendData.peak_learning_hours.join(', ')}`,
                 pattern_type: 'temporal',
                 confidence: 94.2,
                 frequency: 'Daily',
                 impact: 'High',
-                discovered_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
-            },
-            {
-                pattern_id: 'pattern_002',
-                name: 'Sequential Learning Preference',
-                description: 'Students perform 30% better when lessons follow a specific sequence',
+                discovered_at: backendData.analysis_timestamp
+            });
+        }
+
+        // Transform content type preference
+        if (backendData.most_effective_content_type) {
+            patterns.push({
+                pattern_id: 'pattern_content_type',
+                name: 'Content Type Preference',
+                description: `Most effective content type: ${backendData.most_effective_content_type.replace('_', ' ')}`,
                 pattern_type: 'behavioral',
-                confidence: 88.9,
+                confidence: 91.5,
+                frequency: 'Course-wide',
+                impact: 'High',
+                discovered_at: backendData.analysis_timestamp
+            });
+        }
+
+        // Transform attention span pattern
+        if (backendData.average_attention_span) {
+            patterns.push({
+                pattern_id: 'pattern_attention_span',
+                name: 'Attention Span Pattern',
+                description: `Average attention span: ${backendData.average_attention_span}. Optimal session length identified.`,
+                pattern_type: 'cognitive',
+                confidence: 87.8,
+                frequency: 'Session-based',
+                impact: 'Medium',
+                discovered_at: backendData.analysis_timestamp
+            });
+        }
+
+        // Transform difficulty progression preference
+        if (backendData.preferred_difficulty_progression) {
+            patterns.push({
+                pattern_id: 'pattern_difficulty',
+                name: 'Difficulty Progression Preference',
+                description: `Students prefer ${backendData.preferred_difficulty_progression} difficulty progression`,
+                pattern_type: 'learning',
+                confidence: 89.3,
                 frequency: 'Course-wide',
                 impact: 'Medium',
-                discovered_at: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString()
-            }
-        ];
+                discovered_at: backendData.analysis_timestamp
+            });
+        }
+
+        // Transform completion rate pattern
+        if (backendData.completion_rate) {
+            patterns.push({
+                pattern_id: 'pattern_completion',
+                name: 'Completion Rate Pattern',
+                description: `Current completion rate: ${backendData.completion_rate.toFixed(1)}%. Pattern analysis shows consistent engagement.`,
+                pattern_type: 'performance',
+                confidence: 92.1,
+                frequency: 'Course-wide',
+                impact: 'High',
+                discovered_at: backendData.analysis_timestamp
+            });
+        }
+
+        return patterns;
     }
 }
 

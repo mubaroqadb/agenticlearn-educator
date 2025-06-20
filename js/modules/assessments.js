@@ -914,16 +914,15 @@ export class AssessmentManager {
             const response = await apiClient.getAssessmentDetail(assessmentId);
             if (response && response.success && response.data) {
                 this.currentAssessment = response.data;
+                console.log('✅ Assessment detail loaded from backend:', this.currentAssessment);
                 return this.currentAssessment;
             } else {
-                // Fallback to existing assessment data
-                this.currentAssessment = this.assessments.find(a => a.assessment_id === assessmentId);
-                return this.currentAssessment;
+                throw new Error('No assessment detail data received from backend');
             }
         } catch (error) {
-            console.error('Failed to load assessment detail:', error);
-            this.currentAssessment = this.assessments.find(a => a.assessment_id === assessmentId);
-            return this.currentAssessment;
+            console.error('❌ Failed to load assessment detail from backend:', error);
+            UIComponents.showNotification('Failed to load assessment detail: ' + error.message, 'error');
+            return null;
         }
     }
 
@@ -932,71 +931,19 @@ export class AssessmentManager {
             const response = await apiClient.getAssessmentResults(assessmentId);
             if (response && response.success && response.data) {
                 this.assessmentResults = response.data;
+                console.log('✅ Assessment results loaded from backend:', this.assessmentResults);
                 return this.assessmentResults;
             } else {
-                // Generate mock results for demo
-                this.assessmentResults = this.generateMockResults(assessmentId);
-                return this.assessmentResults;
+                throw new Error('No assessment results data received from backend');
             }
         } catch (error) {
-            console.error('Failed to load assessment results:', error);
-            this.assessmentResults = this.generateMockResults(assessmentId);
-            return this.assessmentResults;
+            console.error('❌ Failed to load assessment results from backend:', error);
+            UIComponents.showNotification('Failed to load assessment results: ' + error.message, 'error');
+            return null;
         }
     }
 
-    generateMockResults(assessmentId) {
-        const assessment = this.assessments.find(a => a.assessment_id === assessmentId);
-        if (!assessment) return null;
-
-        return {
-            assessment_id: assessmentId,
-            title: assessment.title,
-            total_students: 3,
-            submitted: 3,
-            completion_rate: 100,
-            average_score: 84.3,
-            analytics: {
-                highest_score: 95,
-                lowest_score: 76,
-                median_score: 82,
-                pass_rate: 100
-            },
-            grade_distribution: {
-                A: 1,
-                B: 2,
-                C: 0,
-                D: 0,
-                F: 0
-            },
-            detailed_results: [
-                {
-                    student_name: 'Ahmad Mahasiswa',
-                    score: 85,
-                    percentage: 85,
-                    letter_grade: 'B',
-                    submitted_at: '2024-01-15T10:30:00Z',
-                    time_taken_minutes: 45
-                },
-                {
-                    student_name: 'Siti Nurhaliza',
-                    score: 82,
-                    percentage: 82,
-                    letter_grade: 'B',
-                    submitted_at: '2024-01-15T11:45:00Z',
-                    time_taken_minutes: 52
-                },
-                {
-                    student_name: 'Budi Santoso',
-                    score: 95,
-                    percentage: 95,
-                    letter_grade: 'A',
-                    submitted_at: '2024-01-15T14:20:00Z',
-                    time_taken_minutes: 38
-                }
-            ]
-        };
-    }
+    // Method removed - now using real backend data only
 
     populateEditForm() {
         if (!this.currentAssessment) return;
