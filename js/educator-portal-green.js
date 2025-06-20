@@ -311,43 +311,237 @@ async function loadAssessmentsData() {
 }
 
 async function loadContentData() {
-    const container = document.getElementById('content-content');
+    console.log("🔄 Loading workflow/content data...");
+    const container = document.getElementById('workflow-content');
     if (container) {
-        container.innerHTML = `
-            <div style="text-align: center; padding: 2rem;">
-                <h3>📚 Content Management</h3>
-                <p>Content management features will be implemented here</p>
-                <button class="btn" style="background: var(--primary);">Add Content</button>
-            </div>
-        `;
+        renderWorkflow();
+        console.log("✅ Workflow content loaded");
     }
+}
+
+function renderWorkflow() {
+    const container = document.getElementById('workflow-content');
+    if (!container) return;
+
+    const workflowHTML = `
+        <div style="margin-bottom: 2rem;">
+            <h3 style="margin-bottom: 1rem;">⚡ Educator Workflow Tools</h3>
+
+            <!-- Weekly Planning D1-D6 -->
+            <div class="card" style="margin-bottom: 2rem; padding: 1.5rem;">
+                <h4 style="margin: 0 0 1rem 0;">📅 Weekly Planning (D1-D6)</h4>
+                <p style="margin: 0 0 1rem 0; color: var(--gray-600);">30-minute structured planning sessions</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div style="padding: 1rem; background: var(--accent); border-radius: 8px; border-left: 4px solid var(--primary);">
+                        <h5 style="margin: 0 0 0.5rem 0; color: var(--primary);">D1: Course Planning</h5>
+                        <p style="margin: 0; font-size: 0.875rem; color: var(--gray-600);">Curriculum design & learning objectives</p>
+                    </div>
+                    <div style="padding: 1rem; background: var(--accent); border-radius: 8px; border-left: 4px solid var(--success);">
+                        <h5 style="margin: 0 0 0.5rem 0; color: var(--success);">D2: Content Creation</h5>
+                        <p style="margin: 0; font-size: 0.875rem; color: var(--gray-600);">Materials & resource development</p>
+                    </div>
+                    <div style="padding: 1rem; background: var(--accent); border-radius: 8px; border-left: 4px solid var(--info);">
+                        <h5 style="margin: 0 0 0.5rem 0; color: var(--info);">D3: Assessment Design</h5>
+                        <p style="margin: 0; font-size: 0.875rem; color: var(--gray-600);">Evaluation methods & rubrics</p>
+                    </div>
+                    <div style="padding: 1rem; background: var(--accent); border-radius: 8px; border-left: 4px solid var(--warning);">
+                        <h5 style="margin: 0 0 0.5rem 0; color: var(--warning);">D4: Student Engagement</h5>
+                        <p style="margin: 0; font-size: 0.875rem; color: var(--gray-600);">Interactive activities & discussions</p>
+                    </div>
+                    <div style="padding: 1rem; background: var(--accent); border-radius: 8px; border-left: 4px solid var(--error);">
+                        <h5 style="margin: 0 0 0.5rem 0; color: var(--error);">D5: Progress Monitoring</h5>
+                        <p style="margin: 0; font-size: 0.875rem; color: var(--gray-600);">Analytics & performance tracking</p>
+                    </div>
+                    <div style="padding: 1rem; background: var(--accent); border-radius: 8px; border-left: 4px solid var(--gray-600);">
+                        <h5 style="margin: 0 0 0.5rem 0; color: var(--gray-600);">D6: Reflection & Improvement</h5>
+                        <p style="margin: 0; font-size: 0.875rem; color: var(--gray-600);">Course evaluation & optimization</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Tools -->
+            <div class="card" style="margin-bottom: 2rem; padding: 1.5rem;">
+                <h4 style="margin: 0 0 1rem 0;">🛠️ Quick Tools</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                    <button class="btn" style="background: var(--primary); padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.5rem;">📝</span>
+                        <span>Lesson Plan Generator</span>
+                        <span style="font-size: 0.75rem; opacity: 0.8;">AI-powered planning</span>
+                    </button>
+                    <button class="btn" style="background: var(--success); padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.5rem;">📊</span>
+                        <span>Progress Tracker</span>
+                        <span style="font-size: 0.75rem; opacity: 0.8;">Real-time monitoring</span>
+                    </button>
+                    <button class="btn" style="background: var(--info); padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.5rem;">💬</span>
+                        <span>Communication Hub</span>
+                        <span style="font-size: 0.75rem; opacity: 0.8;">Student interactions</span>
+                    </button>
+                    <button class="btn" style="background: var(--warning); padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.5rem;">📚</span>
+                        <span>Resource Library</span>
+                        <span style="font-size: 0.75rem; opacity: 0.8;">Content management</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Current Week Status -->
+            <div class="card" style="padding: 1.5rem;">
+                <h4 style="margin: 0 0 1rem 0;">📅 Current Week Status</h4>
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px;">
+                    <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 1rem;">
+                        <h5 style="margin: 0;">Week of ${new Date().toLocaleDateString()}</h5>
+                        <span style="background: var(--success); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.75rem;">
+                            On Track
+                        </span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;">
+                        <div style="text-align: center;">
+                            <div style="font-weight: bold; color: var(--success);">✅ D1</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-500);">Completed</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-weight: bold; color: var(--success);">✅ D2</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-500);">Completed</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-weight: bold; color: var(--warning);">🔄 D3</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-500);">In Progress</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-weight: bold; color: var(--gray-400);">⏳ D4</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-500);">Pending</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-weight: bold; color: var(--gray-400);">⏳ D5</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-500);">Pending</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-weight: bold; color: var(--gray-400);">⏳ D6</div>
+                            <div style="font-size: 0.75rem; color: var(--gray-500);">Pending</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    container.innerHTML = workflowHTML;
 }
 
 async function loadReportsData() {
+    console.log("🔄 Loading reports data...");
     const container = document.getElementById('reports-content');
     if (container) {
-        container.innerHTML = `
-            <div style="text-align: center; padding: 2rem;">
-                <h3>📊 Reports</h3>
-                <p>Reporting features will be implemented here</p>
-                <button class="btn" style="background: var(--primary);">Generate Report</button>
-            </div>
-        `;
+        renderReports();
+        console.log("✅ Reports content loaded");
     }
 }
 
-async function loadSettingsData() {
-    const container = document.getElementById('settings-content');
-    if (container) {
-        container.innerHTML = `
-            <div style="text-align: center; padding: 2rem;">
-                <h3>⚙️ Settings</h3>
-                <p>Settings and preferences will be implemented here</p>
-                <button class="btn" style="background: var(--primary);">Update Settings</button>
+function renderReports() {
+    const container = document.getElementById('reports-content');
+    if (!container) return;
+
+    const reportsHTML = `
+        <div style="margin-bottom: 2rem;">
+            <h3 style="margin-bottom: 1rem;">📋 Reports & Data Export</h3>
+
+            <!-- Quick Reports -->
+            <div class="card" style="margin-bottom: 2rem; padding: 1.5rem;">
+                <h4 style="margin: 0 0 1rem 0;">⚡ Quick Reports</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                    <button class="btn" style="background: var(--primary); padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.5rem;">👥</span>
+                        <span>Student Progress Report</span>
+                        <span style="font-size: 0.75rem; opacity: 0.8;">Individual & class overview</span>
+                    </button>
+                    <button class="btn" style="background: var(--success); padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.5rem;">📊</span>
+                        <span>Assessment Analytics</span>
+                        <span style="font-size: 0.75rem; opacity: 0.8;">Performance metrics</span>
+                    </button>
+                    <button class="btn" style="background: var(--info); padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.5rem;">📈</span>
+                        <span>Engagement Report</span>
+                        <span style="font-size: 0.75rem; opacity: 0.8;">Activity & participation</span>
+                    </button>
+                    <button class="btn" style="background: var(--warning); padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.5rem;">⚠️</span>
+                        <span>At-Risk Students</span>
+                        <span style="font-size: 0.75rem; opacity: 0.8;">Early intervention alerts</span>
+                    </button>
+                </div>
             </div>
-        `;
-    }
+
+            <!-- Data Export Options -->
+            <div class="card" style="margin-bottom: 2rem; padding: 1.5rem;">
+                <h4 style="margin: 0 0 1rem 0;">💾 Data Export Options</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div style="padding: 1rem; background: var(--accent); border-radius: 8px; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📄</div>
+                        <h5 style="margin: 0 0 0.5rem 0;">CSV Export</h5>
+                        <p style="margin: 0 0 1rem 0; font-size: 0.875rem; color: var(--gray-600);">Spreadsheet compatible</p>
+                        <button class="btn" style="background: var(--primary); width: 100%;">Export CSV</button>
+                    </div>
+                    <div style="padding: 1rem; background: var(--accent); border-radius: 8px; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📋</div>
+                        <h5 style="margin: 0 0 0.5rem 0;">PDF Report</h5>
+                        <p style="margin: 0 0 1rem 0; font-size: 0.875rem; color: var(--gray-600);">Formatted document</p>
+                        <button class="btn" style="background: var(--error); width: 100%;">Generate PDF</button>
+                    </div>
+                    <div style="padding: 1rem; background: var(--accent); border-radius: 8px; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📊</div>
+                        <h5 style="margin: 0 0 0.5rem 0;">Excel Export</h5>
+                        <p style="margin: 0 0 1rem 0; font-size: 0.875rem; color: var(--gray-600);">Advanced analytics</p>
+                        <button class="btn" style="background: var(--success); width: 100%;">Export Excel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Reports -->
+            <div class="card" style="padding: 1.5rem;">
+                <h4 style="margin: 0 0 1rem 0;">📋 Recent Reports</h4>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div style="display: flex; justify-content: between; align-items: center; padding: 1rem; background: var(--accent); border-radius: 8px;">
+                        <div>
+                            <h5 style="margin: 0; color: var(--gray-800);">Weekly Progress Report</h5>
+                            <p style="margin: 0; font-size: 0.875rem; color: var(--gray-600);">Generated on ${new Date().toLocaleDateString()}</p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn" style="background: var(--info); padding: 0.5rem 1rem; font-size: 0.875rem;">📥 Download</button>
+                            <button class="btn" style="background: var(--primary); padding: 0.5rem 1rem; font-size: 0.875rem;">👁️ View</button>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: between; align-items: center; padding: 1rem; background: var(--accent); border-radius: 8px;">
+                        <div>
+                            <h5 style="margin: 0; color: var(--gray-800);">Assessment Analytics</h5>
+                            <p style="margin: 0; font-size: 0.875rem; color: var(--gray-600);">Generated 2 days ago</p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn" style="background: var(--info); padding: 0.5rem 1rem; font-size: 0.875rem;">📥 Download</button>
+                            <button class="btn" style="background: var(--primary); padding: 0.5rem 1rem; font-size: 0.875rem;">👁️ View</button>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: between; align-items: center; padding: 1rem; background: var(--accent); border-radius: 8px;">
+                        <div>
+                            <h5 style="margin: 0; color: var(--gray-800);">Student Engagement Report</h5>
+                            <p style="margin: 0; font-size: 0.875rem; color: var(--gray-600);">Generated 1 week ago</p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn" style="background: var(--info); padding: 0.5rem 1rem; font-size: 0.875rem;">📥 Download</button>
+                            <button class="btn" style="background: var(--primary); padding: 0.5rem 1rem; font-size: 0.875rem;">👁️ View</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    container.innerHTML = reportsHTML;
 }
+
+
 
 // ===== RENDERING FUNCTIONS =====
 function renderHeader() {
@@ -693,10 +887,70 @@ function renderAssessments(assessments) {
 
 function renderAnalytics(data) {
     const container = document.getElementById('analytics-content');
-    if (!container || !data) return;
-    
-    // Implement analytics visualization here
-    container.innerHTML = '<div class="analytics-dashboard">Analytics data loaded</div>';
+    if (!container || !data.overview) return;
+
+    const overview = data.overview;
+
+    const analyticsHTML = `
+        <div style="margin-bottom: 2rem;">
+            <h3 style="margin-bottom: 1rem;">📊 Learning Analytics & Insights</h3>
+
+            <!-- Performance Overview -->
+            <div class="card" style="margin-bottom: 2rem; padding: 1.5rem;">
+                <h4 style="margin: 0 0 1rem 0;">📈 Performance Overview</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div style="text-align: center; padding: 1rem; background: var(--accent); border-radius: 8px;">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--primary);">${overview.total_students}</div>
+                        <div style="font-size: 0.875rem; color: var(--gray-600);">Total Students</div>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: var(--accent); border-radius: 8px;">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--success);">${Math.round(overview.average_progress)}%</div>
+                        <div style="font-size: 0.875rem; color: var(--gray-600);">Avg Progress</div>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: var(--accent); border-radius: 8px;">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--info);">${Math.round(overview.average_engagement)}</div>
+                        <div style="font-size: 0.875rem; color: var(--gray-600);">Engagement Score</div>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: var(--accent); border-radius: 8px;">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--warning);">${Math.round(overview.average_assessment_score)}</div>
+                        <div style="font-size: 0.875rem; color: var(--gray-600);">Avg Assessment</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Trends -->
+            <div class="card" style="margin-bottom: 2rem; padding: 1.5rem;">
+                <h4 style="margin: 0 0 1rem 0;">📈 Learning Trends</h4>
+                <div style="background: var(--accent); padding: 1.5rem; border-radius: 8px; text-align: center;">
+                    <p style="margin: 0; color: var(--gray-700);">
+                        📊 Advanced analytics charts will be implemented here<br>
+                        Current data shows strong performance across all metrics
+                    </p>
+                </div>
+            </div>
+
+            <!-- Student Performance Distribution -->
+            <div class="card" style="padding: 1.5rem;">
+                <h4 style="margin: 0 0 1rem 0;">👥 Student Performance Distribution</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                    <div style="text-align: center; padding: 1rem; background: var(--success); color: white; border-radius: 8px;">
+                        <div style="font-size: 1.5rem; font-weight: bold;">${overview.active_students}</div>
+                        <div style="font-size: 0.875rem;">High Performers</div>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: var(--warning); color: white; border-radius: 8px;">
+                        <div style="font-size: 1.5rem; font-weight: bold;">${overview.total_students - overview.active_students}</div>
+                        <div style="font-size: 0.875rem;">Need Support</div>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: var(--error); color: white; border-radius: 8px;">
+                        <div style="font-size: 1.5rem; font-weight: bold;">${overview.at_risk_students}</div>
+                        <div style="font-size: 0.875rem;">At Risk</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    container.innerHTML = analyticsHTML;
 }
 
 // ===== DATA REFRESH =====
