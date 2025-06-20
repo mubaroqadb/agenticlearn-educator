@@ -3,6 +3,12 @@
 import { apiClient } from './core/api-client.js';
 import { UIComponents } from './components/ui-components.js';
 import { dashboardModule } from './modules/dashboard.js';
+import { studentModule } from './modules/students.js';
+import { assessmentModule } from './modules/assessments.js';
+import { communicationModule } from './modules/communication.js';
+import { aiSystemModule } from './modules/ai-system.js';
+import { workflowModule } from './modules/workflow.js';
+import { reportsModule } from './modules/reports.js';
 import { MENU_CONFIG, APP_CONFIG } from './core/config.js';
 import { setInner, show, hide } from './core/utils.js';
 
@@ -15,6 +21,20 @@ class AgenticLearnApp {
             isCollapsed: false,
             activeMenu: 'beranda'
         };
+        this.initializeModules();
+    }
+
+    initializeModules() {
+        // Register all modules
+        this.modules.set('beranda', dashboardModule);
+        this.modules.set('students', studentModule);
+        this.modules.set('assessments', assessmentModule);
+        this.modules.set('communication', communicationModule);
+        this.modules.set('ai-recommendations', aiSystemModule);
+        this.modules.set('workflow', workflowModule);
+        this.modules.set('reports', reportsModule);
+
+        console.log('📦 Modules registered:', Array.from(this.modules.keys()));
     }
 
     async initialize() {
@@ -95,18 +115,23 @@ class AgenticLearnApp {
 
     async initializeModules() {
         console.log('🔧 Initializing modules...');
-        
-        // Register modules
-        this.modules.set('beranda', dashboardModule);
-        // TODO: Add other modules as they are created
-        // this.modules.set('students', studentsModule);
-        // this.modules.set('communication', communicationModule);
-        // this.modules.set('assessments', assessmentsModule);
-        // this.modules.set('ai-recommendations', aiRecommendationsModule);
-        // this.modules.set('reports', reportsModule);
-        
-        // Initialize dashboard module
-        await dashboardModule.initialize();
+
+        // Initialize all modules
+        for (const [moduleId, module] of this.modules) {
+            try {
+                if (typeof module.initialize === 'function') {
+                    console.log(`🔧 Initializing ${moduleId} module...`);
+                    // Only initialize dashboard by default, others on demand
+                    if (moduleId === 'beranda') {
+                        await module.initialize();
+                    }
+                }
+            } catch (error) {
+                console.error(`❌ Failed to initialize ${moduleId} module:`, error);
+            }
+        }
+
+        console.log('✅ Modules initialized successfully');
     }
 
     async showPage(pageId) {

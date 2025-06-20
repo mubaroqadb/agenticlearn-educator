@@ -197,85 +197,67 @@ export class EducatorAPIClient {
         return await this.request(`${API_CONFIG.ENDPOINTS.DATA_EXPORT}?type=${type}&format=${format}`);
     }
 
-    async getMessages() {
-        return await this.request(API_CONFIG.ENDPOINTS.MESSAGES_LIST);
+    // ✅ WORKFLOW METHODS
+
+    async getWorkflowList() {
+        return await this.request(API_CONFIG.ENDPOINTS.WORKFLOW_LIST);
     }
 
-    async sendMessage(messageData) {
+    async createWorkflow(workflowData) {
+        return await this.request(API_CONFIG.ENDPOINTS.WORKFLOW_CREATE, {
+            method: 'POST',
+            body: workflowData
+        });
+    }
+
+    async executeWorkflow(workflowData) {
+        return await this.request(API_CONFIG.ENDPOINTS.WORKFLOW_EXECUTE, {
+            method: 'POST',
+            body: workflowData
+        });
+    }
+
+    async getWorkflowHistory() {
+        return await this.request(API_CONFIG.ENDPOINTS.WORKFLOW_HISTORY);
+    }
+
+    // ✅ REPORTS METHODS
+
+    async generateReport(reportData) {
+        return await this.request(API_CONFIG.ENDPOINTS.REPORTS_GENERATE, {
+            method: 'POST',
+            body: reportData
+        });
+    }
+
+    async getReportsHistory() {
+        return await this.request(API_CONFIG.ENDPOINTS.REPORTS_HISTORY);
+    }
+
+    async downloadReport(reportId) {
+        return await this.request(`${API_CONFIG.ENDPOINTS.REPORTS_DOWNLOAD}?report_id=${reportId}`);
+    }
+
+    async getAdvancedAnalytics() {
+        return await this.request(API_CONFIG.ENDPOINTS.ADVANCED_ANALYTICS);
+    }
+
+    // ✅ BULK MESSAGE METHOD
+
+    async sendBulkMessage(messageData) {
         return await this.request(API_CONFIG.ENDPOINTS.SEND_MESSAGE, {
             method: 'POST',
             body: messageData
         });
     }
 
-    async getAnnouncements() {
-        return await this.request(API_CONFIG.ENDPOINTS.ANNOUNCEMENTS_LIST);
-    }
-
-    async createAnnouncement(announcementData) {
-        return await this.request(API_CONFIG.ENDPOINTS.CREATE_ANNOUNCEMENT, {
-            method: 'POST',
-            body: announcementData
-        });
-    }
-
-    async getNotifications() {
-        return await this.request(API_CONFIG.ENDPOINTS.NOTIFICATIONS);
-    }
+    // ✅ UTILITY METHODS
 
     async markNotificationRead(notificationId) {
         return await this.request(API_CONFIG.ENDPOINTS.MARK_NOTIFICATION_READ, {
             method: 'POST',
             body: { notification_id: notificationId }
         });
-    }
-
-    async getAssessments() {
-        return await this.request(API_CONFIG.ENDPOINTS.ASSESSMENTS_LIST);
-    }
-
-    async getAssessmentDetail(assessmentId) {
-        return await this.request(`${API_CONFIG.ENDPOINTS.ASSESSMENT_DETAIL}?assessment_id=${assessmentId}`);
-    }
-
-    async createAssessment(assessmentData) {
-        return await this.request(API_CONFIG.ENDPOINTS.CREATE_ASSESSMENT, {
-            method: 'POST',
-            body: assessmentData
-        });
-    }
-
-    async updateAssessment(assessmentId, updateData) {
-        return await this.request(`${API_CONFIG.ENDPOINTS.UPDATE_ASSESSMENT}?assessment_id=${assessmentId}`, {
-            method: 'PUT',
-            body: updateData
-        });
-    }
-
-    async deleteAssessment(assessmentId) {
-        return await this.request(`${API_CONFIG.ENDPOINTS.DELETE_ASSESSMENT}?assessment_id=${assessmentId}`, {
-            method: 'DELETE'
-        });
-    }
-
-    async getAssessmentResults(assessmentId) {
-        return await this.request(`${API_CONFIG.ENDPOINTS.ASSESSMENT_RESULTS}?assessment_id=${assessmentId}`);
-    }
-
-    async getAIInsights() {
-        return await this.request(API_CONFIG.ENDPOINTS.AI_INSIGHTS);
-    }
-
-    async getAIRecommendations() {
-        return await this.request(API_CONFIG.ENDPOINTS.AI_RECOMMENDATIONS);
-    }
-
-    async getAILearningPatterns() {
-        return await this.request(API_CONFIG.ENDPOINTS.AI_LEARNING_PATTERNS);
-    }
-
-    async exportData(type, format) {
-        return await this.request(`${API_CONFIG.ENDPOINTS.DATA_EXPORT}?type=${type}&format=${format}`);
     }
 
     async testConnection() {

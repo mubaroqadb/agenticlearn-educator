@@ -40,7 +40,19 @@ export const API_CONFIG = {
         // ✅ DATA MANAGEMENT - Per Backend Documentation
         DATA_EXPORT: "/api/agenticlearn/educator/data/export",
         DATA_IMPORT: "/api/agenticlearn/educator/data/import",
-        DATA_POPULATE: "/api/agenticlearn/educator/data/populate"
+        DATA_POPULATE: "/api/agenticlearn/educator/data/populate",
+
+        // ✅ WORKFLOW TOOLS - D1-D24 Automation
+        WORKFLOW_LIST: "/api/agenticlearn/educator/workflow/list",
+        WORKFLOW_CREATE: "/api/agenticlearn/educator/workflow/create",
+        WORKFLOW_EXECUTE: "/api/agenticlearn/educator/workflow/execute",
+        WORKFLOW_HISTORY: "/api/agenticlearn/educator/workflow/history",
+
+        // ✅ REPORTS & ANALYTICS
+        REPORTS_GENERATE: "/api/agenticlearn/educator/reports/generate",
+        REPORTS_HISTORY: "/api/agenticlearn/educator/reports/history",
+        REPORTS_DOWNLOAD: "/api/agenticlearn/educator/reports/download",
+        ADVANCED_ANALYTICS: "/api/agenticlearn/educator/analytics/advanced"
     }
 };
 
