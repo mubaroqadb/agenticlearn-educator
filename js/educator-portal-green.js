@@ -123,7 +123,7 @@ async function initializePortal() {
             'success'
         );
         
-        // 6. Mark portal as initialized
+        // 6. Mark portal as initialized and expose global objects
         window.educatorPortal = {
             initialized: true,
             api: api,
@@ -131,6 +131,9 @@ async function initializePortal() {
             loadPage: loadPage,
             refreshData: refreshData
         };
+
+        // 7. Expose global API client for modules
+        window.apiClient = api;
         
         console.log('✅ Portal initialized with AgenticAI backend');
         
@@ -255,16 +258,25 @@ async function loadDashboardData() {
 
 async function loadStudentsData() {
     console.log("🔄 Loading students data from AgenticAI...");
-    const response = await api.request(API_CONFIG.ENDPOINTS.STUDENTS_LIST);
-    console.log("👥 Students response:", response);
 
-    if (response && response.success && response.data) {
-        state.students = response.data;
-        renderStudents(response.data);
-        console.log("✅ Students data loaded from AgenticAI database");
-    } else {
-        console.error("❌ AgenticAI students endpoint failed:", response);
-        throw new Error("Students data unavailable - no fallback per Green Computing");
+    try {
+        // Import and initialize students manager
+        const { StudentsManager } = await import('./modules/students.js');
+
+        // Create global students manager instance
+        if (!window.studentsManager) {
+            window.studentsManager = new StudentsManager();
+            console.log("✅ Students manager initialized");
+        }
+
+        // Load and render students
+        await window.studentsManager.loadStudents();
+        window.studentsManager.renderStudentInterface();
+
+        console.log("✅ Students module loaded and initialized");
+    } catch (error) {
+        console.error("❌ Failed to load students module:", error);
+        throw new Error("Students module unavailable - " + error.message);
     }
 }
 
@@ -284,29 +296,49 @@ async function loadAnalyticsData() {
 
 async function loadCommunicationData() {
     console.log("🔄 Loading communication data from AgenticAI...");
-    const response = await api.request(API_CONFIG.ENDPOINTS.MESSAGES_LIST);
-    console.log("💬 Messages response:", response);
 
-    if (response && response.success && response.data) {
-        renderCommunication(response.data);
-        console.log("✅ Communication data loaded from AgenticAI database");
-    } else {
-        console.error("❌ AgenticAI communication endpoint failed:", response);
-        throw new Error("Communication data unavailable - no fallback per Green Computing");
+    try {
+        // Import and initialize communication manager
+        const { CommunicationManager } = await import('./modules/communication.js');
+
+        // Create global communication manager instance
+        if (!window.communicationManager) {
+            window.communicationManager = new CommunicationManager();
+            console.log("✅ Communication manager initialized");
+        }
+
+        // Load and render communication
+        await window.communicationManager.loadMessages();
+        window.communicationManager.renderCommunicationInterface();
+
+        console.log("✅ Communication module loaded and initialized");
+    } catch (error) {
+        console.error("❌ Failed to load communication module:", error);
+        throw new Error("Communication module unavailable - " + error.message);
     }
 }
 
 async function loadAssessmentsData() {
     console.log("🔄 Loading assessments data from AgenticAI...");
-    const response = await api.request(API_CONFIG.ENDPOINTS.ASSESSMENTS_LIST);
-    console.log("📝 Assessments response:", response);
 
-    if (response && response.success && response.data) {
-        renderAssessments(response.data);
-        console.log("✅ Assessments data loaded from AgenticAI database");
-    } else {
-        console.error("❌ AgenticAI assessments endpoint failed:", response);
-        throw new Error("Assessments data unavailable - no fallback per Green Computing");
+    try {
+        // Import and initialize assessment manager
+        const { AssessmentManager } = await import('./modules/assessments.js');
+
+        // Create global assessment manager instance
+        if (!window.assessmentManager) {
+            window.assessmentManager = new AssessmentManager();
+            console.log("✅ Assessment manager initialized");
+        }
+
+        // Load and render assessments
+        await window.assessmentManager.loadAssessments();
+        window.assessmentManager.renderAssessmentInterface();
+
+        console.log("✅ Assessments module loaded and initialized");
+    } catch (error) {
+        console.error("❌ Failed to load assessments module:", error);
+        throw new Error("Assessments module unavailable - " + error.message);
     }
 }
 
