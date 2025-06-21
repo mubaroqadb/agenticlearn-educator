@@ -726,6 +726,7 @@ export class AssessmentManager {
 
             if (response && response.success) {
                 UIComponents.showNotification('Assessment created successfully!', 'success');
+                this.resetCreateForm();
                 await this.loadAssessments();
                 this.switchView('list');
             } else {
@@ -853,18 +854,31 @@ export class AssessmentManager {
     }
 
     async deleteAssessment(assessmentId) {
-        if (!confirm('Are you sure you want to delete this assessment? This action cannot be undone.')) {
-            return;
-        }
+        const assessment = this.assessments.find(a => a.assessment_id === assessmentId);
+        const assessmentTitle = assessment ? assessment.title : 'this assessment';
 
+        UIComponents.showConfirmation(
+            'Delete Assessment',
+            `Are you sure you want to delete "${assessmentTitle}"? This action cannot be undone and will permanently remove all associated data.`,
+            `assessmentManager.confirmDeleteAssessment('${assessmentId}')`
+        );
+    }
+
+    async confirmDeleteAssessment(assessmentId) {
         try {
             console.log('🔄 Deleting assessment:', assessmentId);
+
+            // Show loading notification
+            UIComponents.showNotification('Deleting assessment...', 'info');
+
             const response = await apiClient.deleteAssessment(assessmentId);
 
             if (response && response.success) {
                 UIComponents.showNotification('Assessment deleted successfully!', 'success');
                 await this.loadAssessments();
                 this.renderAssessmentInterface();
+            } else {
+                throw new Error('Failed to delete assessment from backend');
             }
         } catch (error) {
             console.error('❌ Failed to delete assessment:', error);
@@ -1044,6 +1058,37 @@ export class AssessmentManager {
         }
 
         return { isValid: true, message: 'Validation passed' };
+    }
+
+    resetCreateForm() {
+        setTimeout(() => {
+            const form = document.getElementById('create-assessment-form');
+            if (form) {
+                form.reset();
+
+                // Reset questions container to have only one question
+                const questionsContainer = document.getElementById('questions-container');
+                if (questionsContainer) {
+                    const questionItems = questionsContainer.querySelectorAll('.question-item');
+                    // Remove all but the first question
+                    for (let i = 1; i < questionItems.length; i++) {
+                        questionItems[i].remove();
+                    }
+
+                    // Clear the first question
+                    const firstQuestion = questionsContainer.querySelector('.question-item');
+                    if (firstQuestion) {
+                        firstQuestion.querySelectorAll('input, textarea, select').forEach(input => {
+                            if (input.type !== 'number') {
+                                input.value = '';
+                            } else {
+                                input.value = input.defaultValue || '';
+                            }
+                        });
+                    }
+                }
+            }
+        }, 100);
     }
 
     populateEditForm() {

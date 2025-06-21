@@ -49,6 +49,44 @@ export class UIComponents {
         }
     }
 
+    static showConfirmation(title, message, onConfirm, onCancel = null) {
+        const confirmationHTML = `
+            <div class="modal-content" style="max-width: 500px;">
+                <div class="modal-header">
+                    <h3>⚠️ ${title}</h3>
+                </div>
+                <div class="modal-body">
+                    <p style="margin: 0; color: var(--gray-700); line-height: 1.5;">
+                        ${message}
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="UIComponents.hideConfirmation(); ${onCancel ? onCancel + '()' : ''}">
+                        Cancel
+                    </button>
+                    <button class="btn btn-danger" onclick="UIComponents.hideConfirmation(); ${onConfirm}()">
+                        Confirm
+                    </button>
+                </div>
+            </div>
+        `;
+
+        const modal = document.getElementById('confirmation-modal');
+        if (modal) {
+            modal.innerHTML = confirmationHTML;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    static hideConfirmation() {
+        const modal = document.getElementById('confirmation-modal');
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    }
+
     // ===== LOADING STATES =====
 
     static showLoading(elementId, message = 'Loading...') {
