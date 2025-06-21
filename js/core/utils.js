@@ -66,13 +66,24 @@ export function formatDate(timestamp, format = 'short') {
 
 export function formatDuration(minutes) {
     if (!minutes || minutes === 0) return '0 min';
-    
+
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
-    
+
     if (hours === 0) return `${mins} min`;
     if (mins === 0) return `${hours}h`;
     return `${hours}h ${mins}m`;
+}
+
+export function formatTime(timestamp) {
+    if (!timestamp) return 'N/A';
+
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+    });
 }
 
 // ===== NUMBER UTILITIES =====
@@ -280,4 +291,46 @@ export function throttle(func, limit) {
             setTimeout(() => inThrottle = false, limit);
         }
     };
+}
+
+// ===== NOTIFICATION UTILITIES =====
+
+export function showError(message) {
+    console.error('❌ Error:', message);
+    // Use UIComponents if available, otherwise fallback to console
+    if (typeof UIComponents !== 'undefined' && UIComponents.showNotification) {
+        UIComponents.showNotification(message, 'error');
+    } else {
+        alert('Error: ' + message);
+    }
+}
+
+export function showSuccess(message) {
+    console.log('✅ Success:', message);
+    // Use UIComponents if available, otherwise fallback to console
+    if (typeof UIComponents !== 'undefined' && UIComponents.showNotification) {
+        UIComponents.showNotification(message, 'success');
+    } else {
+        alert('Success: ' + message);
+    }
+}
+
+export function showWarning(message) {
+    console.warn('⚠️ Warning:', message);
+    // Use UIComponents if available, otherwise fallback to console
+    if (typeof UIComponents !== 'undefined' && UIComponents.showNotification) {
+        UIComponents.showNotification(message, 'warning');
+    } else {
+        alert('Warning: ' + message);
+    }
+}
+
+export function showInfo(message) {
+    console.info('ℹ️ Info:', message);
+    // Use UIComponents if available, otherwise fallback to console
+    if (typeof UIComponents !== 'undefined' && UIComponents.showNotification) {
+        UIComponents.showNotification(message, 'info');
+    } else {
+        alert('Info: ' + message);
+    }
 }
