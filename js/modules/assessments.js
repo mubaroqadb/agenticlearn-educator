@@ -693,12 +693,19 @@ export class AssessmentManager {
     async handleCreateAssessment(event) {
         event.preventDefault();
 
+        console.log('🔥 ENHANCED VALIDATION ACTIVE - Testing new validation system');
+
         // Validate form data
         const validationResult = this.validateAssessmentForm();
+        console.log('🔍 Validation result:', validationResult);
+
         if (!validationResult.isValid) {
+            console.log('❌ Validation failed:', validationResult.message);
             UIComponents.showNotification(validationResult.message, 'warning');
             return;
         }
+
+        console.log('✅ Validation passed, proceeding with creation');
 
         // Collect form data
         const questions = this.collectQuestions();
@@ -983,11 +990,15 @@ export class AssessmentManager {
     // Method removed - now using real backend data only
 
     validateAssessmentForm() {
+        console.log('🚀 VALIDATION FUNCTION CALLED - Enhanced validation is working!');
+
         const title = document.getElementById('assessment-title')?.value?.trim();
         const points = document.getElementById('assessment-points')?.value;
         const duration = document.getElementById('assessment-duration')?.value;
         const dueDate = document.getElementById('assessment-due-date')?.value;
         const questions = this.collectQuestions();
+
+        console.log('📝 Form data:', { title, points, duration, dueDate, questionsCount: questions.length });
 
         // Title validation
         if (!title || title.length < 3) {
