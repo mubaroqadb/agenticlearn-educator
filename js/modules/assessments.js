@@ -693,11 +693,18 @@ export class AssessmentManager {
     async handleCreateAssessment(event) {
         event.preventDefault();
 
+        // Validate form data
+        const validationResult = this.validateAssessmentForm();
+        if (!validationResult.isValid) {
+            UIComponents.showNotification(validationResult.message, 'warning');
+            return;
+        }
+
         // Collect form data
         const questions = this.collectQuestions();
         const formData = {
-            title: document.getElementById('assessment-title').value,
-            description: document.getElementById('assessment-description').value,
+            title: document.getElementById('assessment-title').value.trim(),
+            description: document.getElementById('assessment-description').value.trim(),
             course_id: document.getElementById('assessment-course').value,
             total_points: parseInt(document.getElementById('assessment-points').value),
             duration_minutes: parseInt(document.getElementById('assessment-duration').value),
@@ -708,16 +715,32 @@ export class AssessmentManager {
 
         try {
             console.log('🔄 Creating assessment...', formData);
+
+            // Show loading state
+            const submitButton = event.target.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = '⏳ Creating...';
+            submitButton.disabled = true;
+
             const response = await apiClient.createAssessment(formData);
 
             if (response && response.success) {
                 UIComponents.showNotification('Assessment created successfully!', 'success');
                 await this.loadAssessments();
                 this.switchView('list');
+            } else {
+                throw new Error(response?.message || 'Failed to create assessment');
             }
         } catch (error) {
             console.error('❌ Failed to create assessment:', error);
             UIComponents.showNotification('Failed to create assessment: ' + error.message, 'error');
+        } finally {
+            // Reset button state
+            const submitButton = event.target.querySelector('button[type="submit"]');
+            if (submitButton) {
+                submitButton.textContent = '✅ Create Assessment';
+                submitButton.disabled = false;
+            }
         }
     }
 
@@ -944,6 +967,84 @@ export class AssessmentManager {
     }
 
     // Method removed - now using real backend data only
+
+    validateAssessmentForm() {
+        const title = document.getElementById('assessment-title')?.value?.trim();
+        const points = document.getElementById('assessment-points')?.value;
+        const duration = document.getElementById('assessment-duration')?.value;
+        const dueDate = document.getElementById('assessment-due-date')?.value;
+        const questions = this.collectQuestions();
+
+        // Title validation
+        if (!title || title.length < 3) {
+            return { isValid: false, message: 'Assessment title must be at least 3 characters long' };
+        }
+
+        if (title.length > 100) {
+            return { isValid: false, message: 'Assessment title must be less than 100 characters' };
+        }
+
+        // Points validation
+        if (!points || isNaN(points) || parseInt(points) < 1) {
+            return { isValid: false, message: 'Total points must be a positive number' };
+        }
+
+        if (parseInt(points) > 1000) {
+            return { isValid: false, message: 'Total points cannot exceed 1000' };
+        }
+
+        // Duration validation
+        if (!duration || isNaN(duration) || parseInt(duration) < 5) {
+            return { isValid: false, message: 'Duration must be at least 5 minutes' };
+        }
+
+        if (parseInt(duration) > 480) {
+            return { isValid: false, message: 'Duration cannot exceed 8 hours (480 minutes)' };
+        }
+
+        // Due date validation
+        if (!dueDate) {
+            return { isValid: false, message: 'Due date is required' };
+        }
+
+        const dueDateObj = new Date(dueDate);
+        const now = new Date();
+        if (dueDateObj <= now) {
+            return { isValid: false, message: 'Due date must be in the future' };
+        }
+
+        // Questions validation
+        if (questions.length === 0) {
+            return { isValid: false, message: 'At least one question is required' };
+        }
+
+        if (questions.length > 50) {
+            return { isValid: false, message: 'Maximum 50 questions allowed' };
+        }
+
+        // Validate each question
+        for (let i = 0; i < questions.length; i++) {
+            const question = questions[i];
+
+            if (!question.question_text || question.question_text.trim().length < 5) {
+                return { isValid: false, message: `Question ${i + 1}: Question text must be at least 5 characters long` };
+            }
+
+            if (question.points < 1 || question.points > 100) {
+                return { isValid: false, message: `Question ${i + 1}: Points must be between 1 and 100` };
+            }
+
+            if (question.question_type === 'multiple_choice' && question.options.length < 2) {
+                return { isValid: false, message: `Question ${i + 1}: Multiple choice questions need at least 2 options` };
+            }
+
+            if (!question.correct_answer || question.correct_answer.trim().length === 0) {
+                return { isValid: false, message: `Question ${i + 1}: Correct answer is required` };
+            }
+        }
+
+        return { isValid: true, message: 'Validation passed' };
+    }
 
     populateEditForm() {
         if (!this.currentAssessment) return;

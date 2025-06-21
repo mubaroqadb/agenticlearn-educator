@@ -453,11 +453,15 @@ export class StudentModule {
         console.log('👁️ Viewing student detail:', studentId);
 
         try {
+            // Show loading modal first
+            this.showLoadingModal('Loading student details...');
+
             // Get detailed student data from backend
             const response = await apiClient.getStudentDetail(studentId);
 
             if (response && response.success && response.data) {
                 this.currentStudent = response.data;
+                console.log('✅ Student detail loaded from backend:', this.currentStudent);
                 this.renderStudentDetailModal();
                 this.showModal('student-modal');
             } else {
@@ -467,13 +471,16 @@ export class StudentModule {
                     this.currentStudent = student;
                     this.renderStudentDetailModal();
                     this.showModal('student-modal');
+                    UIComponents.showNotification('Using cached student data', 'info');
                 } else {
                     UIComponents.showNotification('Student not found', 'error');
                 }
             }
         } catch (error) {
             console.error('Failed to load student detail:', error);
-            UIComponents.showNotification('Failed to load student details', 'error');
+            UIComponents.showNotification('Failed to load student details: ' + error.message, 'error');
+        } finally {
+            this.hideLoadingModal();
         }
     }
 
@@ -989,6 +996,38 @@ export class StudentModule {
             modal.style.display = 'none';
             document.body.style.overflow = 'auto';
         }
+    }
+
+    showLoadingModal(message = 'Loading...') {
+        const loadingHTML = `
+            <div class="modal-content" style="max-width: 400px; text-align: center;">
+                <div class="modal-body" style="padding: 2rem;">
+                    <div class="loading-spinner" style="
+                        width: 40px;
+                        height: 40px;
+                        border: 4px solid var(--accent);
+                        border-top: 4px solid var(--primary);
+                        border-radius: 50%;
+                        animation: spin 1s linear infinite;
+                        margin: 0 auto 1rem;
+                    "></div>
+                    <h3 style="margin: 0; color: var(--gray-700);">${message}</h3>
+                </div>
+            </div>
+            <style>
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            </style>
+        `;
+
+        setInner('loading-modal', loadingHTML);
+        this.showModal('loading-modal');
+    }
+
+    hideLoadingModal() {
+        this.hideModal('loading-modal');
     }
 
     bindEventHandlers() {
