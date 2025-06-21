@@ -9,9 +9,9 @@ export const API_CONFIG = {
         // ✅ ANALYTICS & DASHBOARD - Fixed endpoint per backend documentation
         DASHBOARD_ANALYTICS: "/api/agenticlearn/educator/analytics/dashboard",
 
-        // ✅ STUDENT MANAGEMENT - Per Backend Documentation
+        // ✅ STUDENT MANAGEMENT - CORRECTED endpoints per backend
         STUDENTS_LIST: "/api/agenticlearn/educator/students/list",
-        STUDENT_DETAIL: "/api/agenticlearn/educator/students/detail",
+        STUDENT_DETAIL: "/api/agenticlearn/educator/student/detail",
 
         // ✅ ASSESSMENT MANAGEMENT - CORRECTED endpoints per backend
         ASSESSMENTS_LIST: "/api/agenticlearn/educator/assessments/list",
