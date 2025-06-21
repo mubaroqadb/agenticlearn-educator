@@ -425,9 +425,44 @@
             }
         };
 
+        // Global navigation function - CRITICAL FIX
+        window.showPage = function(pageName) {
+            console.log('🔄 Navigating to page:', pageName);
+
+            // Update active menu item
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Find and activate current menu item
+            const currentMenuItem = document.querySelector(`[onclick="showPage('${pageName}')"]`);
+            if (currentMenuItem) {
+                currentMenuItem.classList.add('active');
+            }
+
+            // Use portal's loadPage if available, otherwise fallback
+            if (window.educatorPortal && window.educatorPortal.loadPage) {
+                window.educatorPortal.loadPage(pageName);
+            } else {
+                console.log('⚠️ Portal not ready, will load when initialized');
+                // Store the requested page for later
+                window.pendingPage = pageName;
+            }
+        };
+
         // Log when portal is ready (no timeout needed)
         document.addEventListener('DOMContentLoaded', () => {
             console.log("🌱 Green Computing Portal: DOM ready, loading modules...");
+
+            // Check for pending page navigation
+            if (window.pendingPage) {
+                setTimeout(() => {
+                    if (window.educatorPortal && window.educatorPortal.loadPage) {
+                        window.educatorPortal.loadPage(window.pendingPage);
+                        window.pendingPage = null;
+                    }
+                }, 1000);
+            }
         });
     </script>
 
