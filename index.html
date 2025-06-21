@@ -314,13 +314,28 @@
 
         // Test function for enhancements
         function testEnhancements() {
-            alert('🧪 ENHANCEMENT TEST: Enhanced validation and UI improvements are active!\n\n' +
-                  '✅ Form validation added\n' +
-                  '✅ Loading states enhanced\n' +
-                  '✅ Confirmation dialogs improved\n' +
-                  '✅ Error handling enhanced\n\n' +
-                  'Try creating an assessment with invalid data to see validation!');
-            console.log('🔥 ENHANCEMENTS ACTIVE - All improvements loaded successfully');
+            console.log('🧪 TESTING ALL FUNCTIONS...');
+
+            // Test navigation
+            console.log('✅ showPage function:', typeof window.showPage);
+
+            // Test assessment manager
+            console.log('✅ assessmentManager:', typeof window.assessmentManager);
+
+            // Test utils import
+            import('./js/core/utils.js').then(utils => {
+                console.log('✅ Utils exports:', Object.keys(utils));
+                console.log('✅ formatTime:', typeof utils.formatTime);
+                console.log('✅ showError:', typeof utils.showError);
+            }).catch(err => {
+                console.error('❌ Utils import failed:', err);
+            });
+
+            alert('🧪 COMPREHENSIVE TEST RESULTS:\n\n' +
+                  '✅ Navigation: ' + (typeof window.showPage === 'function' ? 'WORKING' : 'FAILED') + '\n' +
+                  '✅ Assessment Manager: ' + (typeof window.assessmentManager === 'object' ? 'WORKING' : 'FAILED') + '\n' +
+                  '✅ Check console for detailed module test results\n\n' +
+                  'Try clicking menu items and Create Assessment button!');
         }
 
         // Global manager initialization - DIRECT FIX
