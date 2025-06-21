@@ -796,28 +796,13 @@ export class AIRecommendationsModule {
         try {
             UIComponents.showNotification('Analyzing teaching data...', 'info');
 
-            // Simulate AI analysis
-            await new Promise(resolve => setTimeout(resolve, 2000));
-
-            // Add new mock insight
-            const newInsight = {
-                insight_id: `insight_${Date.now()}`,
-                title: 'New Learning Opportunity Detected',
-                description: 'AI has identified a new pattern in student learning behavior that could improve outcomes.',
-                category: 'engagement',
-                priority: 'medium',
-                confidence: 91.2,
-                impact_score: 7.5,
-                created_at: new Date().toISOString(),
-                status: 'new'
-            };
-
-            this.insights.unshift(newInsight);
+            // Get fresh AI insights from backend
+            await this.loadInsights();
             this.renderCurrentTab();
-            UIComponents.showNotification('New AI insights generated successfully!', 'success');
+            UIComponents.showNotification('AI insights refreshed from backend!', 'success');
         } catch (error) {
             console.error('Failed to generate insights:', error);
-            UIComponents.showNotification('Failed to generate insights', 'error');
+            UIComponents.showNotification('Failed to refresh AI insights: ' + error.message, 'error');
         }
     }
 
@@ -953,21 +938,15 @@ export class AIRecommendationsModule {
         console.log('📈 Analyzing learning patterns...');
         UIComponents.showNotification('Analyzing student learning patterns...', 'info');
 
-        // Add new mock pattern
-        const newPattern = {
-            pattern_id: `pattern_${Date.now()}`,
-            name: 'New Behavioral Pattern',
-            description: 'AI has detected a new learning behavior pattern in your students.',
-            pattern_type: 'behavioral',
-            confidence: 89.5,
-            frequency: 'Weekly',
-            impact: 'Medium',
-            discovered_at: new Date().toISOString()
-        };
-
-        this.learningPatterns.unshift(newPattern);
-        this.renderCurrentTab();
-        UIComponents.showNotification('New learning pattern discovered!', 'success');
+        try {
+            // Get fresh learning patterns from backend
+            await this.loadLearningPatterns();
+            this.renderCurrentTab();
+            UIComponents.showNotification('Learning patterns refreshed from backend!', 'success');
+        } catch (error) {
+            console.error('Failed to analyze patterns:', error);
+            UIComponents.showNotification('Failed to refresh learning patterns: ' + error.message, 'error');
+        }
     }
 
     showLoadingState() {

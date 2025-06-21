@@ -472,33 +472,28 @@ export class RealTimeMonitoring {
     }
 
     async generateActivityFeed() {
-        // Generate simulated activity feed
-        // In production, this would come from the backend
-        const activities = [
-            {
-                id: 'act_001',
-                type: 'login',
-                title: 'Ahmad Mahasiswa logged in',
-                description: 'Started Digital Literacy Module 3',
-                timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString()
-            },
-            {
-                id: 'act_002',
-                type: 'completion',
-                title: 'Siti Pelajar completed lesson',
-                description: 'Finished "Introduction to Programming" with 85% score',
-                timestamp: new Date(Date.now() - 15 * 60 * 1000).toISOString()
-            },
-            {
-                id: 'act_003',
-                type: 'progress',
-                title: 'Budi Santoso made progress',
-                description: 'Advanced to 60% completion in current module',
-                timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString()
+        try {
+            // Get real activity data from backend
+            const studentsResponse = await window.educatorAPI?.request('/api/agenticlearn/educator/students/list');
+            if (studentsResponse && studentsResponse.success && studentsResponse.data) {
+                // Transform student data into activity feed
+                const activities = studentsResponse.data.map((student, index) => ({
+                    id: `act_${student.student_id}`,
+                    type: student.days_since_active <= 1 ? 'login' : 'progress',
+                    title: `${student.name} ${student.days_since_active <= 1 ? 'recently active' : 'making progress'}`,
+                    description: `Progress: ${student.progress_percentage}% | Score: ${student.average_score}% | Risk: ${student.risk_level}`,
+                    timestamp: student.last_active
+                }));
+
+                return activities.slice(0, 5); // Limit to 5 most recent
             }
-        ];
-        
-        return activities;
+
+            // If no backend data available, return empty array
+            return [];
+        } catch (error) {
+            console.error('Failed to load real activity feed:', error);
+            return [];
+        }
     }
 
     calculateUptime() {

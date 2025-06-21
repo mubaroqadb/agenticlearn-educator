@@ -787,29 +787,7 @@ export class WorkflowModule {
         stepsContainer.appendChild(newStep);
     }
 
-    generateMockExecutions() {
-        return [
-            {
-                execution_id: 'exec_001',
-                workflow_id: 'workflow_001',
-                workflow_name: 'Student Onboarding',
-                status: 'completed',
-                started_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-                completed_at: new Date(Date.now() - 1.5 * 60 * 60 * 1000).toISOString(),
-                duration: 1800, // 30 minutes
-                success_rate: 100
-            },
-            {
-                execution_id: 'exec_002',
-                workflow_id: 'workflow_002',
-                workflow_name: 'Weekly Assessment',
-                status: 'running',
-                started_at: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-                duration: 1800,
-                success_rate: 85
-            }
-        ];
-    }
+    // Mock execution method removed - using only real backend data
 
     renderExecutionHistory() {
         const executionsHTML = `

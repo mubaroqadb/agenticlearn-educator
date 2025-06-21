@@ -443,20 +443,7 @@ export class ReportsModule {
             }
         } catch (error) {
             console.error('Failed to generate report:', error);
-            // Create mock export for demo
-            const newExport = {
-                id: `export_${Date.now()}`,
-                report_name: this.getReportTypeName(reportType),
-                description: `${this.getReportTypeName(reportType)} from ${startDate} to ${endDate}`,
-                format: format,
-                file_size: Math.floor(Math.random() * 1024 * 1024) + 1024,
-                status: 'completed',
-                created_at: new Date().toISOString()
-            };
-
-            this.exports.unshift(newExport);
-            UIComponents.showNotification('Report generated successfully (demo mode)!', 'success');
-            this.switchTab('history');
+            UIComponents.showNotification('Failed to generate report: ' + error.message, 'error');
         }
     }
 
@@ -766,28 +753,14 @@ export class ReportsModule {
             }
         } catch (error) {
             console.error('Failed to generate real report data:', error);
-            // Fallback to mock data
-            return this.generateMockReportData(exportItem);
+            throw new Error('Unable to generate report data from backend: ' + error.message);
         }
     }
 
-    generateMockReportData(exportItem) {
-        switch (exportItem.format) {
-            case 'csv':
-                return this.generateMockCSV();
-            case 'json':
-                return this.generateMockJSON();
-            case 'excel':
-                return 'Mock Excel data - would be binary in real implementation';
-            case 'pdf':
-                return 'Mock PDF data - would be binary in real implementation';
-            default:
-                return 'Mock report data';
-        }
-    }
+    // Mock data methods removed - using only real backend data
 
     generateRealCSV(data, type) {
-        if (!data || !data.data) return this.generateMockCSV();
+        if (!data || !data.data) throw new Error('No data available for CSV generation');
 
         switch (type) {
             case 'students':
@@ -809,12 +782,12 @@ export class ReportsModule {
                 return assessmentCsv;
 
             default:
-                return this.generateMockCSV();
+                throw new Error('Unsupported export type for CSV generation');
         }
     }
 
     generateRealJSON(data, type) {
-        if (!data) return this.generateMockJSON();
+        if (!data) throw new Error('No data available for JSON generation');
 
         return JSON.stringify({
             report_type: type || 'Data Export',
@@ -829,30 +802,7 @@ export class ReportsModule {
         }, null, 2);
     }
 
-    generateMockCSV() {
-        return `Student ID,Name,Progress,Average Score,Engagement,Risk Level
-student_001,Alice Johnson,85.5,92.3,88.7,Low
-student_002,Bob Smith,72.1,78.9,65.4,Medium
-student_003,Carol Davis,91.2,89.6,94.1,Low
-student_004,David Wilson,45.8,52.3,41.2,High`;
-    }
-
-    generateMockJSON() {
-        return JSON.stringify({
-            report_type: 'Student Progress Report',
-            generated_at: new Date().toISOString(),
-            data: {
-                total_students: 4,
-                average_progress: 73.65,
-                students: [
-                    { id: 'student_001', name: 'Alice Johnson', progress: 85.5, score: 92.3 },
-                    { id: 'student_002', name: 'Bob Smith', progress: 72.1, score: 78.9 },
-                    { id: 'student_003', name: 'Carol Davis', progress: 91.2, score: 89.6 },
-                    { id: 'student_004', name: 'David Wilson', progress: 45.8, score: 52.3 }
-                ]
-            }
-        }, null, 2);
-    }
+    // Mock CSV and JSON methods removed - using only real backend data
 
     async submitQuickExport(event) {
         event.preventDefault();
