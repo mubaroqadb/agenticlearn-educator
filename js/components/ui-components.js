@@ -219,27 +219,44 @@ export class UIComponents {
         return `
             <div class="metric-card" style="
                 background: var(--white);
-                border-radius: 8px;
-                padding: 1.5rem;
+                border-radius: 10px;
+                padding: 1.25rem;
                 border-left: 4px solid var(--primary);
                 box-shadow: var(--shadow-sm);
+                transition: transform 0.2s, box-shadow 0.2s;
+                min-height: 120px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
             ">
-                <div style="display: flex; justify-content: space-between; align-items: start;">
-                    <div style="flex: 1;">
-                        <div style="
-                            font-size: 0.875rem;
-                            color: var(--gray-600);
-                            margin-bottom: 0.5rem;
-                        ">${title}</div>
-                        <div style="
-                            font-size: 2rem;
-                            font-weight: 600;
-                            color: var(--gray-800);
-                            margin-bottom: 0.5rem;
-                        ">${value}</div>
-                        ${changeHTML}
-                    </div>
-                    ${icon ? `<div style="font-size: 2rem; opacity: 0.7;">${icon}</div>` : ''}
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                    <div style="
+                        font-size: 0.875rem;
+                        color: var(--gray-600);
+                        font-weight: 500;
+                        line-height: 1.2;
+                    ">${title}</div>
+                    ${icon ? `<div style="
+                        font-size: 1.5rem;
+                        opacity: 0.7;
+                        background: var(--accent);
+                        width: 36px;
+                        height: 36px;
+                        border-radius: 8px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    ">${icon}</div>` : ''}
+                </div>
+                <div>
+                    <div style="
+                        font-size: 1.75rem;
+                        font-weight: 700;
+                        color: var(--gray-800);
+                        margin-bottom: 0.25rem;
+                        line-height: 1;
+                    ">${value}</div>
+                    ${changeHTML}
                 </div>
             </div>
         `;
@@ -612,6 +629,11 @@ export class UIComponents {
                 .btn-info {
                     background: var(--info);
                     color: white;
+                }
+
+                .metric-card:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
                 }
             `;
             document.head.appendChild(styles);

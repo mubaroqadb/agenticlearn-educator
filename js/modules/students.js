@@ -89,8 +89,9 @@ export class StudentModule {
                     <!-- Quick Stats -->
                     <div id="student-stats" style="
                         display: grid;
-                        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-                        gap: 1rem;
+                        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                        gap: 1.25rem;
+                        margin-bottom: 1.5rem;
                     ">
                         <!-- Stats will be rendered here -->
                     </div>
