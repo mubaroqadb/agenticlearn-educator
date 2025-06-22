@@ -68,8 +68,7 @@ export class StudentModule {
                     box-shadow: var(--shadow-sm);
                     margin-bottom: 2rem;
                 ">
-                    <!-- Row 1: Header with title and buttons -->
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                         <div>
                             <h2 style="margin: 0 0 0.5rem 0; color: var(--gray-800);">👥 Student Management</h2>
                             <p style="margin: 0; color: var(--gray-600);">Monitor and manage student progress and performance</p>
@@ -87,27 +86,94 @@ export class StudentModule {
                         </div>
                     </div>
 
-                    <!-- Row 2: Stats cards -->
+                    <!-- Quick Stats - Dynamic Data with New Style -->
                     <div id="student-stats" style="
+                        margin-bottom: 2rem;
                         width: 100%;
                     ">
-                        <!-- Stats will be rendered here -->
+                        <!-- Stats will be rendered here dynamically -->
                     </div>
 
-                    <!-- SIMPLE RESPONSIVE LAYOUT -->
+                    <!-- CSS Variables for styling -->
                     <style>
+                        :root {
+                            --white: #ffffff;
+                            --gray-600: #6b7280;
+                            --gray-800: #1f2937;
+                            --primary: #3b82f6;
+                            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+                        }
+
+                        .btn {
+                            padding: 0.5rem 1rem;
+                            border: none;
+                            border-radius: 6px;
+                            font-size: 0.875rem;
+                            font-weight: 500;
+                            cursor: pointer;
+                            transition: all 0.2s;
+                            text-decoration: none;
+                            display: inline-flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                        }
+
+                        .btn-info {
+                            background-color: #0ea5e9;
+                            color: white;
+                        }
+
+                        .btn-info:hover {
+                            background-color: #0284c7;
+                        }
+
+                        .btn-success {
+                            background-color: #22c55e;
+                            color: white;
+                        }
+
+                        .btn-success:hover {
+                            background-color: #16a34a;
+                        }
+
+                        .btn-primary {
+                            background-color: #3b82f6;
+                            color: white;
+                        }
+
+                        .btn-primary:hover {
+                            background-color: #2563eb;
+                        }
+
                         #student-stats .metric-card {
                             flex: 1;
                             min-width: 0;
                             height: 100px;
                         }
 
+                        #student-stats .metric-card:hover {
+                            transform: translateY(-2px);
+                            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                        }
+
                         /* Mobile responsive */
                         @media (max-width: 768px) {
+                            .student-header > div:first-child {
+                                flex-direction: column !important;
+                                align-items: flex-start !important;
+                                gap: 1rem;
+                            }
+
+                            .student-header > div:first-child > div:last-child {
+                                align-self: stretch;
+                                justify-content: center;
+                            }
+
                             #student-stats > div {
                                 flex-direction: column !important;
                                 gap: 0.5rem !important;
                             }
+
                             #student-stats .metric-card {
                                 margin-bottom: 0.5rem;
                             }
@@ -188,7 +254,7 @@ export class StudentModule {
 
     renderStudents() {
         this.renderStudentStats();
-        
+
         if (this.filteredStudents.length === 0) {
             setInner('students-list', UIComponents.createEmptyState(
                 'No Students Found',
@@ -217,21 +283,71 @@ export class StudentModule {
         // Calculate at-risk percentage
         const atRiskPercentage = totalStudents > 0 ? (atRiskStudents / totalStudents * 100) : 0;
 
+        // Use the new style structure with dynamic data
         const statsHTML = `
-            <!-- Row 1: 2 cards -->
+            <!-- First Row: 3 cards -->
             <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
-                ${UIComponents.createMetricCard('Total Students', totalStudents, null, '👥')}
-                ${UIComponents.createMetricCard('Active (7 days)', activeStudents, null, '✅')}
+                ${this.createStyledMetricCard('Total Students', totalStudents, '👥')}
+                ${this.createStyledMetricCard('Active (7 days)', activeStudents, '✅')}
+                ${this.createStyledMetricCard('At Risk', `${atRiskStudents} (${formatPercentage(atRiskPercentage)})`, '⚠️')}
             </div>
-            <!-- Row 2: 3 cards -->
+            <!-- Second Row: 2 cards -->
             <div style="display: flex; gap: 1rem;">
-                ${UIComponents.createMetricCard('At Risk', `${atRiskStudents} (${formatPercentage(atRiskPercentage)})`, atRiskStudents > 0 ? { value: atRiskStudents, unit: ' students', period: 'need attention' } : null, '⚠️')}
-                ${UIComponents.createMetricCard('Avg Progress', formatPercentage(avgProgress), null, '📈')}
-                ${UIComponents.createMetricCard('Avg Score', formatNumber(avgScore, 1), null, '🏆')}
+                ${this.createStyledMetricCard('Avg Progress', formatPercentage(avgProgress), '📈')}
+                ${this.createStyledMetricCard('Avg Score', formatNumber(avgScore, 1), '🏆')}
             </div>
         `;
 
         setInner('student-stats', statsHTML);
+    }
+
+    createStyledMetricCard(title, value, icon) {
+        return `
+            <div class="metric-card" style="
+                background: var(--white);
+                border-radius: 10px;
+                padding: 1rem;
+                border-left: 4px solid var(--primary);
+                box-shadow: var(--shadow-sm);
+                transition: transform 0.2s, box-shadow 0.2s;
+                height: 100px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                box-sizing: border-box;
+                flex: 1;
+                min-width: 0;
+            ">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                    <div style="
+                        font-size: 0.75rem;
+                        color: var(--gray-600);
+                        font-weight: 500;
+                        line-height: 1.2;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                    ">${title}</div>
+                    <div style="
+                        font-size: 1.2rem;
+                        opacity: 0.8;
+                        width: 24px;
+                        height: 24px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    ">${icon}</div>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                    <div style="
+                        font-size: 1.5rem;
+                        font-weight: 700;
+                        color: var(--gray-800);
+                        margin-bottom: 0.25rem;
+                        line-height: 1;
+                    ">${value}</div>
+                </div>
+            </div>
+        `;
     }
 
     renderStudentGrid() {
