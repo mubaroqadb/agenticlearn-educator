@@ -486,6 +486,7 @@ export class CommunicationManager {
 
         try {
             console.log('🔄 Sending message...', formData);
+            console.log('🔗 Using endpoint:', API_CONFIG.ENDPOINTS.SEND_MESSAGE);
 
             // Show loading state
             const submitButton = event.target.querySelector('button[type="submit"]');

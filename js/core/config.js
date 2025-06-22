@@ -60,7 +60,7 @@ export const API_CONFIG = {
 export const APP_CONFIG = {
     // Application settings
     APP_NAME: "AgenticLearn Educator Portal",
-    VERSION: "2.0.0",
+    VERSION: "2.0.1", // Updated to force cache refresh
     
     // UI settings
     THEME: {
