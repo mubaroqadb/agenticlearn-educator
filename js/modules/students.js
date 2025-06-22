@@ -68,7 +68,8 @@ export class StudentModule {
                     box-shadow: var(--shadow-sm);
                     margin-bottom: 2rem;
                 ">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <!-- Row 1: Header with title and buttons -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                         <div>
                             <h2 style="margin: 0 0 0.5rem 0; color: var(--gray-800);">👥 Student Management</h2>
                             <p style="margin: 0; color: var(--gray-600);">Monitor and manage student progress and performance</p>
@@ -85,10 +86,9 @@ export class StudentModule {
                             </button>
                         </div>
                     </div>
-                    
-                    <!-- Quick Stats - SIMPLE DIV ROWS -->
+
+                    <!-- Row 2: Stats cards -->
                     <div id="student-stats" style="
-                        margin-bottom: 2rem;
                         width: 100%;
                     ">
                         <!-- Stats will be rendered here -->
@@ -218,14 +218,14 @@ export class StudentModule {
         const atRiskPercentage = totalStudents > 0 ? (atRiskStudents / totalStudents * 100) : 0;
 
         const statsHTML = `
-            <!-- First Row: 3 cards -->
+            <!-- Row 1: 2 cards -->
             <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
                 ${UIComponents.createMetricCard('Total Students', totalStudents, null, '👥')}
                 ${UIComponents.createMetricCard('Active (7 days)', activeStudents, null, '✅')}
-                ${UIComponents.createMetricCard('At Risk', `${atRiskStudents} (${formatPercentage(atRiskPercentage)})`, atRiskStudents > 0 ? { value: atRiskStudents, unit: ' students', period: 'need attention' } : null, '⚠️')}
             </div>
-            <!-- Second Row: 2 cards -->
+            <!-- Row 2: 3 cards -->
             <div style="display: flex; gap: 1rem;">
+                ${UIComponents.createMetricCard('At Risk', `${atRiskStudents} (${formatPercentage(atRiskPercentage)})`, atRiskStudents > 0 ? { value: atRiskStudents, unit: ' students', period: 'need attention' } : null, '⚠️')}
                 ${UIComponents.createMetricCard('Avg Progress', formatPercentage(avgProgress), null, '📈')}
                 ${UIComponents.createMetricCard('Avg Score', formatNumber(avgScore, 1), null, '🏆')}
             </div>
