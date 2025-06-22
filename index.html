@@ -357,16 +357,21 @@
                 container.innerHTML = `
                     <div style="padding: 2rem;">
                         <!-- Header with Refresh Button -->
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                            <div>
-                                <h3 style="margin: 0 0 0.5rem 0;">👥 Student Management</h3>
-                                <p style="margin: 0; color: #666;">Loading full student management features...</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; background: white; padding: 1.25rem 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #3b82f6;">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div style="background: #3b82f6; color: white; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                                    👥
+                                </div>
+                                <div>
+                                    <h3 style="margin: 0; font-size: 1.25rem; color: #1f2937;">Student Management</h3>
+                                    <p style="margin: 0; color: #6b7280; font-size: 0.875rem;">Manage students, track progress, and analyze performance</p>
+                                </div>
                             </div>
-                            <div style="display: flex; gap: 1rem;">
-                                <button onclick="window.studentModule.tryLoadFullModule()" style="background: #3b82f6; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">
+                            <div style="display: flex; gap: 0.75rem;">
+                                <button onclick="window.studentModule.tryLoadFullModule()" style="background: #3b82f6; color: white; border: none; padding: 0.625rem 1.25rem; border-radius: 6px; cursor: pointer; font-size: 0.875rem; font-weight: 500; transition: background 0.2s;">
                                     🚀 Load Full Features
                                 </button>
-                                <button onclick="window.studentModule.loadStudents()" style="background: #10b981; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">
+                                <button onclick="window.studentModule.loadStudents()" style="background: #10b981; color: white; border: none; padding: 0.625rem 1.25rem; border-radius: 6px; cursor: pointer; font-size: 0.875rem; font-weight: 500; transition: background 0.2s;">
                                     🔄 Refresh
                                 </button>
                             </div>
@@ -384,43 +389,52 @@
                         </div>
 
                         <!-- Feature Preview Cards -->
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
-                            <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #3b82f6;">
-                                <h4 style="margin: 0 0 1rem 0; color: #3b82f6;">📊 Student Analytics</h4>
-                                <p style="margin: 0 0 1rem 0; color: #666;">View comprehensive student performance data, progress tracking, and learning analytics.</p>
-                                <div style="background: #f8fafc; padding: 1rem; border-radius: 4px;">
-                                    <div style="font-size: 0.8rem; color: #666;">Features include:</div>
-                                    <ul style="margin: 0.5rem 0 0 0; padding-left: 1rem; font-size: 0.8rem; color: #666;">
-                                        <li>Progress tracking</li>
-                                        <li>Performance metrics</li>
-                                        <li>Risk assessment</li>
-                                    </ul>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                            <div style="background: white; padding: 1.25rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #3b82f6; transition: transform 0.2s, box-shadow 0.2s;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                                    <div style="background: #3b82f6; color: white; width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">📊</div>
+                                    <h4 style="margin: 0; color: #3b82f6; font-size: 1rem;">Student Analytics</h4>
+                                </div>
+                                <p style="margin: 0 0 1rem 0; color: #6b7280; font-size: 0.875rem; line-height: 1.4;">View comprehensive student performance data, progress tracking, and learning analytics.</p>
+                                <div style="background: #f8fafc; padding: 0.875rem; border-radius: 6px;">
+                                    <div style="font-size: 0.75rem; color: #6b7280; font-weight: 500; margin-bottom: 0.5rem;">Key Features:</div>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                        <span style="background: #e0e7ff; color: #3730a3; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Progress tracking</span>
+                                        <span style="background: #e0e7ff; color: #3730a3; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Performance metrics</span>
+                                        <span style="background: #e0e7ff; color: #3730a3; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Risk assessment</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #10b981;">
-                                <h4 style="margin: 0 0 1rem 0; color: #10b981;">💬 Communication Tools</h4>
-                                <p style="margin: 0 0 1rem 0; color: #666;">Send messages and announcements to individual students or groups.</p>
-                                <div style="background: #f0fdf4; padding: 1rem; border-radius: 4px;">
-                                    <div style="font-size: 0.8rem; color: #666;">Features include:</div>
-                                    <ul style="margin: 0.5rem 0 0 0; padding-left: 1rem; font-size: 0.8rem; color: #666;">
-                                        <li>Individual messaging</li>
-                                        <li>Bulk announcements</li>
-                                        <li>Automated notifications</li>
-                                    </ul>
+                            <div style="background: white; padding: 1.25rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #10b981; transition: transform 0.2s, box-shadow 0.2s;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                                    <div style="background: #10b981; color: white; width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">💬</div>
+                                    <h4 style="margin: 0; color: #10b981; font-size: 1rem;">Communication Tools</h4>
+                                </div>
+                                <p style="margin: 0 0 1rem 0; color: #6b7280; font-size: 0.875rem; line-height: 1.4;">Send messages and announcements to individual students or groups.</p>
+                                <div style="background: #f0fdf4; padding: 0.875rem; border-radius: 6px;">
+                                    <div style="font-size: 0.75rem; color: #6b7280; font-weight: 500; margin-bottom: 0.5rem;">Key Features:</div>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                        <span style="background: #d1fae5; color: #065f46; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Individual messaging</span>
+                                        <span style="background: #d1fae5; color: #065f46; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Bulk announcements</span>
+                                        <span style="background: #d1fae5; color: #065f46; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Auto notifications</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #f59e0b;">
-                                <h4 style="margin: 0 0 1rem 0; color: #f59e0b;">⚠️ Risk Management</h4>
-                                <p style="margin: 0 0 1rem 0; color: #666;">Identify at-risk students and provide targeted interventions.</p>
-                                <div style="background: #fffbeb; padding: 1rem; border-radius: 4px;">
-                                    <div style="font-size: 0.8rem; color: #666;">Features include:</div>
-                                    <ul style="margin: 0.5rem 0 0 0; padding-left: 1rem; font-size: 0.8rem; color: #666;">
-                                        <li>Early warning system</li>
-                                        <li>Intervention tracking</li>
-                                        <li>Success monitoring</li>
-                                    </ul>
+                            <div style="background: white; padding: 1.25rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #f59e0b; transition: transform 0.2s, box-shadow 0.2s;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                                    <div style="background: #f59e0b; color: white; width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">⚠️</div>
+                                    <h4 style="margin: 0; color: #f59e0b; font-size: 1rem;">Risk Management</h4>
+                                </div>
+                                <p style="margin: 0 0 1rem 0; color: #6b7280; font-size: 0.875rem; line-height: 1.4;">Identify at-risk students and provide targeted interventions.</p>
+                                <div style="background: #fffbeb; padding: 0.875rem; border-radius: 6px;">
+                                    <div style="font-size: 0.75rem; color: #6b7280; font-weight: 500; margin-bottom: 0.5rem;">Key Features:</div>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                        <span style="background: #fef3c7; color: #92400e; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Early warning</span>
+                                        <span style="background: #fef3c7; color: #92400e; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Intervention tracking</span>
+                                        <span style="background: #fef3c7; color: #92400e; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Success monitoring</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
