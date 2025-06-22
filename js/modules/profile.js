@@ -19,46 +19,36 @@ class ProfileModule {
     }
 
     async loadProfile() {
-        try {
-            console.log('🔄 Loading user profile...');
-            
-            // Try to get profile from backend
-            const response = await apiClient.getUserProfile();
-            
-            if (response.success && response.data) {
-                this.profile = response.data;
-                console.log('✅ Profile loaded from backend:', this.profile);
-            } else {
-                // Fallback profile data
-                this.profile = {
-                    user_id: 'educator_001',
-                    name: 'Dr. Sarah Johnson',
-                    email: 'sarah.johnson@agenticlearn.edu',
-                    role: 'Senior Educator',
-                    department: 'Computer Science',
-                    phone: '+1 (555) 123-4567',
-                    bio: 'Passionate educator with 10+ years of experience in digital learning and green computing initiatives.',
-                    avatar_url: null,
-                    preferences: {
-                        theme: 'green',
-                        notifications: true,
-                        language: 'en',
-                        timezone: 'UTC-5'
-                    },
-                    stats: {
-                        students_taught: 156,
-                        courses_created: 12,
-                        assessments_created: 48,
-                        years_experience: 10
-                    },
-                    joined_date: '2020-01-15',
-                    last_login: new Date().toISOString()
-                };
-                console.log('⚠️ Using fallback profile data');
-            }
-        } catch (error) {
-            console.error('❌ Failed to load profile:', error);
-            UIComponents.showNotification('Failed to load profile', 'error');
+        const response = await apiClient.getUserProfile();
+
+        if (response.success && response.data) {
+            this.profile = response.data;
+        } else {
+            // Fallback profile data
+            this.profile = {
+                user_id: 'educator_001',
+                name: 'Dr. Sarah Johnson',
+                email: 'sarah.johnson@agenticlearn.edu',
+                role: 'Senior Educator',
+                department: 'Computer Science',
+                phone: '+1 (555) 123-4567',
+                bio: 'Passionate educator with 10+ years of experience in digital learning and green computing initiatives.',
+                avatar_url: null,
+                preferences: {
+                    theme: 'green',
+                    notifications: true,
+                    language: 'en',
+                    timezone: 'UTC-5'
+                },
+                stats: {
+                    students_taught: 156,
+                    courses_created: 12,
+                    assessments_created: 48,
+                    years_experience: 10
+                },
+                joined_date: '2020-01-15',
+                last_login: new Date().toISOString()
+            };
         }
     }
 
@@ -342,36 +332,25 @@ class ProfileModule {
 
     async saveProfile(event) {
         event.preventDefault();
-        
-        try {
-            const formData = {
-                name: document.getElementById('profile-name').value,
-                email: document.getElementById('profile-email').value,
-                role: document.getElementById('profile-role').value,
-                department: document.getElementById('profile-department').value,
-                phone: document.getElementById('profile-phone').value,
-                bio: document.getElementById('profile-bio').value
-            };
 
-            // Update local profile
-            this.profile = { ...this.profile, ...formData };
-            
-            // Try to save to backend
-            try {
-                await apiClient.updateUserProfile(formData);
-                UIComponents.showNotification('Profile updated successfully!', 'success');
-            } catch (error) {
-                console.warn('Backend update failed, keeping local changes:', error);
-                UIComponents.showNotification('Profile updated locally (backend sync pending)', 'warning');
-            }
+        const formData = {
+            name: document.getElementById('profile-name').value,
+            email: document.getElementById('profile-email').value,
+            role: document.getElementById('profile-role').value,
+            department: document.getElementById('profile-department').value,
+            phone: document.getElementById('profile-phone').value,
+            bio: document.getElementById('profile-bio').value
+        };
 
-            this.isEditing = false;
-            this.renderProfileInterface();
-            
-        } catch (error) {
-            console.error('Failed to save profile:', error);
-            UIComponents.showNotification('Failed to save profile', 'error');
-        }
+        // Update local profile
+        this.profile = { ...this.profile, ...formData };
+
+        // Save to backend
+        await apiClient.updateUserProfile(formData);
+        UIComponents.showNotification('Profile updated successfully!', 'success');
+
+        this.isEditing = false;
+        this.renderProfileInterface();
     }
 
     cancelEdit() {

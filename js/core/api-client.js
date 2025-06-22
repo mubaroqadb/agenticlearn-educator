@@ -1,6 +1,6 @@
 // ===== AGENTICLEARN API CLIENT =====
 
-import { API_CONFIG, ERROR_MESSAGES } from './config.js';
+import { API_CONFIG } from './config.js';
 import { getCookie, setCookie } from './utils.js';
 
 export class EducatorAPIClient {
@@ -32,14 +32,17 @@ export class EducatorAPIClient {
 
     async request(endpoint, options = {}) {
         const url = `${this.baseURL}${endpoint}`;
-        const requestId = ++this.requestCount;
-        
+
+        // Debug actual URL being called
+        console.log('🔗 Calling URL:', url);
+        console.log('🔗 BaseURL:', this.baseURL);
+        console.log('🔗 Endpoint:', endpoint);
+
         const headers = {
             'Content-Type': 'application/json',
             ...options.headers
         };
 
-        // ✅ BACKEND DOCUMENTATION - Use 'Authorization: Bearer' header
         if (this.pasetoToken) {
             headers['Authorization'] = `Bearer ${this.pasetoToken}`;
         }
@@ -54,41 +57,11 @@ export class EducatorAPIClient {
             config.body = JSON.stringify(options.body);
         }
 
-        try {
-            console.log(`🔗 API Request #${requestId}: ${config.method} ${endpoint}`);
-            
-            const response = await fetch(url, config);
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(this.formatError(data, response.status));
-            }
-
-            console.log(`✅ API Response #${requestId}:`, data);
-            
-            this.isConnected = true;
-            return data;
-            
-        } catch (error) {
-            console.error(`❌ API Error #${requestId}: ${endpoint}`, error);
-            this.isConnected = false;
-            throw error;
-        }
+        const response = await fetch(url, config);
+        return await response.json();
     }
 
-    formatError(data, status) {
-        if (data.error) {
-            return `${data.error.code || 'API_ERROR'}: ${data.error.message || 'Request failed'}`;
-        }
-        
-        switch (status) {
-            case 401: return ERROR_MESSAGES.AUTH_ERROR;
-            case 404: return ERROR_MESSAGES.NOT_FOUND;
-            case 500: return ERROR_MESSAGES.SERVER_ERROR;
-            case 408: return ERROR_MESSAGES.TIMEOUT_ERROR;
-            default: return ERROR_MESSAGES.NETWORK_ERROR;
-        }
-    }
+
 
     // ✅ CORE API METHODS
 
@@ -258,6 +231,8 @@ export class EducatorAPIClient {
     // ✅ PROFILE METHODS
 
     async getUserProfile() {
+        console.log('🔍 PROFILE endpoint value:', API_CONFIG.ENDPOINTS.PROFILE);
+        console.log('🔍 All endpoints:', API_CONFIG.ENDPOINTS);
         return await this.request(API_CONFIG.ENDPOINTS.PROFILE);
     }
 
@@ -278,25 +253,10 @@ export class EducatorAPIClient {
     }
 
     async testConnection() {
-        try {
-            console.log("🔄 Testing AgenticAI backend connection...");
-            const response = await this.getProfile();
-
-            if (response && response.success) {
-                // Backend returns profile directly, not in data property
-                const profile = response.profile || response.data;
-                this.isConnected = true;
-                console.log("✅ AgenticAI backend connection successful!");
-                console.log("👤 Connected as:", profile.name);
-                return { success: true, profile };
-            } else {
-                throw new Error("Invalid educator profile response");
-            }
-        } catch (error) {
-            this.isConnected = false;
-            console.error("❌ AgenticAI backend connection failed:", error);
-            return { success: false, error: error.message };
-        }
+        const response = await this.getProfile();
+        const profile = response.profile || response.data;
+        this.isConnected = true;
+        return { success: true, profile };
     }
 }
 
