@@ -73,7 +73,7 @@ export class StudentModule {
                 ">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                         <div>
-                            <h2 style="margin: 0 0 0.5rem 0; color: var(--gray-800);">👥 Student Management (v2.0)</h2>
+                            <h2 style="margin: 0 0 0.5rem 0; color: var(--gray-800);">👥 Student Management</h2>
                             <p style="margin: 0; color: var(--gray-600);">Monitor and manage student progress and performance</p>
                         </div>
                         <div style="display: flex; gap: 1rem;">
