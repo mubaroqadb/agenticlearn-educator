@@ -36,56 +36,14 @@ class ProfileModule {
     renderProfileInterface() {
         console.log('🎨 Rendering Profile Interface...');
 
-        // Hide all pages first
-        const pages = document.querySelectorAll('.page-content');
-        console.log('📄 Found pages:', pages.length);
-        pages.forEach(page => {
-            page.classList.remove('active');
-            page.style.display = 'none'; // Force hide
-            console.log('🔄 Hiding page:', page.id);
-        });
-
-        // Specifically hide beranda page
-        const berandaPage = document.getElementById('page-beranda');
-        if (berandaPage) {
-            berandaPage.classList.remove('active');
-            berandaPage.style.display = 'none';
-            console.log('🏠 Beranda page specifically hidden');
-        }
-
-        // Find the correct container (where other pages are)
-        const mainContainer = document.querySelector('.main-content .container');
-        console.log('📦 Main container found:', !!mainContainer);
-
-        // Create or get profile page
-        let profilePage = document.getElementById('page-profile');
+        // Get profile page (should already exist and be active from showPage)
+        const profilePage = document.getElementById('page-profile');
         if (!profilePage) {
-            console.log('🆕 Creating new profile page...');
-            profilePage = document.createElement('div');
-            profilePage.id = 'page-profile';
-            profilePage.className = 'page-content';
-            mainContainer.appendChild(profilePage);
-            console.log('✅ Profile page created and added to container');
-        } else {
-            console.log('♻️ Using existing profile page');
+            console.error('❌ Profile page not found!');
+            return;
         }
 
-        // Show profile page with proper styling
-        profilePage.classList.add('active');
-        profilePage.style.display = 'block';
-        profilePage.style.width = '100%';
-        profilePage.style.height = '100%';
-        profilePage.style.position = 'relative';
-        profilePage.style.zIndex = '1';
-        console.log('👁️ Profile page set to active with styling');
-
-        // Update page title
-        const pageTitle = document.getElementById('page-title');
-        const pageSubtitle = document.getElementById('page-subtitle');
-        if (pageTitle) pageTitle.textContent = 'Profile Management';
-        if (pageSubtitle) pageSubtitle.textContent = 'Manage your profile, settings, and preferences';
-        console.log('📝 Page title updated');
-
+        console.log('✅ Profile page found and should be active');
         const container = profilePage;
 
         const profileHTML = `

@@ -769,26 +769,30 @@
             }
         };
 
-        // Global profile function - NEW
+        // Global profile function - USE STANDARD PAGE NAVIGATION
         window.loadProfile = async function() {
             console.log('👤 Loading profile...');
 
+            // First, create profile page if it doesn't exist
+            let profilePage = document.getElementById('page-profile');
+            if (!profilePage) {
+                console.log('🆕 Creating profile page...');
+                profilePage = document.createElement('div');
+                profilePage.id = 'page-profile';
+                profilePage.className = 'page-content';
+                document.querySelector('.container').appendChild(profilePage);
+            }
+
+            // Use standard page navigation
+            showPage('profile');
+
             try {
-                console.log('🔄 Step 1: Importing profile module...');
+                console.log('🔄 Importing and initializing profile module...');
                 const module = await import('./js/modules/profile.js');
-                console.log('✅ Step 1 complete: Module imported');
-
-                console.log('🔄 Step 2: Getting profileModule...');
                 const { profileModule } = module;
-                console.log('✅ Step 2 complete: ProfileModule obtained');
 
-                console.log('🔄 Step 3: Making globally available...');
                 window.profileModule = profileModule;
-                console.log('✅ Step 3 complete: Global assignment done');
-
-                console.log('🔄 Step 4: Initializing module...');
                 await profileModule.initialize();
-                console.log('✅ Step 4 complete: Module initialized');
 
                 console.log('✅ Profile module loaded and initialized');
             } catch (error) {
