@@ -588,8 +588,21 @@ async function loadReportsData() {
     console.log("🔄 Loading reports data...");
     const container = document.getElementById('reports-content');
     if (container) {
-        renderReports();
-        console.log("✅ Reports content loaded");
+        try {
+            // Import the Reports module (it exports a singleton instance)
+            const { reportsModule } = await import('./modules/reports.js');
+
+            // Make it globally available
+            window.reportsModule = reportsModule;
+
+            // Initialize the module
+            await reportsModule.initialize();
+            console.log("✅ Reports module loaded and initialized");
+        } catch (error) {
+            console.error("❌ Failed to load Reports module:", error);
+            // Fallback to basic reports interface
+            renderReports();
+        }
     }
 }
 
