@@ -33,11 +33,6 @@ export class EducatorAPIClient {
     async request(endpoint, options = {}) {
         const url = `${this.baseURL}${endpoint}`;
 
-        // Debug actual URL being called
-        console.log('🔗 Calling URL:', url);
-        console.log('🔗 BaseURL:', this.baseURL);
-        console.log('🔗 Endpoint:', endpoint);
-
         const headers = {
             'Content-Type': 'application/json',
             ...options.headers
@@ -231,8 +226,6 @@ export class EducatorAPIClient {
     // ✅ PROFILE METHODS
 
     async getUserProfile() {
-        console.log('🔍 PROFILE endpoint value:', API_CONFIG.ENDPOINTS.PROFILE);
-        console.log('🔍 All endpoints:', API_CONFIG.ENDPOINTS);
         return await this.request(API_CONFIG.ENDPOINTS.PROFILE);
     }
 

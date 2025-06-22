@@ -20,36 +20,7 @@ class ProfileModule {
 
     async loadProfile() {
         const response = await apiClient.getUserProfile();
-
-        if (response.success && response.data) {
-            this.profile = response.data;
-        } else {
-            // Fallback profile data
-            this.profile = {
-                user_id: 'educator_001',
-                name: 'Dr. Sarah Johnson',
-                email: 'sarah.johnson@agenticlearn.edu',
-                role: 'Senior Educator',
-                department: 'Computer Science',
-                phone: '+1 (555) 123-4567',
-                bio: 'Passionate educator with 10+ years of experience in digital learning and green computing initiatives.',
-                avatar_url: null,
-                preferences: {
-                    theme: 'green',
-                    notifications: true,
-                    language: 'en',
-                    timezone: 'UTC-5'
-                },
-                stats: {
-                    students_taught: 156,
-                    courses_created: 12,
-                    assessments_created: 48,
-                    years_experience: 10
-                },
-                joined_date: '2020-01-15',
-                last_login: new Date().toISOString()
-            };
-        }
+        this.profile = response.data;
     }
 
     renderProfileInterface() {
