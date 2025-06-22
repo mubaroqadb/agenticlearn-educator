@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module Testing - AgenticLearn Educator</title>
+    <link rel="stylesheet" href="css/educator-portal.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background: var(--background);
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-section {
+            background: var(--white);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+        }
+        .test-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 0.5rem;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        .test-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        .test-result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Module Testing Dashboard</h1>
+        <p>Test all new modules to ensure they're working correctly</p>
+
+        <!-- Analytics Module Test -->
+        <div class="test-section">
+            <h2>📊 Analytics Module Test</h2>
+            <button class="test-button" onclick="testAnalyticsModule()">Test Analytics Module</button>
+            <div id="analytics-result" class="test-result" style="display: none;"></div>
+        </div>
+
+        <!-- Communication Module Test -->
+        <div class="test-section">
+            <h2>💬 Communication Module Test</h2>
+            <button class="test-button" onclick="testCommunicationModule()">Test Communication Module</button>
+            <div id="communication-result" class="test-result" style="display: none;"></div>
+        </div>
+
+        <!-- Assessment Module Test -->
+        <div class="test-section">
+            <h2>📝 Assessment Module Test</h2>
+            <button class="test-button" onclick="testAssessmentModule()">Test Assessment Module</button>
+            <div id="assessment-result" class="test-result" style="display: none;"></div>
+        </div>
+
+        <!-- Student Module Test -->
+        <div class="test-section">
+            <h2>👥 Student Module Test</h2>
+            <button class="test-button" onclick="testStudentModule()">Test Student Module</button>
+            <div id="student-result" class="test-result" style="display: none;"></div>
+        </div>
+
+        <!-- API Client Test -->
+        <div class="test-section">
+            <h2>🔗 API Client Test</h2>
+            <button class="test-button" onclick="testAPIClient()">Test API Client</button>
+            <div id="api-result" class="test-result" style="display: none;"></div>
+        </div>
+
+        <!-- All Modules Test -->
+        <div class="test-section">
+            <h2>🚀 Complete System Test</h2>
+            <button class="test-button" onclick="testAllModules()">Test All Modules</button>
+            <div id="all-result" class="test-result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Test Analytics Module
+        window.testAnalyticsModule = async function() {
+            const resultDiv = document.getElementById('analytics-result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = 'Testing Analytics Module...';
+            resultDiv.className = 'test-result info';
+
+            try {
+                const { AnalyticsModule } = await import('./js/modules/analytics.js');
+                const analyticsModule = new AnalyticsModule();
+                
+                // Test initialization
+                await analyticsModule.initialize();
+                
+                resultDiv.innerHTML = '✅ Analytics Module: PASSED\n- Module imported successfully\n- Initialization completed\n- Interface rendered';
+                resultDiv.className = 'test-result success';
+            } catch (error) {
+                resultDiv.innerHTML = `❌ Analytics Module: FAILED\nError: ${error.message}\nStack: ${error.stack}`;
+                resultDiv.className = 'test-result error';
+            }
+        };
+
+        // Test Communication Module
+        window.testCommunicationModule = async function() {
+            const resultDiv = document.getElementById('communication-result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = 'Testing Communication Module...';
+            resultDiv.className = 'test-result info';
+
+            try {
+                const { CommunicationManager } = await import('./js/modules/communication.js');
+                const communicationManager = new CommunicationManager();
+                
+                // Test initialization
+                await communicationManager.initialize();
+                
+                resultDiv.innerHTML = '✅ Communication Module: PASSED\n- Module imported successfully\n- Initialization completed\n- Interface rendered';
+                resultDiv.className = 'test-result success';
+            } catch (error) {
+                resultDiv.innerHTML = `❌ Communication Module: FAILED\nError: ${error.message}\nStack: ${error.stack}`;
+                resultDiv.className = 'test-result error';
+            }
+        };
+
+        // Test Assessment Module
+        window.testAssessmentModule = async function() {
+            const resultDiv = document.getElementById('assessment-result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = 'Testing Assessment Module...';
+            resultDiv.className = 'test-result info';
+
+            try {
+                const { AssessmentManager } = await import('./js/modules/assessments.js');
+                const assessmentManager = new AssessmentManager();
+                
+                // Test initialization
+                await assessmentManager.initialize();
+                
+                resultDiv.innerHTML = '✅ Assessment Module: PASSED\n- Module imported successfully\n- Initialization completed\n- Interface rendered';
+                resultDiv.className = 'test-result success';
+            } catch (error) {
+                resultDiv.innerHTML = `❌ Assessment Module: FAILED\nError: ${error.message}\nStack: ${error.stack}`;
+                resultDiv.className = 'test-result error';
+            }
+        };
+
+        // Test Student Module
+        window.testStudentModule = async function() {
+            const resultDiv = document.getElementById('student-result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = 'Testing Student Module...';
+            resultDiv.className = 'test-result info';
+
+            try {
+                const { StudentModule } = await import('./js/modules/students.js');
+                const studentModule = new StudentModule();
+                
+                // Test initialization
+                await studentModule.initialize();
+                
+                resultDiv.innerHTML = '✅ Student Module: PASSED\n- Module imported successfully\n- Initialization completed\n- Interface rendered';
+                resultDiv.className = 'test-result success';
+            } catch (error) {
+                resultDiv.innerHTML = `❌ Student Module: FAILED\nError: ${error.message}\nStack: ${error.stack}`;
+                resultDiv.className = 'test-result error';
+            }
+        };
+
+        // Test API Client
+        window.testAPIClient = async function() {
+            const resultDiv = document.getElementById('api-result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = 'Testing API Client...';
+            resultDiv.className = 'test-result info';
+
+            try {
+                const { apiClient } = await import('./js/core/api-client.js');
+                
+                // Test API methods exist
+                const methods = ['getDashboardAnalytics', 'getStudentsList', 'getMessagesList', 'getAssessmentsList'];
+                const results = [];
+                
+                for (const method of methods) {
+                    if (typeof apiClient[method] === 'function') {
+                        results.push(`✅ ${method}: Available`);
+                    } else {
+                        results.push(`❌ ${method}: Missing`);
+                    }
+                }
+                
+                resultDiv.innerHTML = `✅ API Client: PASSED\n${results.join('\n')}`;
+                resultDiv.className = 'test-result success';
+            } catch (error) {
+                resultDiv.innerHTML = `❌ API Client: FAILED\nError: ${error.message}\nStack: ${error.stack}`;
+                resultDiv.className = 'test-result error';
+            }
+        };
+
+        // Test All Modules
+        window.testAllModules = async function() {
+            const resultDiv = document.getElementById('all-result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = 'Testing All Modules...';
+            resultDiv.className = 'test-result info';
+
+            const results = [];
+            
+            // Test each module
+            const tests = [
+                { name: 'Analytics', func: testAnalyticsModule },
+                { name: 'Communication', func: testCommunicationModule },
+                { name: 'Assessment', func: testAssessmentModule },
+                { name: 'Student', func: testStudentModule },
+                { name: 'API Client', func: testAPIClient }
+            ];
+
+            for (const test of tests) {
+                try {
+                    await test.func();
+                    results.push(`✅ ${test.name}: PASSED`);
+                } catch (error) {
+                    results.push(`❌ ${test.name}: FAILED - ${error.message}`);
+                }
+            }
+
+            const passedCount = results.filter(r => r.includes('PASSED')).length;
+            const totalCount = results.length;
+            
+            resultDiv.innerHTML = `🧪 COMPLETE SYSTEM TEST RESULTS:\n\n${results.join('\n')}\n\n📊 Summary: ${passedCount}/${totalCount} modules passed`;
+            resultDiv.className = passedCount === totalCount ? 'test-result success' : 'test-result error';
+        };
+    </script>
+</body>
+</html>

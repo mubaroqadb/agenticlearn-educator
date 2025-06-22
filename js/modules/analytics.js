@@ -2,7 +2,7 @@
 // Advanced learning analytics with charts and insights
 
 import { apiClient } from '../core/api-client.js';
-import { UIComponents } from '../components/improved_ui_components.js';
+import { UIComponents } from '../components/ui-components.js';
 import { setInner, formatDate, formatNumber, formatPercentage } from '../core/utils.js';
 import { API_CONFIG } from '../core/config.js';
 
