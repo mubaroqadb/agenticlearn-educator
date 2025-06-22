@@ -25,9 +25,9 @@ export const API_CONFIG = {
 
         // ✅ COMMUNICATION SYSTEM - Per Backend Documentation
         MESSAGES_LIST: "/api/agenticlearn/educator/communication/messages/list",
-        SEND_MESSAGE: "/api/agenticlearn/educator/communication/messages/send",
+        SEND_MESSAGE: "/api/agenticlearn/educator/communication/send-message",
         ANNOUNCEMENTS_LIST: "/api/agenticlearn/educator/communication/announcements/list",
-        CREATE_ANNOUNCEMENT: "/api/agenticlearn/educator/communication/announcements/create",
+        CREATE_ANNOUNCEMENT: "/api/agenticlearn/educator/communication/announcement/create",
 
         // ✅ NOTIFICATION SYSTEM - Per Backend Documentation
         NOTIFICATIONS: "/api/agenticlearn/educator/communication/notifications",
