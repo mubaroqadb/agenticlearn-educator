@@ -773,19 +773,31 @@
         window.loadProfile = async function() {
             console.log('👤 Loading profile...');
 
+            // Add immediate visual feedback
+            alert('Profile button clicked! Starting profile load...');
+
             try {
-                // Import and initialize Profile module
-                const { profileModule } = await import('./js/modules/profile.js');
+                console.log('🔄 Step 1: Importing profile module...');
+                const module = await import('./js/modules/profile.js');
+                console.log('✅ Step 1 complete: Module imported');
 
-                // Make it globally available
+                console.log('🔄 Step 2: Getting profileModule...');
+                const { profileModule } = module;
+                console.log('✅ Step 2 complete: ProfileModule obtained');
+
+                console.log('🔄 Step 3: Making globally available...');
                 window.profileModule = profileModule;
+                console.log('✅ Step 3 complete: Global assignment done');
 
-                // Initialize the module
+                console.log('🔄 Step 4: Initializing module...');
                 await profileModule.initialize();
+                console.log('✅ Step 4 complete: Module initialized');
+
+                alert('✅ Profile loaded successfully!');
                 console.log('✅ Profile module loaded and initialized');
             } catch (error) {
                 console.error('❌ Failed to load Profile module:', error);
-                alert('👤 Profile\n\nProfile system is loading...\n\nFeatures:\n• Edit profile information\n• Change settings\n• View statistics\n• Export data');
+                alert('❌ Error at step: ' + error.message);
             }
         };
 

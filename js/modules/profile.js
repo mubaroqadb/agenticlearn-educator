@@ -13,14 +13,24 @@ class ProfileModule {
 
     async initialize() {
         console.log('👤 Initializing Profile Module...');
-        await this.loadProfile();
-        this.renderProfileInterface();
-        this.bindEventHandlers();
+
+        try {
+            await this.loadProfile();
+            this.renderProfileInterface();
+            this.bindEventHandlers();
+            console.log('✅ Profile Module initialized successfully');
+        } catch (error) {
+            console.error('❌ Profile Module initialization failed:', error);
+            alert('❌ Profile initialization failed: ' + error.message);
+            throw error;
+        }
     }
 
     async loadProfile() {
         const response = await apiClient.getUserProfile();
-        this.profile = response.data;
+        // Backend returns profile in different structure
+        this.profile = response.profile || response.data || response;
+        console.log('📋 Profile loaded:', this.profile);
     }
 
     renderProfileInterface() {
