@@ -53,10 +53,7 @@ export const API_CONFIG = {
         REPORTS_GENERATE: "/api/agenticlearn/educator/reports/generate",
         REPORTS_HISTORY: "/api/agenticlearn/educator/reports/history",
         REPORTS_DOWNLOAD: "/api/agenticlearn/educator/reports/download",
-        ADVANCED_ANALYTICS: "/api/agenticlearn/educator/analytics/advanced",
-
-        // ✅ DATA POPULATION (for testing)
-        DATA_POPULATE: "/api/agenticlearn/educator/data/populate"
+        ADVANCED_ANALYTICS: "/api/agenticlearn/educator/analytics/advanced"
     }
 };
 
