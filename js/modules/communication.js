@@ -500,30 +500,11 @@ export class CommunicationManager {
                 await this.loadMessages();
                 this.updateMessagesList();
             } else {
-                // Check if it's a 404 error (endpoint not found)
-                console.warn('⚠️ Backend endpoint returned error, using demo mode');
-                UIComponents.showNotification('Message sent (demo mode - backend endpoint not available)', 'warning');
-                document.getElementById('send-message-form').reset();
-
-                // Add message to local array for demo purposes
-                this.addMessageToLocalArray(formData);
-                this.updateMessagesList();
+                throw new Error(response?.error || 'Failed to send message');
             }
         } catch (error) {
             console.error('❌ Failed to send message:', error);
-
-            // Check if it's a network/404 error
-            if (error.message && error.message.includes('404')) {
-                UIComponents.showNotification('Backend endpoint not available - using demo mode', 'warning');
-            } else {
-                UIComponents.showNotification('Network error - using demo mode', 'warning');
-            }
-
-            document.getElementById('send-message-form').reset();
-
-            // Add message to local array for demo purposes
-            this.addMessageToLocalArray(formData);
-            this.updateMessagesList();
+            UIComponents.showNotification(`Failed to send message: ${error.message}`, 'error');
         } finally {
             // Reset button state
             const submitButton = event.target.querySelector('button[type="submit"]');
@@ -559,28 +540,11 @@ export class CommunicationManager {
                 await this.loadAnnouncements();
                 this.updateAnnouncementsList();
             } else {
-                console.warn('⚠️ Backend endpoint returned error, using demo mode');
-                UIComponents.showNotification('Announcement created (demo mode - backend endpoint not available)', 'warning');
-                document.getElementById('create-announcement-form').reset();
-
-                // Add announcement to local array for demo purposes
-                this.addAnnouncementToLocalArray(formData);
-                this.updateAnnouncementsList();
+                throw new Error(response?.error || 'Failed to create announcement');
             }
         } catch (error) {
             console.error('❌ Failed to create announcement:', error);
-
-            if (error.message && error.message.includes('404')) {
-                UIComponents.showNotification('Backend endpoint not available - using demo mode', 'warning');
-            } else {
-                UIComponents.showNotification('Network error - using demo mode', 'warning');
-            }
-
-            document.getElementById('create-announcement-form').reset();
-
-            // Add announcement to local array for demo purposes
-            this.addAnnouncementToLocalArray(formData);
-            this.updateAnnouncementsList();
+            UIComponents.showNotification(`Failed to create announcement: ${error.message}`, 'error');
         }
     }
 
@@ -932,48 +896,7 @@ export class CommunicationManager {
         }
     }
 
-    // Demo mode helper methods
-    addMessageToLocalArray(formData) {
-        const newMessage = {
-            message_id: `msg_${Date.now()}`,
-            from_id: formData.from_id,
-            from_name: formData.from_name,
-            to_id: formData.to_id,
-            to_name: formData.to_name,
-            subject: formData.subject,
-            content: formData.content,
-            message_type: formData.message_type,
-            status: 'sent',
-            timestamp: new Date().toISOString(),
-            conversation_id: formData.conversation_id
-        };
 
-        // Add to beginning of messages array
-        this.messages.unshift(newMessage);
-
-        console.log('📝 Added message to local array for demo:', newMessage);
-    }
-
-    addAnnouncementToLocalArray(formData) {
-        const newAnnouncement = {
-            announcement_id: `ann_${Date.now()}`,
-            title: formData.title,
-            content: formData.content,
-            priority: formData.priority,
-            audience: formData.audience,
-            course_id: formData.course_id,
-            expires_at: formData.expires_at,
-            created_at: new Date().toISOString(),
-            read_count: 0,
-            total_recipients: 25,
-            read_percentage: 0
-        };
-
-        // Add to beginning of announcements array
-        this.announcements.unshift(newAnnouncement);
-
-        console.log('📢 Added announcement to local array for demo:', newAnnouncement);
-    }
 
     getMessageTemplates() {
         return [
