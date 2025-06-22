@@ -149,36 +149,36 @@ export class StudentModule {
                             background-color: #2563eb;
                         }
 
-                        #student-stats .metric-card {
+                        #ai-stats .metric-card {
                             flex: 1;
                             min-width: 0;
                             height: 100px;
                         }
 
-                        #student-stats .metric-card:hover {
+                        #ai-stats .metric-card:hover {
                             transform: translateY(-2px);
                             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
                         }
 
                         /* Mobile responsive */
                         @media (max-width: 768px) {
-                            .student-header > div:first-child {
+                            .ai-header > div:first-child {
                                 flex-direction: column !important;
                                 align-items: flex-start !important;
                                 gap: 1rem;
                             }
 
-                            .student-header > div:first-child > div:last-child {
+                            .ai-header > div:first-child > div:last-child {
                                 align-self: stretch;
                                 justify-content: center;
                             }
 
-                            #student-stats > div {
-                                flex-direction: column !important;
+                            #ai-stats {
+                                grid-template-columns: 1fr !important;
                                 gap: 0.5rem !important;
                             }
 
-                            #student-stats .metric-card {
+                            #ai-stats .metric-card {
                                 margin-bottom: 0.5rem;
                             }
                         }
@@ -312,15 +312,20 @@ export class StudentModule {
     }
 
     renderStudentStats() {
-        if (!this.students.length) return;
-
         const statsConfig = this.getStatsConfig();
         const container = document.getElementById('ai-stats');
 
-        if (!container) return;
+        if (!container) {
+            console.warn('ai-stats container not found');
+            return;
+        }
 
-        const statsHTML = statsConfig.map(config => this.createAIStatsCard(config, this.students)).join('');
+        // Use empty array if no students, so we still show the cards with 0 values
+        const data = this.students || [];
+        const statsHTML = statsConfig.map(config => this.createAIStatsCard(config, data)).join('');
         container.innerHTML = statsHTML;
+
+        console.log('✅ AI Stats rendered:', statsHTML.length, 'characters');
     }
 
     createAIStatsCard(config, data) {
