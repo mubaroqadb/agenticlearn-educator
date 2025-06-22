@@ -88,15 +88,18 @@ export class CommunicationManager {
                 <div class="communication-header">
                     <h2>💬 Communication Center</h2>
                     <div class="communication-tabs">
-                        <button class="tab-btn ${this.currentView === 'messages' ? 'active' : ''}" 
+                        <button class="tab-btn ${this.currentView === 'messages' ? 'active' : ''}"
+                                data-view="messages"
                                 onclick="communicationManager.switchView('messages')">
                             📧 Messages (${this.messages.length})
                         </button>
-                        <button class="tab-btn ${this.currentView === 'announcements' ? 'active' : ''}" 
+                        <button class="tab-btn ${this.currentView === 'announcements' ? 'active' : ''}"
+                                data-view="announcements"
                                 onclick="communicationManager.switchView('announcements')">
                             📢 Announcements (${this.announcements.length})
                         </button>
-                        <button class="tab-btn ${this.currentView === 'notifications' ? 'active' : ''}" 
+                        <button class="tab-btn ${this.currentView === 'notifications' ? 'active' : ''}"
+                                data-view="notifications"
                                 onclick="communicationManager.switchView('notifications')">
                             🔔 Notifications (${this.notifications.filter(n => !n.read).length})
                         </button>
@@ -486,7 +489,7 @@ export class CommunicationManager {
                 UIComponents.showNotification('Message sent successfully!', 'success');
                 document.getElementById('send-message-form').reset();
                 await this.loadMessages();
-                this.renderCommunicationInterface();
+                this.updateViewContent('messages');
             } else {
                 // Backend endpoint doesn't exist yet, simulate success
                 UIComponents.showNotification('Message sent (demo mode)', 'info');
@@ -530,7 +533,7 @@ export class CommunicationManager {
                 UIComponents.showNotification('Announcement created successfully!', 'success');
                 document.getElementById('create-announcement-form').reset();
                 await this.loadAnnouncements();
-                this.renderCommunicationInterface();
+                this.updateViewContent('announcements');
             }
         } catch (error) {
             console.error('❌ Failed to create announcement:', error);
@@ -540,7 +543,126 @@ export class CommunicationManager {
 
     switchView(view) {
         this.currentView = view;
-        this.renderCommunicationInterface();
+        this.updateViewDisplay();
+    }
+
+    updateViewDisplay() {
+        // Update tab active states
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`[data-view="${this.currentView}"]`)?.classList.add('active');
+
+        // Update view content visibility
+        document.querySelectorAll('.view-content').forEach(view => {
+            view.classList.add('hidden');
+            view.classList.remove('active');
+        });
+
+        const activeView = document.getElementById(`${this.currentView}-view`);
+        if (activeView) {
+            activeView.classList.remove('hidden');
+            activeView.classList.add('active');
+
+            // Update content for the active view only
+            this.updateViewContent(this.currentView);
+        }
+    }
+
+    updateViewContent(viewName) {
+        switch (viewName) {
+            case 'messages':
+                const messagesContainer = document.querySelector('#messages-view .messages-list');
+                if (messagesContainer) {
+                    messagesContainer.innerHTML = this.renderMessagesList();
+                }
+                break;
+            case 'announcements':
+                const announcementsContainer = document.querySelector('#announcements-view .announcements-list');
+                if (announcementsContainer) {
+                    announcementsContainer.innerHTML = this.renderAnnouncementsList();
+                }
+                break;
+            case 'notifications':
+                const notificationsContainer = document.querySelector('#notifications-view .notifications-list');
+                if (notificationsContainer) {
+                    notificationsContainer.innerHTML = this.renderNotificationsList();
+                }
+                break;
+        }
+    }
+
+    renderMessagesList() {
+        return this.messages.map(message => `
+            <div class="message-card">
+                <div class="card-header">
+                    <div class="card-title">${message.subject}</div>
+                    <div class="card-meta">${formatDate(message.timestamp)}</div>
+                </div>
+                <div class="card-meta">
+                    To: ${message.to_name} | Type: ${message.message_type} | Status: ${message.status}
+                </div>
+                <div class="card-content">${message.content}</div>
+                <div class="action-buttons">
+                    <button class="btn-secondary" onclick="communicationManager.replyToMessage('${message.message_id}')">
+                        Reply
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    renderAnnouncementsList() {
+        return this.announcements.map(announcement => `
+            <div class="announcement-card">
+                <div class="card-header">
+                    <div class="card-title">${announcement.title}</div>
+                    <div class="card-meta">
+                        ${formatDate(announcement.created_at)} | Priority: ${announcement.priority}
+                    </div>
+                </div>
+                <div class="card-meta">
+                    Audience: ${announcement.audience} | Read: ${announcement.read_count}/${announcement.total_recipients} (${announcement.read_percentage}%)
+                </div>
+                <div class="card-content">${announcement.content}</div>
+                <div class="action-buttons">
+                    <button class="btn-secondary" onclick="communicationManager.editAnnouncement('${announcement.announcement_id}')">
+                        Edit
+                    </button>
+                    <button class="btn-secondary" onclick="communicationManager.deleteAnnouncement('${announcement.announcement_id}')">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    renderNotificationsList() {
+        return this.notifications.map(notification => `
+            <div class="notification-card ${notification.read ? '' : 'unread'}">
+                <div class="card-header">
+                    <div class="card-title">
+                        ${notification.read ? '' : '🔴 '} ${notification.title}
+                    </div>
+                    <div class="card-meta">
+                        ${formatDate(notification.created_at)} | Priority: ${notification.priority}
+                    </div>
+                </div>
+                <div class="card-content">${notification.message}</div>
+                <div class="action-buttons">
+                    ${!notification.read ? `
+                        <button class="btn-primary" onclick="communicationManager.markNotificationRead('${notification.notification_id}')">
+                            Mark as Read
+                        </button>
+                    ` : ''}
+                    ${notification.action_url ? `
+                        <button class="btn-secondary" onclick="communicationManager.handleNotificationAction('${notification.action_url}')">
+                            Take Action
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+        `).join('');
     }
 
     async markNotificationRead(notificationId) {
@@ -550,8 +672,8 @@ export class CommunicationManager {
             const notification = this.notifications.find(n => n.notification_id === notificationId);
             if (notification) {
                 notification.read = true;
-                this.renderCommunicationInterface();
-                showSuccess('Notification marked as read');
+                this.updateViewContent('notifications');
+                UIComponents.showNotification('Notification marked as read', 'success');
             }
         } catch (error) {
             console.error('❌ Failed to mark notification as read:', error);
@@ -611,8 +733,8 @@ export class CommunicationManager {
             console.log('🔄 Deleting announcement:', announcementId);
             // Note: Backend doesn't have delete endpoint yet, but we'll simulate it
             this.announcements = this.announcements.filter(a => a.announcement_id !== announcementId);
-            this.renderCommunicationInterface();
-            showSuccess('Announcement deleted successfully');
+            this.updateViewContent('announcements');
+            UIComponents.showNotification('Announcement deleted successfully', 'success');
         } catch (error) {
             console.error('❌ Failed to delete announcement:', error);
             UIComponents.showNotification('Failed to delete announcement: ' + error.message, 'error');
@@ -707,7 +829,7 @@ export class CommunicationManager {
             if (this.currentView === 'notifications') {
                 this.loadNotifications().then(() => {
                     if (this.currentView === 'notifications') {
-                        this.renderCommunicationInterface();
+                        this.updateViewContent('notifications');
                     }
                 });
             }
@@ -718,7 +840,7 @@ export class CommunicationManager {
             if (this.currentView === 'messages') {
                 this.loadMessages().then(() => {
                     if (this.currentView === 'messages') {
-                        this.renderCommunicationInterface();
+                        this.updateViewContent('messages');
                     }
                 });
             }
