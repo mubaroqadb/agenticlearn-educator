@@ -356,15 +356,25 @@ async function loadStudentsData() {
 
 async function loadAnalyticsData() {
     console.log("🔄 Loading analytics data from AgenticAI...");
-    const response = await api.request(API_CONFIG.ENDPOINTS.DASHBOARD_ANALYTICS);
-    console.log("📊 Analytics response:", response);
 
-    if (response && response.success && response.data) {
-        renderAnalytics(response.data);
-        console.log("✅ Analytics data loaded from AgenticAI database");
-    } else {
-        console.error("❌ AgenticAI analytics endpoint failed:", response);
-        throw new Error("Analytics data unavailable - no fallback per Green Computing");
+    try {
+        // Import and initialize analytics module
+        const { AnalyticsModule } = await import('./modules/analytics.js');
+
+        // Create global analytics manager instance
+        if (!window.analyticsModule) {
+            window.analyticsModule = new AnalyticsModule();
+            console.log("✅ Analytics module initialized successfully");
+        }
+
+        // Initialize analytics module
+        console.log("🎨 Initializing analytics interface...");
+        await window.analyticsModule.initialize();
+
+        console.log("✅ Analytics module loaded and initialized successfully");
+    } catch (error) {
+        console.error("❌ Failed to load analytics module:", error);
+        throw new Error("Analytics module unavailable - " + error.message);
     }
 }
 
