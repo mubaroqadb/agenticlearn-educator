@@ -422,15 +422,15 @@ async function loadAIRecommendationsData() {
 
         console.log("📦 Importing AI recommendations module...");
 
-        // Import and initialize AI recommendations module
-        const { AIRecommendationsModule } = await import('./modules/ai-recommendations.js');
+        // Import AI recommendations module (imports the instance, not the class)
+        const aiModule = await import('./modules/ai-recommendations.js');
         console.log("✅ AI module imported successfully");
 
-        // Create global AI module instance
+        // Use the imported instance
         if (!window.aiModule) {
-            console.log("🔧 Creating AI module instance...");
-            window.aiModule = new AIRecommendationsModule();
-            console.log("✅ AI recommendations module instance created");
+            console.log("🔧 Setting up AI module instance...");
+            window.aiModule = aiModule.default; // Use the default export (instance)
+            console.log("✅ AI recommendations module instance set up");
         }
 
         // Load and render AI recommendations
