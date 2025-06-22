@@ -322,14 +322,7 @@ async function loadStudentsData() {
     console.log("🔄 Loading students data from AgenticAI...");
 
     try {
-        // STEP 1: COMPLETELY CLEAR STUDENTS-CONTENT CONTAINER
-        const studentsContainer = document.getElementById('students-content');
-        if (studentsContainer) {
-            console.log("🧹 Clearing students-content container completely...");
-            studentsContainer.innerHTML = '';
-        }
-
-        // STEP 2: CLEAR ANY PLACEHOLDER SYSTEM
+        // CRITICAL FIX: Clear placeholder system first
         if (window.studentModule && window.studentModule.isPlaceholder) {
             console.log("🔄 Clearing placeholder system...");
             if (window.studentModule.clearRetryTimer) {
@@ -338,18 +331,19 @@ async function loadStudentsData() {
             window.studentModule = null;
         }
 
-        // STEP 3: IMPORT AND CREATE REAL MODULE
+        // Import and initialize students module
         const { StudentModule } = await import('./modules/students.js');
 
-        // STEP 4: CREATE FRESH INSTANCE
-        window.studentModule = new StudentModule();
-        console.log("✅ Student module initialized successfully");
+        // Create global students manager instance
+        if (!window.studentModule) {
+            window.studentModule = new StudentModule();
+            console.log("✅ Student module initialized successfully");
+        }
 
-        // STEP 5: RENDER INTERFACE FIRST (to empty container)
+        // Render interface first, then load data
         console.log("🎨 Rendering student interface...");
         window.studentModule.renderStudentInterface();
 
-        // STEP 6: LOAD DATA INTO INTERFACE
         console.log("📊 Loading student data...");
         await window.studentModule.loadStudents();
 

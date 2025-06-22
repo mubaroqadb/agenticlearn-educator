@@ -1,19 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgenticLearn Educator Portal</title>
-    <link rel="stylesheet" href="./css/educator-portal-green.css">
-    <link rel="icon" href="./assets/favicon.ico" type="image/x-icon">
+    <title>AgenticLearn - Portal Dosen (Enhanced v2.1)</title>
+
+    <!-- Import Shared CSS -->
+    <link rel="stylesheet" href="https://mubaroqadb.github.io/agenticlearn-shared/css/green-components.css">
+    
+    <!-- Import Modular CSS -->
+    <link rel="stylesheet" href="./css/educator-portal.css">
+    <link rel="stylesheet" href="./css/layout.css">
 </head>
 <body>
     <!-- Sidebar Navigation -->
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <div class="logo">
-                <span class="logo-icon">🌱</span>
-                <span class="logo-text">AgenticLearn</span>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; font-weight: 700;">
+                    🎓
+                </div>
+                <div>
+                    <h2 style="font-size: 1.125rem; font-weight: 700; color: var(--gray-900); margin: 0;">AgenticLearn</h2>
+                    <p style="color: var(--gray-600); font-size: 0.75rem; margin: 0;">Educator Portal</p>
+                </div>
             </div>
             <button class="sidebar-toggle" id="sidebar-toggle">
                 <span></span>
@@ -25,11 +35,11 @@
         <div class="sidebar-menu">
             <a href="#" class="menu-item active" onclick="showPage('beranda')">
                 <span class="menu-icon">🏠</span>
-                <span class="menu-text">Dashboard Overview</span>
+                <span class="menu-text">Beranda</span>
             </a>
             <a href="#" class="menu-item" onclick="showPage('analytics')">
                 <span class="menu-icon">📊</span>
-                <span class="menu-text">Analytics</span>
+                <span class="menu-text">Analytics & Insights</span>
             </a>
             <a href="#" class="menu-item" onclick="showPage('students')">
                 <span class="menu-icon">👥</span>
@@ -309,59 +319,470 @@
             return true; // Green computing: minimal auth check
         }
 
-        // NO PLACEHOLDER SYSTEM - DIRECT MODULE LOADING ONLY
-        console.log('🎯 Clean index.html - no placeholder conflicts');
 
-        // Global refresh function
+
+        // Global students module fix - DIRECT FIX for GitHub Pages delay
+        // Only create placeholder if no real module exists
+        if (!window.studentModule || !window.studentModule.renderStudentInterface) {
+            window.studentModule = {
+                isPlaceholder: true,
+                retryTimer: null, // Track timer to prevent multiple instances
+                retryAttempts: 0,
+                maxRetryAttempts: 10, // Limit retry attempts
+
+                loadStudents: function() {
+                    // Check if real module has been loaded
+                    if (window.studentModule && !window.studentModule.isPlaceholder) {
+                        console.log('✅ Real StudentModule detected, skipping placeholder');
+                        return;
+                    }
+
+                    console.log('🔄 Loading students (placeholder mode)...');
+
+                    // Clear any existing timer first
+                    this.clearRetryTimer();
+
+                const container = document.getElementById('students-content');
+                if (!container) return;
+
+                container.innerHTML = `
+                    <div style="padding: 2rem;">
+                        <!-- Header with Refresh Button -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; background: white; padding: 1.25rem 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #3b82f6;">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div style="background: #3b82f6; color: white; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                                    👥
+                                </div>
+                                <div>
+                                    <h3 style="margin: 0; font-size: 1.25rem; color: #1f2937;">Student Management</h3>
+                                    <p style="margin: 0; color: #6b7280; font-size: 0.875rem;">Manage students, track progress, and analyze performance</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 0.75rem;">
+                                <button onclick="window.studentModule.tryLoadFullModule()" style="background: #3b82f6; color: white; border: none; padding: 0.625rem 1.25rem; border-radius: 6px; cursor: pointer; font-size: 0.875rem; font-weight: 500; transition: background 0.2s;">
+                                    🚀 Load Full Features
+                                </button>
+                                <button onclick="window.studentModule.loadStudents()" style="background: #10b981; color: white; border: none; padding: 0.625rem 1.25rem; border-radius: 6px; cursor: pointer; font-size: 0.875rem; font-weight: 500; transition: background 0.2s;">
+                                    🔄 Refresh
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Status Indicator -->
+                        <div style="background: #fef3c7; border: 1px solid #f59e0b; padding: 1rem; border-radius: 6px; margin-bottom: 2rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="font-size: 1.2rem;">🔄</span>
+                                <strong>Student features are loading...</strong>
+                            </div>
+                            <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">
+                                Click "Load Full Features" to try accessing complete functionality.
+                            </p>
+                        </div>
+
+                        <!-- Feature Preview Cards -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                            <div style="background: white; padding: 1.25rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #3b82f6; transition: transform 0.2s, box-shadow 0.2s;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                                    <div style="background: #3b82f6; color: white; width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">📊</div>
+                                    <h4 style="margin: 0; color: #3b82f6; font-size: 1rem;">Student Analytics</h4>
+                                </div>
+                                <p style="margin: 0 0 1rem 0; color: #6b7280; font-size: 0.875rem; line-height: 1.4;">View comprehensive student performance data, progress tracking, and learning analytics.</p>
+                                <div style="background: #f8fafc; padding: 0.875rem; border-radius: 6px;">
+                                    <div style="font-size: 0.75rem; color: #6b7280; font-weight: 500; margin-bottom: 0.5rem;">Key Features:</div>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                        <span style="background: #e0e7ff; color: #3730a3; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Progress tracking</span>
+                                        <span style="background: #e0e7ff; color: #3730a3; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Performance metrics</span>
+                                        <span style="background: #e0e7ff; color: #3730a3; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Risk assessment</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="background: white; padding: 1.25rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #10b981; transition: transform 0.2s, box-shadow 0.2s;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                                    <div style="background: #10b981; color: white; width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">💬</div>
+                                    <h4 style="margin: 0; color: #10b981; font-size: 1rem;">Communication Tools</h4>
+                                </div>
+                                <p style="margin: 0 0 1rem 0; color: #6b7280; font-size: 0.875rem; line-height: 1.4;">Send messages and announcements to individual students or groups.</p>
+                                <div style="background: #f0fdf4; padding: 0.875rem; border-radius: 6px;">
+                                    <div style="font-size: 0.75rem; color: #6b7280; font-weight: 500; margin-bottom: 0.5rem;">Key Features:</div>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                        <span style="background: #d1fae5; color: #065f46; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Individual messaging</span>
+                                        <span style="background: #d1fae5; color: #065f46; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Bulk announcements</span>
+                                        <span style="background: #d1fae5; color: #065f46; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Auto notifications</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="background: white; padding: 1.25rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #f59e0b; transition: transform 0.2s, box-shadow 0.2s;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                                    <div style="background: #f59e0b; color: white; width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 1rem;">⚠️</div>
+                                    <h4 style="margin: 0; color: #f59e0b; font-size: 1rem;">Risk Management</h4>
+                                </div>
+                                <p style="margin: 0 0 1rem 0; color: #6b7280; font-size: 0.875rem; line-height: 1.4;">Identify at-risk students and provide targeted interventions.</p>
+                                <div style="background: #fffbeb; padding: 0.875rem; border-radius: 6px;">
+                                    <div style="font-size: 0.75rem; color: #6b7280; font-weight: 500; margin-bottom: 0.5rem;">Key Features:</div>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                        <span style="background: #fef3c7; color: #92400e; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Early warning</span>
+                                        <span style="background: #fef3c7; color: #92400e; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Intervention tracking</span>
+                                        <span style="background: #fef3c7; color: #92400e; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Success monitoring</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hidden Elements for Compatibility -->
+                        <div id="students-list" style="display: none;">
+                            <!-- This element exists to prevent "Element not found" errors -->
+                            <!-- Real StudentModule will replace the entire interface -->
+                        </div>
+
+                        <div id="student-stats" style="display: none;">
+                            <!-- Stats container for compatibility -->
+                        </div>
+
+                        <div id="student-modal" style="display: none;">
+                            <!-- Modal container for compatibility -->
+                        </div>
+
+                        <!-- Auto-retry Timer -->
+                        <div id="auto-retry-status" style="text-align: center; margin-top: 2rem; padding: 1rem; background: #f8fafc; border-radius: 6px;">
+                            <p style="margin: 0; color: #666; font-size: 0.9rem;">
+                                Auto-retry in <span id="retry-countdown">30</span> seconds... (Attempt <span id="retry-attempt">1</span>/<span id="max-attempts">10</span>)
+                            </p>
+                            <button onclick="window.studentModule.stopAutoRetry()" style="background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; margin-top: 0.5rem; font-size: 0.8rem;">
+                                ⏹️ Stop Auto-Retry
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                // Start auto-retry countdown only if not already running
+                if (!this.retryTimer) {
+                    this.startAutoRetry();
+                }
+                console.log('✅ Students placeholder loaded with refresh options');
+            },
+
+            renderStudentInterface: function() {
+                console.log('✅ Student interface rendered (placeholder)');
+            },
+
+            tryLoadFullModule: async function() {
+                console.log('🔄 Attempting to load full StudentModule...');
+                try {
+                    // Try to import the real module
+                    const module = await import('./js/modules/students.js');
+                    if (module.StudentModule) {
+                        console.log('✅ Full StudentModule found! Replacing placeholder...');
+
+                        // Clear retry timer before replacing
+                        this.clearRetryTimer();
+
+                        // Replace placeholder with real module
+                        const realModule = new module.StudentModule();
+
+                        // Initialize the real module safely
+                        try {
+                            await realModule.loadStudents();
+                            realModule.renderStudentInterface();
+
+                            // Replace the global reference
+                            window.studentModule = realModule;
+
+                            console.log('✅ Full StudentModule loaded successfully');
+                            return true;
+                        } catch (initError) {
+                            console.log('⚠️ Full StudentModule loaded but initialization failed:', initError.message);
+                            // Keep placeholder active if real module fails to initialize
+                            throw initError;
+                        }
+                    }
+                } catch (error) {
+                    console.log('⚠️ Full StudentModule not ready yet:', error.message);
+                    this.retryAttempts++;
+
+                    // Show user-friendly message with safe element access
+                    const container = document.getElementById('students-content');
+                    if (container) {
+                        const statusDiv = container.querySelector('#auto-retry-status');
+                        if (statusDiv) {
+                            statusDiv.innerHTML = `
+                                <p style="margin: 0; color: #f59e0b; font-size: 0.9rem;">
+                                    ⚠️ Attempt ${this.retryAttempts}/${this.maxRetryAttempts} failed. ${error.message.substring(0, 100)}...
+                                </p>
+                                <button onclick="window.studentModule.stopAutoRetry()" style="background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; margin-top: 0.5rem; font-size: 0.8rem;">
+                                    ⏹️ Stop Auto-Retry
+                                </button>
+                            `;
+                        }
+                    }
+                }
+                return false;
+            },
+
+            startAutoRetry: function() {
+                // Check if we've exceeded max attempts
+                if (this.retryAttempts >= this.maxRetryAttempts) {
+                    console.log('⚠️ Max retry attempts reached. Stopping auto-retry.');
+                    this.showMaxAttemptsReached();
+                    return;
+                }
+
+                // Clear any existing timer
+                this.clearRetryTimer();
+
+                let countdown = 30;
+                const countdownElement = document.getElementById('retry-countdown');
+                const attemptElement = document.getElementById('retry-attempt');
+                const maxAttemptsElement = document.getElementById('max-attempts');
+
+                // Update attempt counter
+                if (attemptElement) attemptElement.textContent = this.retryAttempts + 1;
+                if (maxAttemptsElement) maxAttemptsElement.textContent = this.maxRetryAttempts;
+
+                this.retryTimer = setInterval(() => {
+                    countdown--;
+                    if (countdownElement) {
+                        countdownElement.textContent = countdown;
+                    }
+
+                    if (countdown <= 0) {
+                        clearInterval(this.retryTimer);
+                        this.retryTimer = null;
+
+                        console.log(`🔄 Auto-retry attempt ${this.retryAttempts + 1}/${this.maxRetryAttempts}: Attempting to load full module...`);
+                        this.tryLoadFullModule().then(success => {
+                            if (!success && this.retryAttempts < this.maxRetryAttempts) {
+                                // Restart countdown if failed and under limit
+                                setTimeout(() => {
+                                    if (this.isPlaceholder) { // Only restart if still in placeholder mode
+                                        this.startAutoRetry();
+                                    }
+                                }, 2000);
+                            }
+                        });
+                    }
+                }, 1000);
+
+                // Auto-retry timer started silently
+            },
+
+            clearRetryTimer: function() {
+                if (this.retryTimer) {
+                    clearInterval(this.retryTimer);
+                    this.retryTimer = null;
+                    // Timer cleared silently - no need for console spam
+                }
+            },
+
+            stopAutoRetry: function() {
+                this.clearRetryTimer();
+                this.retryAttempts = this.maxRetryAttempts; // Prevent restart
+
+                const statusDiv = document.getElementById('auto-retry-status');
+                if (statusDiv) {
+                    statusDiv.innerHTML = `
+                        <p style="margin: 0; color: #ef4444; font-size: 0.9rem;">
+                            ⏹️ Auto-retry stopped by user
+                        </p>
+                        <button onclick="window.studentModule.resetAndRetry()" style="background: #3b82f6; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; margin-top: 0.5rem; font-size: 0.8rem;">
+                            🔄 Restart Auto-Retry
+                        </button>
+                    `;
+                }
+                // User action logged only when needed
+            },
+
+            resetAndRetry: function() {
+                this.retryAttempts = 0;
+                this.startAutoRetry();
+                // Auto-retry restarted silently
+            },
+
+            showMaxAttemptsReached: function() {
+                const statusDiv = document.getElementById('auto-retry-status');
+                if (statusDiv) {
+                    statusDiv.innerHTML = `
+                        <p style="margin: 0; color: #ef4444; font-size: 0.9rem;">
+                            ⚠️ Maximum retry attempts (${this.maxRetryAttempts}) reached
+                        </p>
+                        <button onclick="window.studentModule.resetAndRetry()" style="background: #3b82f6; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; margin-top: 0.5rem; font-size: 0.8rem;">
+                            🔄 Reset and Retry
+                        </button>
+                    `;
+                }
+            }
+        };
+        } // End of placeholder creation conditional
+
+        // Global manager initialization - DIRECT FIX
+        window.assessmentManager = {
+            switchView: function(view) {
+                console.log('🔄 Switching to view:', view);
+
+                // Hide all views
+                const views = ['list', 'create', 'edit', 'results'];
+                views.forEach(v => {
+                    const element = document.getElementById(`assessment-${v}-view`);
+                    if (element) {
+                        element.style.display = 'none';
+                        element.classList.remove('active');
+                        element.classList.add('hidden');
+                    }
+                });
+
+                // Show target view
+                const targetView = document.getElementById(`assessment-${view}-view`);
+                if (targetView) {
+                    targetView.style.display = 'block';
+                    targetView.classList.add('active');
+                    targetView.classList.remove('hidden');
+                    console.log('✅ Switched to view:', view);
+                } else {
+                    console.log('⚠️ View not found, creating form...');
+                    this.createAssessmentForm();
+                }
+            },
+
+            createAssessmentForm: function() {
+                const container = document.getElementById('assessments-content');
+                if (!container) return;
+
+                const formHTML = `
+                    <div class="assessment-container">
+                        <div class="assessment-header">
+                            <h2>📝 Create New Assessment</h2>
+                            <button class="btn-secondary" onclick="assessmentManager.switchView('list')">
+                                ← Back to List
+                            </button>
+                        </div>
+
+                        <div class="create-form" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 2rem; max-width: 800px; margin: 0 auto;">
+                            <form id="create-assessment-form">
+                                <div class="form-section" style="margin-bottom: 2rem;">
+                                    <h3 style="font-size: 1.125rem; font-weight: 600; color: #1f2937; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb;">Basic Information</h3>
+
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                                        <div>
+                                            <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">Assessment Title:</label>
+                                            <input type="text" id="assessment-title" required style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                                        </div>
+                                        <div>
+                                            <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">Course:</label>
+                                            <select id="assessment-course" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                                                <option value="">Select course...</option>
+                                                <option value="course_001">Digital Literacy</option>
+                                                <option value="course_002">Programming Basics</option>
+                                                <option value="course_003">Advanced Computing</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-bottom: 1rem;">
+                                        <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">Description:</label>
+                                        <textarea id="assessment-description" rows="3" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem; min-height: 100px; resize: vertical;"></textarea>
+                                    </div>
+
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                                        <div>
+                                            <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">Total Points:</label>
+                                            <input type="number" id="assessment-points" min="1" value="100" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                                        </div>
+                                        <div>
+                                            <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">Duration (minutes):</label>
+                                            <input type="number" id="assessment-duration" min="1" value="60" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                                        </div>
+                                        <div>
+                                            <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: #374151;">Due Date:</label>
+                                            <input type="datetime-local" id="assessment-due-date" required style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="text-align: center; padding-top: 2rem; border-top: 1px solid #e5e7eb;">
+                                    <button type="submit" style="background: #3b82f6; color: white; padding: 0.75rem 2rem; border: none; border-radius: 0.375rem; cursor: pointer; font-size: 0.875rem; margin-right: 1rem;">
+                                        ✅ Create Assessment
+                                    </button>
+                                    <button type="button" onclick="assessmentManager.switchView('list')" style="background: #f3f4f6; color: #374151; padding: 0.75rem 2rem; border: none; border-radius: 0.375rem; cursor: pointer; font-size: 0.875rem;">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                `;
+
+                container.innerHTML = formHTML;
+                console.log('✅ Assessment creation form displayed');
+            }
+        };
+
+        // Global refresh function - CRITICAL FIX
         window.refreshAllDashboardData = function() {
             console.log('🔄 Refreshing all dashboard data...');
+
+            // Use portal's refreshData if available
             if (window.educatorPortal && window.educatorPortal.refreshData) {
                 window.educatorPortal.refreshData();
             } else if (window.refreshData) {
                 window.refreshData();
             } else {
+                // Fallback: reload current page
                 console.log('⚠️ No refresh function available, reloading current page');
                 if (window.educatorPortal && window.educatorPortal.loadPage) {
                     const currentPage = window.educatorPortal.currentPage || 'beranda';
                     window.educatorPortal.loadPage(currentPage);
                 } else {
+                    // Ultimate fallback: reload page
                     window.location.reload();
                 }
             }
         };
 
-        // Global navigation function
+        // Global navigation function - CRITICAL FIX
         window.showPage = function(pageName) {
             console.log('🔄 Navigating to page:', pageName);
+
+            // Update active menu item
             document.querySelectorAll('.menu-item').forEach(item => {
                 item.classList.remove('active');
             });
+
+            // Find and activate current menu item
             const currentMenuItem = document.querySelector(`[onclick="showPage('${pageName}')"]`);
             if (currentMenuItem) {
                 currentMenuItem.classList.add('active');
             }
+
+            // Use portal's loadPage if available, otherwise fallback
             if (window.educatorPortal && window.educatorPortal.loadPage) {
                 window.educatorPortal.loadPage(pageName);
             } else {
                 console.log('⚠️ Portal not ready, will load when initialized');
+                // Store the requested page for later
                 window.pendingPage = pageName;
             }
         };
 
-        // Global notifications function
+        // Global notifications function - CRITICAL FIX
         window.loadNotifications = function() {
             console.log('🔔 Loading notifications...');
+
+            // Use portal's loadNotifications if available
             if (window.educatorPortal && window.educatorPortal.loadNotifications) {
                 window.educatorPortal.loadNotifications();
             } else {
+                // Fallback: show placeholder notification
                 alert('🔔 Notifications\n\nNotification system is loading...\n\nFeatures:\n• Real-time alerts\n• Message notifications\n• System updates\n• Assignment reminders');
                 console.log('⚠️ Notifications system not ready, showing placeholder');
             }
         };
 
-        // Global profile function
+        // Global profile function - USE STANDARD PAGE NAVIGATION
         window.loadProfile = async function() {
             console.log('👤 Loading profile...');
+
+            // First, create profile page if it doesn't exist
             let profilePage = document.getElementById('page-profile');
             if (!profilePage) {
                 console.log('🆕 Creating profile page...');
@@ -370,13 +791,18 @@
                 profilePage.className = 'page-content';
                 document.querySelector('.container').appendChild(profilePage);
             }
+
+            // Use standard page navigation
             showPage('profile');
+
             try {
                 console.log('🔄 Importing and initializing profile module...');
                 const module = await import('./js/modules/profile.js');
                 const { profileModule } = module;
+
                 window.profileModule = profileModule;
                 await profileModule.initialize();
+
                 console.log('✅ Profile module loaded and initialized');
             } catch (error) {
                 console.error('❌ Failed to load Profile module:', error);
@@ -384,15 +810,11 @@
             }
         };
 
-        // Toggle notifications function
-        window.toggleNotifications = function() {
-            console.log('🔔 Toggle notifications clicked');
-            loadNotifications();
-        };
-
-        // Log when portal is ready
+        // Log when portal is ready (no timeout needed)
         document.addEventListener('DOMContentLoaded', () => {
             console.log("🌱 Green Computing Portal: DOM ready, loading modules...");
+
+            // Check for pending page navigation
             if (window.pendingPage) {
                 setTimeout(() => {
                     if (window.educatorPortal && window.educatorPortal.loadPage) {
@@ -404,7 +826,22 @@
         });
     </script>
 
+    <!-- Modal Containers for Reports Module -->
+    <div id="quick-export-modal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <!-- Quick Export Modal Content -->
+    </div>
+
+    <div id="schedule-modal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <!-- Schedule Modal Content -->
+    </div>
+
+    <div id="template-modal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <!-- Template Modal Content -->
+    </div>
+
     <!-- 🌱 GREEN COMPUTING: Vanilla JS ES6+, No frameworks, Minimal footprint -->
     <!-- 🚀 MICRO FRONTEND: Modular loading, Independent components -->
     <!-- ❌ NO FALLBACK DATA: Pure backend dependency per green architecture -->
     <script type="module" src="./js/educator-portal-green.js"></script>
+</body>
+</html>
