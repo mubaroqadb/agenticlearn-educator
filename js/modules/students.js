@@ -86,60 +86,30 @@ export class StudentModule {
                         </div>
                     </div>
                     
-                    <!-- Quick Stats - HORIZONTAL WITH WRAPPING -->
+                    <!-- Quick Stats - SIMPLE DIV ROWS -->
                     <div id="student-stats" style="
-                        display: flex !important;
-                        flex-direction: row !important;
-                        flex-wrap: wrap !important;
-                        gap: 1rem !important;
-                        margin-bottom: 2rem !important;
-                        width: 100% !important;
+                        margin-bottom: 2rem;
+                        width: 100%;
                     ">
                         <!-- Stats will be rendered here -->
                     </div>
 
-                    <!-- HORIZONTAL LAYOUT WITH SMART WRAPPING -->
+                    <!-- SIMPLE RESPONSIVE LAYOUT -->
                     <style>
-                        #student-stats {
-                            display: flex !important;
-                            flex-direction: row !important;
-                            flex-wrap: wrap !important;
-                            gap: 1rem !important;
-                            margin-bottom: 2rem !important;
-                            width: 100% !important;
-                            padding: 0 !important;
-                        }
-
                         #student-stats .metric-card {
-                            flex: 1 1 calc(20% - 0.8rem) !important;
-                            min-width: 180px !important;
-                            max-width: 250px !important;
-                            height: 100px !important;
-                            min-height: 100px !important;
-                            max-height: 100px !important;
+                            flex: 1;
+                            min-width: 0;
+                            height: 100px;
                         }
 
-                        /* Responsive wrapping behavior */
-                        @media (max-width: 1200px) {
-                            #student-stats .metric-card {
-                                flex: 1 1 calc(33.333% - 0.67rem) !important;
-                                min-width: 160px !important;
-                            }
-                        }
+                        /* Mobile responsive */
                         @media (max-width: 768px) {
-                            #student-stats .metric-card {
-                                flex: 1 1 calc(50% - 0.5rem) !important;
-                                min-width: 140px !important;
-                            }
-                        }
-                        @media (max-width: 480px) {
-                            #student-stats {
+                            #student-stats > div {
                                 flex-direction: column !important;
+                                gap: 0.5rem !important;
                             }
                             #student-stats .metric-card {
-                                flex: 1 1 100% !important;
-                                min-width: 100% !important;
-                                max-width: none !important;
+                                margin-bottom: 0.5rem;
                             }
                         }
                     </style>
@@ -248,55 +218,20 @@ export class StudentModule {
         const atRiskPercentage = totalStudents > 0 ? (atRiskStudents / totalStudents * 100) : 0;
 
         const statsHTML = `
-            ${UIComponents.createMetricCard('Total Students', totalStudents, null, '👥')}
-            ${UIComponents.createMetricCard('Active (7 days)', activeStudents, null, '✅')}
-            ${UIComponents.createMetricCard('At Risk', `${atRiskStudents} (${formatPercentage(atRiskPercentage)})`, atRiskStudents > 0 ? { value: atRiskStudents, unit: ' students', period: 'need attention' } : null, '⚠️')}
-            ${UIComponents.createMetricCard('Avg Progress', formatPercentage(avgProgress), null, '📈')}
-            ${UIComponents.createMetricCard('Avg Score', formatNumber(avgScore, 1), null, '🏆')}
+            <!-- First Row: 3 cards -->
+            <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                ${UIComponents.createMetricCard('Total Students', totalStudents, null, '👥')}
+                ${UIComponents.createMetricCard('Active (7 days)', activeStudents, null, '✅')}
+                ${UIComponents.createMetricCard('At Risk', `${atRiskStudents} (${formatPercentage(atRiskPercentage)})`, atRiskStudents > 0 ? { value: atRiskStudents, unit: ' students', period: 'need attention' } : null, '⚠️')}
+            </div>
+            <!-- Second Row: 2 cards -->
+            <div style="display: flex; gap: 1rem;">
+                ${UIComponents.createMetricCard('Avg Progress', formatPercentage(avgProgress), null, '📈')}
+                ${UIComponents.createMetricCard('Avg Score', formatNumber(avgScore, 1), null, '🏆')}
+            </div>
         `;
 
         setInner('student-stats', statsHTML);
-
-        // Enforce horizontal layout with wrapping after render
-        setTimeout(() => {
-            const statsContainer = document.getElementById('student-stats');
-            if (statsContainer) {
-                console.log('🔧 Enforcing horizontal layout with wrapping...');
-                statsContainer.style.display = 'flex';
-                statsContainer.style.flexDirection = 'row';
-                statsContainer.style.flexWrap = 'wrap';
-                statsContainer.style.gap = '1rem';
-
-                const cards = statsContainer.querySelectorAll('.metric-card');
-                const screenWidth = window.innerWidth;
-
-                cards.forEach((card, index) => {
-                    if (screenWidth > 1200) {
-                        // Desktop: 5 cards per row (20% each)
-                        card.style.flex = '1 1 calc(20% - 0.8rem)';
-                        card.style.minWidth = '180px';
-                        card.style.maxWidth = '250px';
-                    } else if (screenWidth > 768) {
-                        // Tablet: 3 cards per row
-                        card.style.flex = '1 1 calc(33.333% - 0.67rem)';
-                        card.style.minWidth = '160px';
-                        card.style.maxWidth = '200px';
-                    } else if (screenWidth > 480) {
-                        // Small tablet: 2 cards per row
-                        card.style.flex = '1 1 calc(50% - 0.5rem)';
-                        card.style.minWidth = '140px';
-                        card.style.maxWidth = '180px';
-                    } else {
-                        // Mobile: 1 card per row
-                        card.style.flex = '1 1 100%';
-                        card.style.minWidth = '100%';
-                        card.style.maxWidth = 'none';
-                    }
-                    console.log(`📊 Card ${index + 1} configured for ${screenWidth}px screen`);
-                });
-                console.log('✅ Student stats configured for responsive wrapping layout');
-            }
-        }, 100);
     }
 
     renderStudentGrid() {

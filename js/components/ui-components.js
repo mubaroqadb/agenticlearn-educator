@@ -224,17 +224,13 @@ export class UIComponents {
                 border-left: 4px solid var(--primary);
                 box-shadow: var(--shadow-sm);
                 transition: transform 0.2s, box-shadow 0.2s;
-                min-height: 100px;
                 height: 100px;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
                 box-sizing: border-box;
-                flex-grow: 1;
-                flex-shrink: 1;
-                flex-basis: calc(20% - 0.8rem);
-                min-width: 180px;
-                max-width: 250px;
+                flex: 1;
+                min-width: 0;
             ">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
                     <div style="
