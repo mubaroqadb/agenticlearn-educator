@@ -559,14 +559,14 @@
                     }
                 }, 1000);
 
-                console.log(`✅ Auto-retry timer started (attempt ${this.retryAttempts + 1}/${this.maxRetryAttempts})`);
+                // Auto-retry timer started silently
             },
 
             clearRetryTimer: function() {
                 if (this.retryTimer) {
                     clearInterval(this.retryTimer);
                     this.retryTimer = null;
-                    console.log('🛑 Auto-retry timer cleared');
+                    // Timer cleared silently - no need for console spam
                 }
             },
 
@@ -585,13 +585,13 @@
                         </button>
                     `;
                 }
-                console.log('🛑 Auto-retry stopped by user');
+                // User action logged only when needed
             },
 
             resetAndRetry: function() {
                 this.retryAttempts = 0;
                 this.startAutoRetry();
-                console.log('🔄 Auto-retry reset and restarted');
+                // Auto-retry restarted silently
             },
 
             showMaxAttemptsReached: function() {
