@@ -24,8 +24,29 @@ class ProfileModule {
     }
 
     renderProfileInterface() {
-        const container = document.getElementById('main-content');
-        if (!container) return;
+        // Hide all pages first
+        const pages = document.querySelectorAll('.page-content');
+        pages.forEach(page => page.classList.remove('active'));
+
+        // Create or get profile page
+        let profilePage = document.getElementById('page-profile');
+        if (!profilePage) {
+            profilePage = document.createElement('div');
+            profilePage.id = 'page-profile';
+            profilePage.className = 'page-content';
+            document.querySelector('.container').appendChild(profilePage);
+        }
+
+        // Show profile page
+        profilePage.classList.add('active');
+
+        // Update page title
+        const pageTitle = document.getElementById('page-title');
+        const pageSubtitle = document.getElementById('page-subtitle');
+        if (pageTitle) pageTitle.textContent = 'Profile Management';
+        if (pageSubtitle) pageSubtitle.textContent = 'Manage your profile, settings, and preferences';
+
+        const container = profilePage;
 
         const profileHTML = `
             <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
