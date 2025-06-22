@@ -238,7 +238,7 @@ async function loadPage(pageName) {
                 await loadContentData();
                 break;
             case 'ai-recommendations':
-                await loadAnalyticsData(); // Use analytics for AI recommendations
+                await loadAIRecommendationsData();
                 break;
             case 'reports':
                 await loadReportsData();
@@ -401,6 +401,29 @@ async function loadAssessmentsData() {
     } catch (error) {
         console.error("❌ Failed to load assessments module:", error);
         throw new Error("Assessments module unavailable - " + error.message);
+    }
+}
+
+async function loadAIRecommendationsData() {
+    console.log("🤖 Loading AI recommendations data from AgenticAI...");
+
+    try {
+        // Import and initialize AI recommendations module
+        const { AIRecommendationsModule } = await import('./modules/ai-recommendations.js');
+
+        // Create global AI module instance
+        if (!window.aiModule) {
+            window.aiModule = new AIRecommendationsModule();
+            console.log("✅ AI recommendations module initialized");
+        }
+
+        // Load and render AI recommendations
+        await window.aiModule.initialize();
+
+        console.log("✅ AI recommendations module loaded and initialized");
+    } catch (error) {
+        console.error("❌ Failed to load AI recommendations module:", error);
+        throw new Error("AI recommendations module unavailable - " + error.message);
     }
 }
 
