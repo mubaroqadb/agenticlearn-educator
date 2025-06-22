@@ -391,11 +391,11 @@ async function loadCommunicationData() {
             console.log("✅ Communication manager initialized");
         }
 
-        // Load and render communication
-        await window.communicationManager.loadMessages();
-        window.communicationManager.renderCommunicationInterface();
+        // Initialize communication system
+        console.log("🎨 Initializing communication interface...");
+        await window.communicationManager.initialize();
 
-        console.log("✅ Communication module loaded and initialized");
+        console.log("✅ Communication module loaded and initialized successfully");
     } catch (error) {
         console.error("❌ Failed to load communication module:", error);
         throw new Error("Communication module unavailable - " + error.message);

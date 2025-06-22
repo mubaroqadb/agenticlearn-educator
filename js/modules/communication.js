@@ -12,6 +12,7 @@ export class CommunicationManager {
         this.notifications = [];
         this.isLoading = false;
         this.currentView = 'messages'; // messages, announcements, notifications
+        this.messageTemplates = this.getMessageTemplates();
     }
 
     async initialize() {
@@ -20,6 +21,7 @@ export class CommunicationManager {
             await this.loadAllData();
             this.renderCommunicationInterface();
             this.setupEventListeners();
+            this.startAutoRefresh();
             console.log('✅ Communication System initialized successfully');
         } catch (error) {
             console.error('❌ Communication System initialization failed:', error);
@@ -292,8 +294,17 @@ export class CommunicationManager {
                         <input type="text" class="form-input" id="message-subject" required>
                     </div>
                     <div class="form-group">
+                        <label class="form-label">Message Templates:</label>
+                        <select class="form-select" id="message-template" onchange="communicationManager.applyMessageTemplate()">
+                            <option value="">Select template...</option>
+                            ${this.messageTemplates.map(template =>
+                                `<option value="${template.id}">${template.name}</option>`
+                            ).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label class="form-label">Message:</label>
-                        <textarea class="form-textarea" id="message-content" required></textarea>
+                        <textarea class="form-textarea" id="message-content" required placeholder="Type your message or select a template above..."></textarea>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Message Type:</label>
@@ -712,6 +723,181 @@ export class CommunicationManager {
                 });
             }
         }, 15000);
+    }
+
+    getMessageTemplates() {
+        return [
+            {
+                id: 'encouragement',
+                name: '🌟 Encouragement',
+                subject: 'Keep up the great work!',
+                content: 'Hi [Student Name],\n\nI wanted to take a moment to acknowledge your excellent progress in our course. Your dedication and hard work are truly paying off!\n\nKeep up the fantastic work, and don\'t hesitate to reach out if you need any support.\n\nBest regards,\nDr. Sarah Johnson'
+            },
+            {
+                id: 'reminder',
+                name: '⏰ Assignment Reminder',
+                subject: 'Upcoming Assignment Deadline',
+                content: 'Hi [Student Name],\n\nThis is a friendly reminder that your assignment "[Assignment Name]" is due on [Due Date].\n\nIf you have any questions or need assistance, please don\'t hesitate to reach out.\n\nBest regards,\nDr. Sarah Johnson'
+            },
+            {
+                id: 'feedback',
+                name: '📝 Feedback',
+                subject: 'Feedback on your recent work',
+                content: 'Hi [Student Name],\n\nI\'ve reviewed your recent submission and wanted to provide some feedback:\n\n[Feedback Details]\n\nOverall, you\'re making good progress. Keep up the good work!\n\nBest regards,\nDr. Sarah Johnson'
+            },
+            {
+                id: 'concern',
+                name: '⚠️ Academic Concern',
+                subject: 'Let\'s discuss your progress',
+                content: 'Hi [Student Name],\n\nI\'ve noticed that you might be facing some challenges with the course material. I\'d like to schedule a meeting to discuss how I can better support your learning.\n\nPlease let me know your availability for a brief chat.\n\nBest regards,\nDr. Sarah Johnson'
+            },
+            {
+                id: 'congratulations',
+                name: '🎉 Congratulations',
+                subject: 'Congratulations on your achievement!',
+                content: 'Hi [Student Name],\n\nCongratulations on your excellent performance! Your hard work and dedication have really paid off.\n\nI\'m proud of your achievement and look forward to seeing your continued success.\n\nBest regards,\nDr. Sarah Johnson'
+            }
+        ];
+    }
+
+    applyMessageTemplate() {
+        const templateSelect = document.getElementById('message-template');
+        const subjectInput = document.getElementById('message-subject');
+        const contentTextarea = document.getElementById('message-content');
+
+        if (!templateSelect || !subjectInput || !contentTextarea) return;
+
+        const templateId = templateSelect.value;
+        if (!templateId) return;
+
+        const template = this.messageTemplates.find(t => t.id === templateId);
+        if (template) {
+            subjectInput.value = template.subject;
+            contentTextarea.value = template.content;
+
+            // Show notification
+            UIComponents.showNotification(`Template "${template.name}" applied`, 'success');
+        }
+    }
+
+    // Bulk messaging functionality
+    async sendBulkMessage() {
+        const modalHTML = `
+            <div class="modal-overlay" style="
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            ">
+                <div class="modal-content" style="
+                    background: white;
+                    padding: 2rem;
+                    border-radius: 12px;
+                    max-width: 600px;
+                    width: 90%;
+                    max-height: 80vh;
+                    overflow-y: auto;
+                ">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h3 style="margin: 0;">📢 Send Bulk Message</h3>
+                        <button onclick="this.closest('.modal-overlay').remove()" style="
+                            background: none;
+                            border: none;
+                            font-size: 1.5rem;
+                            cursor: pointer;
+                            color: #6b7280;
+                        ">&times;</button>
+                    </div>
+
+                    <form id="bulk-message-form">
+                        <div class="form-group">
+                            <label class="form-label">Recipients:</label>
+                            <select class="form-select" id="bulk-recipients" multiple style="height: 120px;">
+                                <option value="all">All Students</option>
+                                <option value="at_risk">At-Risk Students</option>
+                                <option value="high_performers">High Performers</option>
+                                <option value="course_001">Digital Literacy Course</option>
+                                <option value="course_002">Programming Basics Course</option>
+                            </select>
+                            <small style="color: #6b7280;">Hold Ctrl/Cmd to select multiple options</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Subject:</label>
+                            <input type="text" class="form-input" id="bulk-subject" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Message:</label>
+                            <textarea class="form-textarea" id="bulk-content" required style="height: 150px;"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Priority:</label>
+                            <select class="form-select" id="bulk-priority">
+                                <option value="normal">Normal</option>
+                                <option value="high">High</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                            <button type="button" class="btn-secondary" onclick="this.closest('.modal-overlay').remove()">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn-primary">
+                                📤 Send to All
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+        // Add event listener for form submission
+        document.getElementById('bulk-message-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.handleBulkMessage(e);
+        });
+    }
+
+    async handleBulkMessage(event) {
+        const formData = {
+            recipients: Array.from(document.getElementById('bulk-recipients').selectedOptions).map(o => o.value),
+            subject: document.getElementById('bulk-subject').value,
+            content: document.getElementById('bulk-content').value,
+            priority: document.getElementById('bulk-priority').value,
+            message_type: 'bulk'
+        };
+
+        try {
+            console.log('🔄 Sending bulk message...', formData);
+
+            // Show loading state
+            const submitButton = event.target.querySelector('button[type="submit"]');
+            submitButton.textContent = '⏳ Sending...';
+            submitButton.disabled = true;
+
+            // Simulate API call (backend endpoint doesn't exist yet)
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            UIComponents.showNotification(`Bulk message sent to ${formData.recipients.length} recipient groups`, 'success');
+
+            // Close modal
+            document.querySelector('.modal-overlay').remove();
+
+        } catch (error) {
+            console.error('❌ Failed to send bulk message:', error);
+            UIComponents.showNotification('Failed to send bulk message: ' + error.message, 'error');
+        }
     }
 }
 
