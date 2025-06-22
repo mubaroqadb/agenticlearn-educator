@@ -425,6 +425,20 @@
                             </div>
                         </div>
 
+                        <!-- Hidden Elements for Compatibility -->
+                        <div id="students-list" style="display: none;">
+                            <!-- This element exists to prevent "Element not found" errors -->
+                            <!-- Real StudentModule will replace the entire interface -->
+                        </div>
+
+                        <div id="student-stats" style="display: none;">
+                            <!-- Stats container for compatibility -->
+                        </div>
+
+                        <div id="student-modal" style="display: none;">
+                            <!-- Modal container for compatibility -->
+                        </div>
+
                         <!-- Auto-retry Timer -->
                         <div id="auto-retry-status" style="text-align: center; margin-top: 2rem; padding: 1rem; background: #f8fafc; border-radius: 6px;">
                             <p style="margin: 0; color: #666; font-size: 0.9rem;">
@@ -461,27 +475,35 @@
 
                         // Replace placeholder with real module
                         const realModule = new module.StudentModule();
-                        await realModule.loadStudents();
-                        realModule.renderStudentInterface();
 
-                        // Replace the global reference
-                        window.studentModule = realModule;
+                        // Initialize the real module safely
+                        try {
+                            await realModule.loadStudents();
+                            realModule.renderStudentInterface();
 
-                        console.log('✅ Full StudentModule loaded successfully');
-                        return true;
+                            // Replace the global reference
+                            window.studentModule = realModule;
+
+                            console.log('✅ Full StudentModule loaded successfully');
+                            return true;
+                        } catch (initError) {
+                            console.log('⚠️ Full StudentModule loaded but initialization failed:', initError.message);
+                            // Keep placeholder active if real module fails to initialize
+                            throw initError;
+                        }
                     }
                 } catch (error) {
                     console.log('⚠️ Full StudentModule not ready yet:', error.message);
                     this.retryAttempts++;
 
-                    // Show user-friendly message
+                    // Show user-friendly message with safe element access
                     const container = document.getElementById('students-content');
                     if (container) {
                         const statusDiv = container.querySelector('#auto-retry-status');
                         if (statusDiv) {
                             statusDiv.innerHTML = `
                                 <p style="margin: 0; color: #f59e0b; font-size: 0.9rem;">
-                                    ⚠️ Attempt ${this.retryAttempts}/${this.maxRetryAttempts} failed. ${error.message}
+                                    ⚠️ Attempt ${this.retryAttempts}/${this.maxRetryAttempts} failed. ${error.message.substring(0, 100)}...
                                 </p>
                                 <button onclick="window.studentModule.stopAutoRetry()" style="background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; margin-top: 0.5rem; font-size: 0.8rem;">
                                     ⏹️ Stop Auto-Retry
