@@ -86,49 +86,47 @@ export class StudentModule {
                         </div>
                     </div>
                     
-                    <!-- Quick Stats - FORCED HORIZONTAL FLEXBOX -->
+                    <!-- Quick Stats - HORIZONTAL WITH WRAPPING -->
                     <div id="student-stats" style="
                         display: flex !important;
                         flex-direction: row !important;
-                        flex-wrap: nowrap !important;
+                        flex-wrap: wrap !important;
                         gap: 1rem !important;
                         margin-bottom: 2rem !important;
                         width: 100% !important;
-                        overflow-x: auto !important;
                     ">
                         <!-- Stats will be rendered here -->
                     </div>
 
-                    <!-- FORCE HORIZONTAL LAYOUT WITH FLEXBOX -->
+                    <!-- HORIZONTAL LAYOUT WITH SMART WRAPPING -->
                     <style>
                         #student-stats {
                             display: flex !important;
                             flex-direction: row !important;
-                            flex-wrap: nowrap !important;
+                            flex-wrap: wrap !important;
                             gap: 1rem !important;
                             margin-bottom: 2rem !important;
                             width: 100% !important;
-                            overflow-x: auto !important;
                             padding: 0 !important;
                         }
 
                         #student-stats .metric-card {
-                            flex: 1 1 0 !important;
-                            min-width: 160px !important;
-                            max-width: none !important;
-                            width: auto !important;
+                            flex: 1 1 calc(20% - 0.8rem) !important;
+                            min-width: 180px !important;
+                            max-width: 250px !important;
                             height: 100px !important;
                             min-height: 100px !important;
                             max-height: 100px !important;
-                            flex-shrink: 0 !important;
                         }
 
-                        /* Responsive: Allow wrapping on smaller screens */
-                        @media (max-width: 768px) {
-                            #student-stats {
-                                flex-wrap: wrap !important;
-                                overflow-x: visible !important;
+                        /* Responsive wrapping behavior */
+                        @media (max-width: 1200px) {
+                            #student-stats .metric-card {
+                                flex: 1 1 calc(33.333% - 0.67rem) !important;
+                                min-width: 160px !important;
                             }
+                        }
+                        @media (max-width: 768px) {
                             #student-stats .metric-card {
                                 flex: 1 1 calc(50% - 0.5rem) !important;
                                 min-width: 140px !important;
@@ -141,6 +139,7 @@ export class StudentModule {
                             #student-stats .metric-card {
                                 flex: 1 1 100% !important;
                                 min-width: 100% !important;
+                                max-width: none !important;
                             }
                         }
                     </style>
@@ -258,25 +257,44 @@ export class StudentModule {
 
         setInner('student-stats', statsHTML);
 
-        // Debug: Force horizontal layout after render
+        // Enforce horizontal layout with wrapping after render
         setTimeout(() => {
             const statsContainer = document.getElementById('student-stats');
             if (statsContainer) {
-                console.log('🔧 Forcing horizontal layout for student stats...');
+                console.log('🔧 Enforcing horizontal layout with wrapping...');
                 statsContainer.style.display = 'flex';
                 statsContainer.style.flexDirection = 'row';
-                statsContainer.style.flexWrap = 'nowrap';
+                statsContainer.style.flexWrap = 'wrap';
                 statsContainer.style.gap = '1rem';
-                statsContainer.style.overflowX = 'auto';
 
                 const cards = statsContainer.querySelectorAll('.metric-card');
+                const screenWidth = window.innerWidth;
+
                 cards.forEach((card, index) => {
-                    card.style.flex = '1 1 0';
-                    card.style.minWidth = '160px';
-                    card.style.flexShrink = '0';
-                    console.log(`📊 Card ${index + 1} styled for horizontal layout`);
+                    if (screenWidth > 1200) {
+                        // Desktop: 5 cards per row (20% each)
+                        card.style.flex = '1 1 calc(20% - 0.8rem)';
+                        card.style.minWidth = '180px';
+                        card.style.maxWidth = '250px';
+                    } else if (screenWidth > 768) {
+                        // Tablet: 3 cards per row
+                        card.style.flex = '1 1 calc(33.333% - 0.67rem)';
+                        card.style.minWidth = '160px';
+                        card.style.maxWidth = '200px';
+                    } else if (screenWidth > 480) {
+                        // Small tablet: 2 cards per row
+                        card.style.flex = '1 1 calc(50% - 0.5rem)';
+                        card.style.minWidth = '140px';
+                        card.style.maxWidth = '180px';
+                    } else {
+                        // Mobile: 1 card per row
+                        card.style.flex = '1 1 100%';
+                        card.style.minWidth = '100%';
+                        card.style.maxWidth = 'none';
+                    }
+                    console.log(`📊 Card ${index + 1} configured for ${screenWidth}px screen`);
                 });
-                console.log('✅ Student stats forced to horizontal layout');
+                console.log('✅ Student stats configured for responsive wrapping layout');
             }
         }, 100);
     }

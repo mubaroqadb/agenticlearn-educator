@@ -230,8 +230,11 @@ export class UIComponents {
                 flex-direction: column;
                 justify-content: space-between;
                 box-sizing: border-box;
-                flex-shrink: 0;
-                min-width: 160px;
+                flex-grow: 1;
+                flex-shrink: 1;
+                flex-basis: calc(20% - 0.8rem);
+                min-width: 180px;
+                max-width: 250px;
             ">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
                     <div style="
