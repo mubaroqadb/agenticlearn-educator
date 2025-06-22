@@ -100,13 +100,7 @@ export class StudentModule {
 
                     <!-- CSS Variables for styling -->
                     <style>
-                        :root {
-                            --white: #ffffff;
-                            --gray-600: #6b7280;
-                            --gray-800: #1f2937;
-                            --primary: #3b82f6;
-                            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-                        }
+                        /* Use existing green theme variables from educator-portal.css */
 
                         .btn {
                             padding: 0.5rem 1rem;
@@ -123,30 +117,30 @@ export class StudentModule {
                         }
 
                         .btn-info {
-                            background-color: #0ea5e9;
+                            background-color: var(--info);
                             color: white;
                         }
 
                         .btn-info:hover {
-                            background-color: #0284c7;
+                            background-color: var(--primary-light);
                         }
 
                         .btn-success {
-                            background-color: #22c55e;
+                            background-color: var(--success);
                             color: white;
                         }
 
                         .btn-success:hover {
-                            background-color: #16a34a;
+                            background-color: var(--primary-dark);
                         }
 
                         .btn-primary {
-                            background-color: #3b82f6;
+                            background-color: var(--primary);
                             color: white;
                         }
 
                         .btn-primary:hover {
-                            background-color: #2563eb;
+                            background-color: var(--primary-dark);
                         }
 
                         #ai-stats .metric-card {
