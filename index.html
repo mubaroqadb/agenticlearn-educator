@@ -773,9 +773,6 @@
         window.loadProfile = async function() {
             console.log('👤 Loading profile...');
 
-            // Add immediate visual feedback
-            alert('Profile button clicked! Starting profile load...');
-
             try {
                 console.log('🔄 Step 1: Importing profile module...');
                 const module = await import('./js/modules/profile.js');
@@ -793,11 +790,10 @@
                 await profileModule.initialize();
                 console.log('✅ Step 4 complete: Module initialized');
 
-                alert('✅ Profile loaded successfully!');
                 console.log('✅ Profile module loaded and initialized');
             } catch (error) {
                 console.error('❌ Failed to load Profile module:', error);
-                alert('❌ Error at step: ' + error.message);
+                alert('❌ Error loading profile: ' + error.message);
             }
         };
 
