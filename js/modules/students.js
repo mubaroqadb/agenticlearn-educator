@@ -2,7 +2,7 @@
 // Enhanced student management with interactive features
 
 import { apiClient } from '../core/api-client.js';
-import { UIComponents } from '../components/ui-components.js';
+import { UIComponents } from '../components/improved_ui_components.js';
 import { setInner, formatDate, formatNumber, formatPercentage } from '../core/utils.js';
 import { API_CONFIG } from '../core/config.js';
 
@@ -20,6 +20,9 @@ export class StudentModule {
             sortOrder: 'asc'
         };
         this.viewMode = 'grid'; // grid or list
+
+        // Ensure UIComponents styles are loaded
+        UIComponents.addGlobalStyles();
     }
 
     async initialize() {
@@ -330,60 +333,11 @@ export class StudentModule {
 
         if (!container) return;
 
-        const statsHTML = statsConfig.map(config => this.createStatsCard(config, this.students)).join('');
+        const statsHTML = statsConfig.map(config => UIComponents.createStatsCard(config, this.students)).join('');
         container.innerHTML = statsHTML;
     }
 
-    createStatsCard(config, data) {
-        const value = config.getValue(data);
-
-        return `
-            <div class="metric-card" style="
-                background: var(--white);
-                border-radius: 10px;
-                padding: 1rem;
-                border-left: 4px solid ${config.color};
-                box-shadow: var(--shadow-sm);
-                transition: transform 0.2s, box-shadow 0.2s;
-                height: 100px;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                box-sizing: border-box;
-                flex: 1;
-                min-width: 0;
-            ">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
-                    <div style="
-                        font-size: 0.75rem;
-                        color: var(--gray-600);
-                        font-weight: 500;
-                        line-height: 1.2;
-                        text-transform: uppercase;
-                        letter-spacing: 0.5px;
-                    ">${config.title}</div>
-                    <div style="
-                        font-size: 1.2rem;
-                        opacity: 0.8;
-                        width: 24px;
-                        height: 24px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                    ">${config.icon}</div>
-                </div>
-                <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
-                    <div style="
-                        font-size: 1.5rem;
-                        font-weight: 700;
-                        color: var(--gray-800);
-                        margin-bottom: 0.25rem;
-                        line-height: 1;
-                    ">${value}</div>
-                </div>
-            </div>
-        `;
-    }
+    // createStatsCard method removed - now using UIComponents.createStatsCard()
 
     renderStudentGrid() {
         return `
