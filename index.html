@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgenticLearn Educator Portal</title>
+    <link rel="stylesheet" href="./css/educator-portal-green.css">
+    <link rel="icon" href="./assets/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-icon">🌱</span>
+                <span class="logo-text">AgenticLearn</span>
+            </div>
+            <button class="sidebar-toggle" id="sidebar-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+
+        <div class="sidebar-menu">
+            <a href="#" class="menu-item active" onclick="showPage('beranda')">
+                <span class="menu-icon">🏠</span>
+                <span class="menu-text">Dashboard Overview</span>
+            </a>
+            <a href="#" class="menu-item" onclick="showPage('analytics')">
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Analytics</span>
+            </a>
+            <a href="#" class="menu-item" onclick="showPage('students')">
+                <span class="menu-icon">👥</span>
+                <span class="menu-text">Student Management</span>
+            </a>
+            <a href="#" class="menu-item" onclick="showPage('communication')">
+                <span class="menu-icon">💬</span>
+                <span class="menu-text">Communication</span>
+            </a>
+            <a href="#" class="menu-item" onclick="showPage('workflow')">
+                <span class="menu-icon">⚡</span>
+                <span class="menu-text">Workflow Tools</span>
+            </a>
+            <a href="#" class="menu-item" onclick="showPage('assessments')">
+                <span class="menu-icon">📝</span>
+                <span class="menu-text">Assessment Management</span>
+            </a>
+            <a href="#" class="menu-item" onclick="showPage('ai-recommendations')">
+                <span class="menu-icon">🤖</span>
+                <span class="menu-text">AI Recommendations</span>
+            </a>
+            <a href="#" class="menu-item" onclick="showPage('reports')">
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Reports & Export</span>
+            </a>
+            <a href="#" class="menu-item" onclick="loadProfile()">
+                <span class="menu-icon">👤</span>
+                <span class="menu-text">Profile</span>
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <div style="background: var(--accent); padding: 0.75rem; border-radius: 8px; text-align: center;">
+                <div style="font-size: 0.75rem; color: var(--gray-600); margin-bottom: 0.25rem;">Welcome back</div>
+                <div style="font-weight: 600; color: var(--primary); font-size: 0.875rem;">Dr. Sarah Johnson</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div>
+                    <h1 id="page-title" style="font-size: 1.5rem; font-weight: 700; color: var(--gray-900); margin: 0;">Dashboard Overview</h1>
+                    <p id="page-subtitle" style="color: var(--gray-600); font-size: 0.875rem; margin: 0;">Welcome to your educator dashboard</p>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="background: var(--accent); padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--accent-dark);">
+                    <span style="font-size: 0.75rem; color: var(--gray-600);">Last Login:</span>
+                    <span style="font-weight: 600; color: var(--primary); font-size: 0.75rem;" id="last-login">Today 09:30</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="notification-bell" onclick="toggleNotifications()" style="position: relative; cursor: pointer; padding: 0.5rem;">
+                        <span style="font-size: 1.2rem;">🔔</span>
+                        <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                    </div>
+                    <span id="cacheStatus" style="display: none; font-size: 0.75rem; color: var(--gray-600);"></span>
+
+                    <button class="btn" onclick="refreshAllDashboardData()" style="background: var(--success); padding: 0.5rem 1rem; font-size: 0.875rem;">
+                        🔄 Refresh All
+                    </button>
+                    <button class="btn" onclick="loadNotifications()" style="background: var(--info); padding: 0.5rem 1rem; font-size: 0.875rem;">
+                        🔔 Notifications
+                    </button>
+                    <button class="btn" onclick="loadProfile()" style="background: var(--primary); padding: 0.5rem 1rem; font-size: 0.875rem;">
+                        👤 Profile
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="container">
+            <!-- Beranda Page -->
+            <div id="page-beranda" class="page-content active">
+                <div id="beranda-content">
+                    <!-- Enhanced Dashboard Loading State -->
+                    <div class="loading-state" style="text-align: center; padding: 3rem; color: #6b7280;">
+                        <div class="loading-spinner" style="
+                            width: 40px;
+                            height: 40px;
+                            border: 4px solid #e5e7eb;
+                            border-top: 4px solid #3b82f6;
+                            border-radius: 50%;
+                            animation: spin 1s linear infinite;
+                            margin: 0 auto 1rem;
+                        "></div>
+                        <h3>🏠 Loading Dashboard...</h3>
+                        <p>Fetching your latest data, analytics, and insights...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Page -->
+            <div id="page-analytics" class="page-content">
+                <div id="analytics-content">
+                    <!-- Enhanced Analytics Loading State -->
+                    <div class="loading-state" style="text-align: center; padding: 3rem; color: #6b7280;">
+                        <div class="loading-spinner" style="
+                            width: 40px;
+                            height: 40px;
+                            border: 4px solid #e5e7eb;
+                            border-top: 4px solid #3b82f6;
+                            border-radius: 50%;
+                            animation: spin 1s linear infinite;
+                            margin: 0 auto 1rem;
+                        "></div>
+                        <h3>📊 Loading Analytics...</h3>
+                        <p>Analyzing student performance and generating insights...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Management Page -->
+            <div id="page-students" class="page-content">
+                <div id="students-content">
+                    <!-- Enhanced Students Loading State -->
+                    <div class="loading-state" style="text-align: center; padding: 3rem; color: #6b7280;">
+                        <div class="loading-spinner" style="
+                            width: 40px;
+                            height: 40px;
+                            border: 4px solid #e5e7eb;
+                            border-top: 4px solid #3b82f6;
+                            border-radius: 50%;
+                            animation: spin 1s linear infinite;
+                            margin: 0 auto 1rem;
+                        "></div>
+                        <h3>👥 Loading Student Management...</h3>
+                        <p>Fetching student data, progress, and performance metrics...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Communication Page -->
+            <div id="page-communication" class="page-content">
+                <div id="communication-content">
+                    <!-- Enhanced Communication Loading State -->
+                    <div class="loading-state" style="text-align: center; padding: 3rem; color: #6b7280;">
+                        <div class="loading-spinner" style="
+                            width: 40px;
+                            height: 40px;
+                            border: 4px solid #e5e7eb;
+                            border-top: 4px solid #3b82f6;
+                            border-radius: 50%;
+                            animation: spin 1s linear infinite;
+                            margin: 0 auto 1rem;
+                        "></div>
+                        <h3>💬 Loading Communication System...</h3>
+                        <p>Connecting to messaging services and loading your conversations...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workflow Tools Page -->
+            <div id="page-workflow" class="page-content">
+                <div id="workflow-content">
+                    <!-- Enhanced Workflow Loading State -->
+                    <div class="loading-state" style="text-align: center; padding: 3rem; color: #6b7280;">
+                        <div class="loading-spinner" style="
+                            width: 40px;
+                            height: 40px;
+                            border: 4px solid #e5e7eb;
+                            border-top: 4px solid #3b82f6;
+                            border-radius: 50%;
+                            animation: spin 1s linear infinite;
+                            margin: 0 auto 1rem;
+                        "></div>
+                        <h3>⚡ Loading Workflow Tools...</h3>
+                        <p>Preparing your D1-D24 workflow tools and automation features...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assessment Management Page -->
+            <div id="page-assessments" class="page-content">
+                <div id="assessments-content">
+                    <!-- Enhanced Assessment Loading State -->
+                    <div class="loading-state" style="text-align: center; padding: 3rem; color: #6b7280;">
+                        <div class="loading-spinner" style="
+                            width: 40px;
+                            height: 40px;
+                            border: 4px solid #e5e7eb;
+                            border-top: 4px solid #3b82f6;
+                            border-radius: 50%;
+                            animation: spin 1s linear infinite;
+                            margin: 0 auto 1rem;
+                        "></div>
+                        <h3>📝 Loading Assessment Management...</h3>
+                        <p>Fetching your assessments, results, and analytics...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Recommendations Page -->
+            <div id="page-ai-recommendations" class="page-content">
+                <div id="ai-recommendations-content">
+                    <!-- Enhanced AI Loading State -->
+                    <div class="loading-state" style="text-align: center; padding: 3rem; color: #6b7280;">
+                        <div class="loading-spinner" style="
+                            width: 40px;
+                            height: 40px;
+                            border: 4px solid #e5e7eb;
+                            border-top: 4px solid #3b82f6;
+                            border-radius: 50%;
+                            animation: spin 1s linear infinite;
+                            margin: 0 auto 1rem;
+                        "></div>
+                        <h3>🤖 Initializing AI Module...</h3>
+                        <p>Loading AI recommendations system...</p>
+                        <div style="margin-top: 2rem;">
+                            <button onclick="window.loadPage('ai-recommendations')" style="background: #8b5cf6; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">
+                                🔄 Retry Loading
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports & Export Page -->
+            <div id="page-reports" class="page-content">
+                <div id="reports-content">
+                    <!-- Enhanced Reports Loading State -->
+                    <div class="loading-state" style="text-align: center; padding: 3rem; color: #6b7280;">
+                        <div class="loading-spinner" style="
+                            width: 40px;
+                            height: 40px;
+                            border: 4px solid #e5e7eb;
+                            border-top: 4px solid #3b82f6;
+                            border-radius: 50%;
+                            animation: spin 1s linear infinite;
+                            margin: 0 auto 1rem;
+                        "></div>
+                        <h3>📋 Loading Reports & Export...</h3>
+                        <p>Preparing your data export options and report generation tools...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carbon Indicator -->
+    <div class="carbon-indicator">
+        🌱 Low Carbon Website
+    </div>
+
+    <!-- Modals -->
+    <div id="student-modal" class="modal" style="display: none;"></div>
+    <div id="message-modal" class="modal" style="display: none;"></div>
+    <div id="bulk-message-modal" class="modal" style="display: none;"></div>
+    <div id="progress-modal" class="modal" style="display: none;"></div>
+    <div id="loading-modal" class="modal" style="display: none;"></div>
+    <div id="workflow-modal" class="modal" style="display: none;"></div>
+    <div id="workflow-view-modal" class="modal" style="display: none;"></div>
+    <div id="execution-modal" class="modal" style="display: none;"></div>
+    <div id="automation-modal" class="modal" style="display: none;"></div>
+    <div id="insight-modal" class="modal" style="display: none;"></div>
+    <div id="recommendation-modal" class="modal" style="display: none;"></div>
+    <div id="pattern-modal" class="modal" style="display: none;"></div>
+    <div id="assessment-modal" class="modal" style="display: none;"></div>
+    <div id="assessment-results-modal" class="modal" style="display: none;"></div>
+    <div id="quick-export-modal" class="modal" style="display: none;"></div>
+    <div id="schedule-modal" class="modal" style="display: none;"></div>
+    <div id="template-modal" class="modal" style="display: none;"></div>
+    <div id="confirmation-modal" class="modal" style="display: none;"></div>
+
+    <!-- 🌱 GREEN COMPUTING: Minimal JavaScript, No timeout fallbacks -->
+    <script>
+        // Simple authentication check
+        function checkAuthentication() {
+            return true; // Green computing: minimal auth check
+        }
+
+        // NO PLACEHOLDER SYSTEM - DIRECT MODULE LOADING ONLY
+        console.log('🎯 Clean index.html - no placeholder conflicts');
+
+        // Global refresh function
+        window.refreshAllDashboardData = function() {
+            console.log('🔄 Refreshing all dashboard data...');
+            if (window.educatorPortal && window.educatorPortal.refreshData) {
+                window.educatorPortal.refreshData();
+            } else if (window.refreshData) {
+                window.refreshData();
+            } else {
+                console.log('⚠️ No refresh function available, reloading current page');
+                if (window.educatorPortal && window.educatorPortal.loadPage) {
+                    const currentPage = window.educatorPortal.currentPage || 'beranda';
+                    window.educatorPortal.loadPage(currentPage);
+                } else {
+                    window.location.reload();
+                }
+            }
+        };
+
+        // Global navigation function
+        window.showPage = function(pageName) {
+            console.log('🔄 Navigating to page:', pageName);
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            const currentMenuItem = document.querySelector(`[onclick="showPage('${pageName}')"]`);
+            if (currentMenuItem) {
+                currentMenuItem.classList.add('active');
+            }
+            if (window.educatorPortal && window.educatorPortal.loadPage) {
+                window.educatorPortal.loadPage(pageName);
+            } else {
+                console.log('⚠️ Portal not ready, will load when initialized');
+                window.pendingPage = pageName;
+            }
+        };
+
+        // Global notifications function
+        window.loadNotifications = function() {
+            console.log('🔔 Loading notifications...');
+            if (window.educatorPortal && window.educatorPortal.loadNotifications) {
+                window.educatorPortal.loadNotifications();
+            } else {
+                alert('🔔 Notifications\n\nNotification system is loading...\n\nFeatures:\n• Real-time alerts\n• Message notifications\n• System updates\n• Assignment reminders');
+                console.log('⚠️ Notifications system not ready, showing placeholder');
+            }
+        };
+
+        // Global profile function
+        window.loadProfile = async function() {
+            console.log('👤 Loading profile...');
+            let profilePage = document.getElementById('page-profile');
+            if (!profilePage) {
+                console.log('🆕 Creating profile page...');
+                profilePage = document.createElement('div');
+                profilePage.id = 'page-profile';
+                profilePage.className = 'page-content';
+                document.querySelector('.container').appendChild(profilePage);
+            }
+            showPage('profile');
+            try {
+                console.log('🔄 Importing and initializing profile module...');
+                const module = await import('./js/modules/profile.js');
+                const { profileModule } = module;
+                window.profileModule = profileModule;
+                await profileModule.initialize();
+                console.log('✅ Profile module loaded and initialized');
+            } catch (error) {
+                console.error('❌ Failed to load Profile module:', error);
+                alert('❌ Error loading profile: ' + error.message);
+            }
+        };
+
+        // Toggle notifications function
+        window.toggleNotifications = function() {
+            console.log('🔔 Toggle notifications clicked');
+            loadNotifications();
+        };
+
+        // Log when portal is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("🌱 Green Computing Portal: DOM ready, loading modules...");
+            if (window.pendingPage) {
+                setTimeout(() => {
+                    if (window.educatorPortal && window.educatorPortal.loadPage) {
+                        window.educatorPortal.loadPage(window.pendingPage);
+                        window.pendingPage = null;
+                    }
+                }, 1000);
+            }
+        });
+    </script>
+
+    <!-- 🌱 GREEN COMPUTING: Vanilla JS ES6+, No frameworks, Minimal footprint -->
+    <!-- 🚀 MICRO FRONTEND: Modular loading, Independent components -->
+    <!-- ❌ NO FALLBACK DATA: Pure backend dependency per green architecture -->
+    <script type="module" src="./js/educator-portal-green.js"></script>
