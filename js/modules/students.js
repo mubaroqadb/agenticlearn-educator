@@ -385,17 +385,7 @@ export class StudentModule {
                         line-height: 1;
                     ">${value}</div>
 
-                    <div style="
-                        display: flex;
-                        align-items: center;
-                        gap: 0.25rem;
-                        font-size: 0.875rem;
-                        color: #dc2626;
-                    ">
-                        ↘️
-                        NaN%
-                        <span style="color: var(--gray-500);"></span>
-                    </div>
+                    <!-- No trend indicator needed for student management -->
                 </div>
             </div>
         `;
