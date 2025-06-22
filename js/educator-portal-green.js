@@ -50,6 +50,11 @@ class SimpleAPIClient {
         }
 
         try {
+            // Check if online first
+            if (!navigator.onLine) {
+                throw new Error('🌐 No internet connection. Please check your network and try again.');
+            }
+
             console.log(`🔗 API Request: ${config.method} ${url}`);
             const response = await fetch(url, config);
             const data = await response.json();
@@ -62,7 +67,18 @@ class SimpleAPIClient {
             return data;
         } catch (error) {
             console.error(`❌ API Error: ${endpoint}`, error);
-            throw error;
+
+            // Enhanced error handling for different network scenarios
+            if (error.message.includes('Failed to fetch') ||
+                error.message.includes('ERR_INTERNET_DISCONNECTED') ||
+                error.message.includes('ERR_NETWORK') ||
+                error.name === 'TypeError' && error.message.includes('fetch')) {
+                throw new Error('🌐 Connection failed. Please check your internet connection and try again.');
+            } else if (error.message.includes('No internet connection')) {
+                throw new Error('📡 You appear to be offline. Please check your internet connection.');
+            } else {
+                throw error;
+            }
         }
     }
 
@@ -232,8 +248,54 @@ async function loadPage(pageName) {
         }
     } catch (error) {
         console.error(`❌ Failed to load data for page ${pageName}:`, error);
-        UIComponents.showNotification(`Failed to load ${pageName} data: ${error.message}`, 'error');
+
+        // Show user-friendly error message based on error type
+        let errorMessage = error.message;
+        if (error.message.includes('Connection failed') || error.message.includes('offline')) {
+            errorMessage = `🌐 Cannot load ${pageName} - please check your internet connection`;
+        } else if (error.message.includes('Failed to fetch')) {
+            errorMessage = `📡 Network error loading ${pageName} - please try again`;
+        }
+
+        UIComponents.showNotification(errorMessage, 'error');
+
+        // Show offline indicator in the page if needed
+        showOfflineIndicator(pageName);
     }
+}
+
+// ===== OFFLINE HANDLING =====
+function showOfflineIndicator(pageName) {
+    const pageContainer = document.getElementById(`page-${pageName}`);
+    if (!pageContainer) return;
+
+    const offlineHTML = `
+        <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 1.5rem; border-radius: 8px; margin: 1rem 0; text-align: center;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-bottom: 1rem;">
+                <span style="font-size: 1.5rem;">📡</span>
+                <h3 style="margin: 0; color: #dc2626;">Connection Issue</h3>
+            </div>
+            <p style="margin: 0 0 1rem 0; color: #6b7280;">
+                Unable to load ${pageName} data. Please check your internet connection.
+            </p>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button onclick="location.reload()" style="background: #3b82f6; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">
+                    🔄 Retry
+                </button>
+                <button onclick="window.loadPage('${pageName}')" style="background: #10b981; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">
+                    🔄 Reload Page
+                </button>
+            </div>
+            <p style="margin: 1rem 0 0 0; font-size: 0.875rem; color: #9ca3af;">
+                Status: ${navigator.onLine ? 'Online' : 'Offline'} |
+                Last attempt: ${new Date().toLocaleTimeString()}
+            </p>
+        </div>
+    `;
+
+    // Insert at the beginning of the page content
+    const existingContent = pageContainer.innerHTML;
+    pageContainer.innerHTML = offlineHTML + existingContent;
 }
 
 // ===== DATA LOADING FUNCTIONS =====
