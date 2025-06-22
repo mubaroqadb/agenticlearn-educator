@@ -408,21 +408,58 @@ async function loadAIRecommendationsData() {
     console.log("🤖 Loading AI recommendations data from AgenticAI...");
 
     try {
+        // Show loading state
+        const container = document.getElementById('ai-recommendations-content');
+        if (container) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 3rem; color: #6b7280;">
+                    <div style="width: 40px; height: 40px; border: 4px solid #e5e7eb; border-top: 4px solid #8b5cf6; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem;"></div>
+                    <h3>🤖 Loading AI Module...</h3>
+                    <p>Importing AI recommendations system...</p>
+                </div>
+            `;
+        }
+
+        console.log("📦 Importing AI recommendations module...");
+
         // Import and initialize AI recommendations module
         const { AIRecommendationsModule } = await import('./modules/ai-recommendations.js');
+        console.log("✅ AI module imported successfully");
 
         // Create global AI module instance
         if (!window.aiModule) {
+            console.log("🔧 Creating AI module instance...");
             window.aiModule = new AIRecommendationsModule();
-            console.log("✅ AI recommendations module initialized");
+            console.log("✅ AI recommendations module instance created");
         }
 
         // Load and render AI recommendations
+        console.log("🚀 Initializing AI module...");
         await window.aiModule.initialize();
 
-        console.log("✅ AI recommendations module loaded and initialized");
+        console.log("✅ AI recommendations module loaded and initialized successfully");
     } catch (error) {
         console.error("❌ Failed to load AI recommendations module:", error);
+
+        // Show error state
+        const container = document.getElementById('ai-recommendations-content');
+        if (container) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 3rem; color: #dc2626;">
+                    <h3>❌ AI Module Loading Failed</h3>
+                    <p>Error: ${error.message}</p>
+                    <div style="margin-top: 2rem;">
+                        <button onclick="window.loadPage('ai-recommendations')" style="background: #8b5cf6; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer; margin-right: 1rem;">
+                            🔄 Retry
+                        </button>
+                        <button onclick="console.log('AI Module Error Details:', '${error.stack || error.message}')" style="background: #6b7280; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer;">
+                            🔍 Debug Info
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
         throw new Error("AI recommendations module unavailable - " + error.message);
     }
 }
