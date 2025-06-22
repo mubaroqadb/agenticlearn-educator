@@ -13,6 +13,8 @@ export class CommunicationManager {
         this.isLoading = false;
         this.currentView = 'messages'; // messages, announcements, notifications
         this.messageTemplates = this.getMessageTemplates();
+        this.isUserTyping = false;
+        this.typingTimeout = null;
     }
 
     async initialize() {
@@ -451,6 +453,58 @@ export class CommunicationManager {
         if (createAnnouncementForm) {
             createAnnouncementForm.addEventListener('submit', (e) => this.handleCreateAnnouncement(e));
         }
+
+        // Add typing detection to prevent auto-refresh during typing
+        this.setupTypingDetection();
+    }
+
+    setupTypingDetection() {
+        // Monitor form inputs for typing activity
+        const formInputs = [
+            'message-to-student',
+            'message-subject',
+            'message-content',
+            'announcement-title',
+            'announcement-content'
+        ];
+
+        formInputs.forEach(inputId => {
+            const input = document.getElementById(inputId);
+            if (input) {
+                input.addEventListener('input', () => this.handleUserTyping());
+                input.addEventListener('focus', () => this.handleUserTyping());
+                input.addEventListener('blur', () => this.handleUserStoppedTyping());
+            }
+        });
+    }
+
+    handleUserTyping() {
+        this.isUserTyping = true;
+
+        // Clear existing timeout
+        if (this.typingTimeout) {
+            clearTimeout(this.typingTimeout);
+        }
+
+        // Set timeout to detect when user stops typing
+        this.typingTimeout = setTimeout(() => {
+            this.isUserTyping = false;
+        }, 3000); // Consider user stopped typing after 3 seconds of inactivity
+    }
+
+    handleUserStoppedTyping() {
+        // Delay to allow for quick focus changes
+        setTimeout(() => {
+            const activeElement = document.activeElement;
+            const isStillInForm = activeElement && (
+                activeElement.id.includes('message-') ||
+                activeElement.id.includes('announcement-')
+            );
+
+            if (!isStillInForm) {
+                this.isUserTyping = false;
+            }
+        }, 100);
     }
 
     async handleSendMessage(event) {
@@ -489,7 +543,7 @@ export class CommunicationManager {
                 UIComponents.showNotification('Message sent successfully!', 'success');
                 document.getElementById('send-message-form').reset();
                 await this.loadMessages();
-                this.updateViewContent('messages');
+                this.updateMessagesList();
             } else {
                 // Backend endpoint doesn't exist yet, simulate success
                 UIComponents.showNotification('Message sent (demo mode)', 'info');
@@ -533,7 +587,7 @@ export class CommunicationManager {
                 UIComponents.showNotification('Announcement created successfully!', 'success');
                 document.getElementById('create-announcement-form').reset();
                 await this.loadAnnouncements();
-                this.updateViewContent('announcements');
+                this.updateAnnouncementsList();
             }
         } catch (error) {
             console.error('❌ Failed to create announcement:', error);
@@ -672,7 +726,7 @@ export class CommunicationManager {
             const notification = this.notifications.find(n => n.notification_id === notificationId);
             if (notification) {
                 notification.read = true;
-                this.updateViewContent('notifications');
+                this.updateNotificationsList();
                 UIComponents.showNotification('Notification marked as read', 'success');
             }
         } catch (error) {
@@ -733,7 +787,7 @@ export class CommunicationManager {
             console.log('🔄 Deleting announcement:', announcementId);
             // Note: Backend doesn't have delete endpoint yet, but we'll simulate it
             this.announcements = this.announcements.filter(a => a.announcement_id !== announcementId);
-            this.updateViewContent('announcements');
+            this.updateAnnouncementsList();
             UIComponents.showNotification('Announcement deleted successfully', 'success');
         } catch (error) {
             console.error('❌ Failed to delete announcement:', error);
@@ -826,25 +880,58 @@ export class CommunicationManager {
     startAutoRefresh() {
         // Refresh notifications every 10 seconds
         setInterval(() => {
-            if (this.currentView === 'notifications') {
+            if (this.currentView === 'notifications' && !this.isUserTyping) {
                 this.loadNotifications().then(() => {
-                    if (this.currentView === 'notifications') {
-                        this.updateViewContent('notifications');
+                    if (this.currentView === 'notifications' && !this.isUserTyping) {
+                        this.updateNotificationsList();
                     }
                 });
             }
         }, 10000);
 
-        // Refresh messages every 15 seconds
+        // Refresh messages every 15 seconds (but skip if user is typing)
         setInterval(() => {
-            if (this.currentView === 'messages') {
+            if (this.currentView === 'messages' && !this.isUserTyping) {
                 this.loadMessages().then(() => {
-                    if (this.currentView === 'messages') {
-                        this.updateViewContent('messages');
+                    if (this.currentView === 'messages' && !this.isUserTyping) {
+                        this.updateMessagesList();
                     }
                 });
             }
         }, 15000);
+
+        // Refresh announcements every 20 seconds
+        setInterval(() => {
+            if (this.currentView === 'announcements' && !this.isUserTyping) {
+                this.loadAnnouncements().then(() => {
+                    if (this.currentView === 'announcements' && !this.isUserTyping) {
+                        this.updateAnnouncementsList();
+                    }
+                });
+            }
+        }, 20000);
+    }
+
+    // Smart update methods that don't touch forms
+    updateMessagesList() {
+        const messagesContainer = document.querySelector('#messages-view .messages-list');
+        if (messagesContainer) {
+            messagesContainer.innerHTML = this.renderMessagesList();
+        }
+    }
+
+    updateAnnouncementsList() {
+        const announcementsContainer = document.querySelector('#announcements-view .announcements-list');
+        if (announcementsContainer) {
+            announcementsContainer.innerHTML = this.renderAnnouncementsList();
+        }
+    }
+
+    updateNotificationsList() {
+        const notificationsContainer = document.querySelector('#notifications-view .notifications-list');
+        if (notificationsContainer) {
+            notificationsContainer.innerHTML = this.renderNotificationsList();
+        }
     }
 
     getMessageTemplates() {
