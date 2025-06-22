@@ -584,19 +584,19 @@ export class AssessmentManager {
                         <h4>📈 Overall Statistics</h4>
                         <div class="assessment-stats">
                             <div class="stat-item">
-                                <div class="stat-value">${results.total_students}</div>
+                                <div class="stat-value">${results.total_students || 0}</div>
                                 <div class="stat-label">Total Students</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-value">${results.submitted}</div>
+                                <div class="stat-value">${results.submitted || 0}</div>
                                 <div class="stat-label">Submitted</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-value">${formatPercentage(results.completion_rate)}</div>
+                                <div class="stat-value">${formatPercentage(results.completion_rate || 0)}</div>
                                 <div class="stat-label">Completion</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-value">${formatNumber(results.average_score, 1)}</div>
+                                <div class="stat-value">${formatNumber(results.average_score || 0, 1)}</div>
                                 <div class="stat-label">Average Score</div>
                             </div>
                         </div>
@@ -606,19 +606,19 @@ export class AssessmentManager {
                         <h4>🎯 Score Analytics</h4>
                         <div class="assessment-stats">
                             <div class="stat-item">
-                                <div class="stat-value">${formatNumber(results.analytics.highest_score, 1)}</div>
+                                <div class="stat-value">${formatNumber((results.analytics && results.analytics.highest_score) || 0, 1)}</div>
                                 <div class="stat-label">Highest</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-value">${formatNumber(results.analytics.lowest_score, 1)}</div>
+                                <div class="stat-value">${formatNumber((results.analytics && results.analytics.lowest_score) || 0, 1)}</div>
                                 <div class="stat-label">Lowest</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-value">${formatNumber(results.analytics.median_score, 1)}</div>
+                                <div class="stat-value">${formatNumber((results.analytics && results.analytics.median_score) || 0, 1)}</div>
                                 <div class="stat-label">Median</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-value">${formatPercentage(results.analytics.pass_rate)}</div>
+                                <div class="stat-value">${formatPercentage((results.analytics && results.analytics.pass_rate) || 0)}</div>
                                 <div class="stat-label">Pass Rate</div>
                             </div>
                         </div>
@@ -649,7 +649,7 @@ export class AssessmentManager {
                 <div class="results-card">
                     <h4>👥 Individual Results</h4>
                     <div class="student-results">
-                        ${results.detailed_results.map(student => `
+                        ${(results.detailed_results && results.detailed_results.length > 0) ? results.detailed_results.map(student => `
                             <div class="student-result-item" style="
                                 display: flex;
                                 justify-content: space-between;
@@ -660,22 +660,27 @@ export class AssessmentManager {
                                 margin-bottom: 0.5rem;
                             ">
                                 <div>
-                                    <div style="font-weight: 500;">${student.student_name}</div>
+                                    <div style="font-weight: 500;">${student.student_name || 'Unknown Student'}</div>
                                     <div style="font-size: 0.875rem; color: #6b7280;">
                                         Submitted: ${formatDate(student.submitted_at)} |
-                                        Time: ${student.time_taken_minutes} min
+                                        Time: ${student.time_taken_minutes || 0} min
                                     </div>
                                 </div>
                                 <div style="text-align: right;">
                                     <div style="font-size: 1.25rem; font-weight: 600; color: #3b82f6;">
-                                        ${formatNumber(student.score, 1)} (${student.letter_grade})
+                                        ${formatNumber(student.score || 0, 1)} (${student.letter_grade || 'N/A'})
                                     </div>
                                     <div style="font-size: 0.875rem; color: #6b7280;">
-                                        ${formatPercentage(student.percentage)}
+                                        ${formatPercentage(student.percentage || 0)}
                                     </div>
                                 </div>
                             </div>
-                        `).join('')}
+                        `).join('') : `
+                            <div style="text-align: center; padding: 2rem; color: #6b7280;">
+                                <p>📊 No individual results available yet.</p>
+                                <p style="font-size: 0.875rem;">Results will appear here once students submit their assessments.</p>
+                            </div>
+                        `}
                     </div>
                 </div>
             </div>
