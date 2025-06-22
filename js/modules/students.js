@@ -27,9 +27,9 @@ export class StudentModule {
 
     async initialize() {
         console.log('👥 Initializing Student Management Module...');
-        await this.loadStudents();
         this.renderStudentInterface();
         this.bindEventHandlers();
+        await this.loadStudents();
     }
 
     async loadStudents() {
@@ -314,7 +314,19 @@ export class StudentModule {
         const container = document.getElementById('ai-stats');
 
         if (!container) {
-            console.warn('ai-stats container not found');
+            console.warn('ai-stats container not found - interface may not be rendered yet');
+            // Try again after a short delay
+            setTimeout(() => {
+                const retryContainer = document.getElementById('ai-stats');
+                if (retryContainer) {
+                    const data = this.students || [];
+                    const statsHTML = statsConfig.map(config => this.createAIStatsCard(config, data)).join('');
+                    retryContainer.innerHTML = statsHTML;
+                    console.log('✅ AI Stats rendered on retry:', statsHTML.length, 'characters');
+                } else {
+                    console.error('❌ ai-stats container still not found after retry');
+                }
+            }, 200);
             return;
         }
 
