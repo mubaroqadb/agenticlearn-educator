@@ -1039,3 +1039,15 @@ document.addEventListener('DOMContentLoaded', () => {
 // ===== EXPORT FUNCTIONS TO WINDOW =====
 window.loadPage = loadPage;
 window.refreshData = refreshData;
+window.refreshAllDashboardData = refreshData; // Alias for compatibility
+window.loadNotifications = async function() {
+    console.log('🔔 Loading notifications...');
+    try {
+        // Try to load communication module for notifications
+        await loadPage('communication');
+        console.log('✅ Notifications loaded via communication module');
+    } catch (error) {
+        console.log('⚠️ Notifications not available:', error.message);
+        UIComponents.showNotification('Notifications system is loading...', 'info');
+    }
+};

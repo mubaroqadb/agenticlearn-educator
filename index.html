@@ -711,6 +711,28 @@
             }
         };
 
+        // Global refresh function - CRITICAL FIX
+        window.refreshAllDashboardData = function() {
+            console.log('🔄 Refreshing all dashboard data...');
+
+            // Use portal's refreshData if available
+            if (window.educatorPortal && window.educatorPortal.refreshData) {
+                window.educatorPortal.refreshData();
+            } else if (window.refreshData) {
+                window.refreshData();
+            } else {
+                // Fallback: reload current page
+                console.log('⚠️ No refresh function available, reloading current page');
+                if (window.educatorPortal && window.educatorPortal.loadPage) {
+                    const currentPage = window.educatorPortal.currentPage || 'beranda';
+                    window.educatorPortal.loadPage(currentPage);
+                } else {
+                    // Ultimate fallback: reload page
+                    window.location.reload();
+                }
+            }
+        };
+
         // Global navigation function - CRITICAL FIX
         window.showPage = function(pageName) {
             console.log('🔄 Navigating to page:', pageName);
@@ -733,6 +755,20 @@
                 console.log('⚠️ Portal not ready, will load when initialized');
                 // Store the requested page for later
                 window.pendingPage = pageName;
+            }
+        };
+
+        // Global notifications function - CRITICAL FIX
+        window.loadNotifications = function() {
+            console.log('🔔 Loading notifications...');
+
+            // Use portal's loadNotifications if available
+            if (window.educatorPortal && window.educatorPortal.loadNotifications) {
+                window.educatorPortal.loadNotifications();
+            } else {
+                // Fallback: show placeholder notification
+                alert('🔔 Notifications\n\nNotification system is loading...\n\nFeatures:\n• Real-time alerts\n• Message notifications\n• System updates\n• Assignment reminders');
+                console.log('⚠️ Notifications system not ready, showing placeholder');
             }
         };
 
