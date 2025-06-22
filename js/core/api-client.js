@@ -104,6 +104,40 @@ export class EducatorAPIClient {
         return await this.request(API_CONFIG.ENDPOINTS.NOTIFICATIONS);
     }
 
+    async markNotificationRead(notificationId) {
+        return await this.request(API_CONFIG.ENDPOINTS.MARK_NOTIFICATION_READ, {
+            method: 'POST',
+            body: { notification_id: notificationId }
+        });
+    }
+
+    async markAllNotificationsRead() {
+        return await this.request(API_CONFIG.ENDPOINTS.MARK_ALL_NOTIFICATIONS_READ, {
+            method: 'POST'
+        });
+    }
+
+    async updateAnnouncement(announcementData) {
+        return await this.request(API_CONFIG.ENDPOINTS.UPDATE_ANNOUNCEMENT, {
+            method: 'PUT',
+            body: announcementData
+        });
+    }
+
+    async deleteAnnouncement(announcementId) {
+        return await this.request(API_CONFIG.ENDPOINTS.DELETE_ANNOUNCEMENT, {
+            method: 'DELETE',
+            body: { announcement_id: announcementId }
+        });
+    }
+
+    async sendBulkMessage(messageData) {
+        return await this.request(API_CONFIG.ENDPOINTS.SEND_BULK_MESSAGE, {
+            method: 'POST',
+            body: messageData
+        });
+    }
+
     // ✅ ASSESSMENT METHODS
 
     async getAssessmentsList() {

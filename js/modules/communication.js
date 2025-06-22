@@ -531,21 +531,29 @@ export class CommunicationManager {
             expires_at: expiresAt ? new Date(expiresAt).toISOString() : null
         };
 
-        try {
-            console.log('🔄 Creating announcement...', formData);
-            const response = await apiClient.createAnnouncement(formData);
+        // Check if we're editing or creating
+        if (this.editingAnnouncementId) {
+            // Update existing announcement
+            formData.announcement_id = this.editingAnnouncementId;
+            await this.updateAnnouncement(formData);
+        } else {
+            // Create new announcement
+            try {
+                console.log('🔄 Creating announcement...', formData);
+                const response = await apiClient.createAnnouncement(formData);
 
-            if (response && response.success) {
-                UIComponents.showNotification('Announcement created successfully!', 'success');
-                document.getElementById('create-announcement-form').reset();
-                await this.loadAnnouncements();
-                this.updateAnnouncementsList();
-            } else {
-                throw new Error(response?.error || 'Failed to create announcement');
+                if (response && response.success) {
+                    UIComponents.showNotification('Announcement created successfully!', 'success');
+                    document.getElementById('create-announcement-form').reset();
+                    await this.loadAnnouncements();
+                    this.updateAnnouncementsList();
+                } else {
+                    throw new Error(response?.error || 'Failed to create announcement');
+                }
+            } catch (error) {
+                console.error('❌ Failed to create announcement:', error);
+                UIComponents.showNotification(`Failed to create announcement: ${error.message}`, 'error');
             }
-        } catch (error) {
-            console.error('❌ Failed to create announcement:', error);
-            UIComponents.showNotification(`Failed to create announcement: ${error.message}`, 'error');
         }
     }
 
@@ -676,16 +684,23 @@ export class CommunicationManager {
     async markNotificationRead(notificationId) {
         try {
             console.log('🔄 Marking notification as read:', notificationId);
-            // Note: Backend doesn't have this endpoint yet, but we'll simulate it
-            const notification = this.notifications.find(n => n.notification_id === notificationId);
-            if (notification) {
-                notification.read = true;
+
+            const response = await apiClient.markNotificationRead(notificationId);
+
+            if (response && response.success) {
+                // Update local notification
+                const notification = this.notifications.find(n => n.notification_id === notificationId);
+                if (notification) {
+                    notification.read = true;
+                }
                 this.updateNotificationsList();
                 UIComponents.showNotification('Notification marked as read', 'success');
+            } else {
+                throw new Error(response?.error || 'Failed to mark notification as read');
             }
         } catch (error) {
             console.error('❌ Failed to mark notification as read:', error);
-            showError('Failed to mark notification as read: ' + error.message);
+            UIComponents.showNotification(`Failed to mark notification as read: ${error.message}`, 'error');
         }
     }
 
@@ -721,14 +736,59 @@ export class CommunicationManager {
         console.log('🔄 Editing announcement:', announcementId);
         const announcement = this.announcements.find(a => a.announcement_id === announcementId);
         if (announcement) {
+            // Store the ID for update operation
+            this.editingAnnouncementId = announcementId;
+
             // Pre-fill the form with announcement data
             document.getElementById('announcement-title').value = announcement.title;
             document.getElementById('announcement-content').value = announcement.content;
             document.getElementById('announcement-priority').value = announcement.priority;
             document.getElementById('announcement-audience').value = announcement.audience;
 
+            // Change form button text to indicate editing
+            const submitButton = document.querySelector('#create-announcement-form button[type="submit"]');
+            if (submitButton) {
+                submitButton.textContent = '✏️ Update Announcement';
+            }
+
             // Scroll to form
             document.getElementById('create-announcement-form').scrollIntoView({ behavior: 'smooth' });
+
+            UIComponents.showNotification('Editing announcement - modify and click Update', 'info');
+        }
+    }
+
+    async updateAnnouncement(announcementData) {
+        try {
+            console.log('🔄 Updating announcement...', announcementData);
+
+            const response = await apiClient.updateAnnouncement(announcementData);
+
+            if (response && response.success) {
+                // Update local announcement
+                const index = this.announcements.findIndex(a => a.announcement_id === announcementData.announcement_id);
+                if (index !== -1) {
+                    this.announcements[index] = { ...this.announcements[index], ...announcementData };
+                }
+
+                // Reset form and editing state
+                document.getElementById('create-announcement-form').reset();
+                this.editingAnnouncementId = null;
+
+                // Reset button text
+                const submitButton = document.querySelector('#create-announcement-form button[type="submit"]');
+                if (submitButton) {
+                    submitButton.textContent = '📢 Create Announcement';
+                }
+
+                this.updateAnnouncementsList();
+                UIComponents.showNotification('Announcement updated successfully!', 'success');
+            } else {
+                throw new Error(response?.error || 'Failed to update announcement');
+            }
+        } catch (error) {
+            console.error('❌ Failed to update announcement:', error);
+            UIComponents.showNotification(`Failed to update announcement: ${error.message}`, 'error');
         }
     }
 
@@ -739,13 +799,20 @@ export class CommunicationManager {
 
         try {
             console.log('🔄 Deleting announcement:', announcementId);
-            // Note: Backend doesn't have delete endpoint yet, but we'll simulate it
-            this.announcements = this.announcements.filter(a => a.announcement_id !== announcementId);
-            this.updateAnnouncementsList();
-            UIComponents.showNotification('Announcement deleted successfully', 'success');
+
+            const response = await apiClient.deleteAnnouncement(announcementId);
+
+            if (response && response.success) {
+                // Remove from local array
+                this.announcements = this.announcements.filter(a => a.announcement_id !== announcementId);
+                this.updateAnnouncementsList();
+                UIComponents.showNotification('Announcement deleted successfully', 'success');
+            } else {
+                throw new Error(response?.error || 'Failed to delete announcement');
+            }
         } catch (error) {
             console.error('❌ Failed to delete announcement:', error);
-            UIComponents.showNotification('Failed to delete announcement: ' + error.message, 'error');
+            UIComponents.showNotification(`Failed to delete announcement: ${error.message}`, 'error');
         }
     }
 
@@ -862,16 +929,21 @@ export class CommunicationManager {
         try {
             console.log('🔄 Marking all notifications as read...');
 
-            // Mark all notifications as read
-            this.notifications.forEach(notification => {
-                notification.read = true;
-            });
+            const response = await apiClient.markAllNotificationsRead();
 
-            this.updateNotificationsList();
-            UIComponents.showNotification('All notifications marked as read', 'success');
+            if (response && response.success) {
+                // Mark all local notifications as read
+                this.notifications.forEach(notification => {
+                    notification.read = true;
+                });
+                this.updateNotificationsList();
+                UIComponents.showNotification('All notifications marked as read', 'success');
+            } else {
+                throw new Error(response?.error || 'Failed to mark all notifications as read');
+            }
         } catch (error) {
             console.error('❌ Failed to mark all notifications as read:', error);
-            UIComponents.showNotification('Failed to mark notifications as read', 'error');
+            UIComponents.showNotification(`Failed to mark notifications as read: ${error.message}`, 'error');
         }
     }
 
@@ -1060,10 +1132,13 @@ export class CommunicationManager {
             submitButton.textContent = '⏳ Sending...';
             submitButton.disabled = true;
 
-            // Simulate API call (backend endpoint doesn't exist yet)
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            const response = await apiClient.sendBulkMessage(formData);
 
-            UIComponents.showNotification(`Bulk message sent to ${formData.recipients.length} recipient groups`, 'success');
+            if (response && response.success) {
+                UIComponents.showNotification(`Bulk message sent to ${formData.recipients.length} recipient groups`, 'success');
+            } else {
+                throw new Error(response?.error || 'Failed to send bulk message');
+            }
 
             // Close modal
             document.querySelector('.modal-overlay').remove();

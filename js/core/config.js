@@ -28,10 +28,16 @@ export const API_CONFIG = {
         SEND_MESSAGE: "/api/agenticlearn/educator/communication/send-message",
         ANNOUNCEMENTS_LIST: "/api/agenticlearn/educator/communication/announcements/list",
         CREATE_ANNOUNCEMENT: "/api/agenticlearn/educator/communication/announcement/create",
+        UPDATE_ANNOUNCEMENT: "/api/agenticlearn/educator/communication/announcement/update",
+        DELETE_ANNOUNCEMENT: "/api/agenticlearn/educator/communication/announcement/delete",
 
         // ✅ NOTIFICATION SYSTEM - Per Backend Documentation
         NOTIFICATIONS: "/api/agenticlearn/educator/communication/notifications",
         MARK_NOTIFICATION_READ: "/api/agenticlearn/notifications/mark-read",
+        MARK_ALL_NOTIFICATIONS_READ: "/api/agenticlearn/notifications/mark-all-read",
+
+        // ✅ BULK MESSAGING
+        SEND_BULK_MESSAGE: "/api/agenticlearn/educator/communication/bulk-message",
 
         // ✅ AI & ML INTEGRATION - Per Backend Documentation
         AI_INSIGHTS: "/api/agenticlearn/educator/ai/insights",
