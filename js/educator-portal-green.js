@@ -260,20 +260,20 @@ async function loadStudentsData() {
     console.log("🔄 Loading students data from AgenticAI...");
 
     try {
-        // Import and initialize students module - FIXED CLASS NAME
+        // Import and initialize students module - FIXED CLASS NAME (StudentModule not StudentsManager)
         const { StudentModule } = await import('./modules/students.js');
 
         // Create global students manager instance
         if (!window.studentModule) {
             window.studentModule = new StudentModule();
-            console.log("✅ Student module initialized");
+            console.log("✅ Student module initialized successfully");
         }
 
         // Load and render students
         await window.studentModule.loadStudents();
         window.studentModule.renderStudentInterface();
 
-        console.log("✅ Students module loaded and initialized");
+        console.log("✅ Students module loaded and initialized successfully");
     } catch (error) {
         console.error("❌ Failed to load students module:", error);
         throw new Error("Students module unavailable - " + error.message);
