@@ -325,6 +325,15 @@ async function loadStudentsData() {
         // Import and initialize students module - FIXED CLASS NAME (StudentModule not StudentsManager)
         const { StudentModule } = await import('./modules/students.js');
 
+        // CRITICAL: Clear any placeholder system first
+        if (window.studentModule && window.studentModule.isPlaceholder) {
+            console.log("🔄 Clearing placeholder system...");
+            if (window.studentModule.clearRetryTimer) {
+                window.studentModule.clearRetryTimer();
+            }
+            window.studentModule = null;
+        }
+
         // Create global students manager instance
         if (!window.studentModule) {
             window.studentModule = new StudentModule();

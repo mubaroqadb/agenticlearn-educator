@@ -322,17 +322,25 @@
 
 
         // Global students module fix - DIRECT FIX for GitHub Pages delay
-        window.studentModule = {
-            isPlaceholder: true,
-            retryTimer: null, // Track timer to prevent multiple instances
-            retryAttempts: 0,
-            maxRetryAttempts: 10, // Limit retry attempts
+        // Only create placeholder if no real module exists
+        if (!window.studentModule || !window.studentModule.renderStudentInterface) {
+            window.studentModule = {
+                isPlaceholder: true,
+                retryTimer: null, // Track timer to prevent multiple instances
+                retryAttempts: 0,
+                maxRetryAttempts: 10, // Limit retry attempts
 
-            loadStudents: function() {
-                console.log('🔄 Loading students (placeholder mode)...');
+                loadStudents: function() {
+                    // Check if real module has been loaded
+                    if (window.studentModule && !window.studentModule.isPlaceholder) {
+                        console.log('✅ Real StudentModule detected, skipping placeholder');
+                        return;
+                    }
 
-                // Clear any existing timer first
-                this.clearRetryTimer();
+                    console.log('🔄 Loading students (placeholder mode)...');
+
+                    // Clear any existing timer first
+                    this.clearRetryTimer();
 
                 const container = document.getElementById('students-content');
                 if (!container) return;
@@ -605,6 +613,7 @@
                 }
             }
         };
+        } // End of placeholder creation conditional
 
         // Global manager initialization - DIRECT FIX
         window.assessmentManager = {
