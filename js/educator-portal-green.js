@@ -415,11 +415,11 @@ async function loadAssessmentsData() {
             console.log("✅ Assessment manager initialized");
         }
 
-        // Load and render assessments
-        await window.assessmentManager.loadAssessments();
-        window.assessmentManager.renderAssessmentInterface();
+        // Initialize assessment system
+        console.log("🎨 Initializing assessment interface...");
+        await window.assessmentManager.initialize();
 
-        console.log("✅ Assessments module loaded and initialized");
+        console.log("✅ Assessments module loaded and initialized successfully");
     } catch (error) {
         console.error("❌ Failed to load assessments module:", error);
         throw new Error("Assessments module unavailable - " + error.message);

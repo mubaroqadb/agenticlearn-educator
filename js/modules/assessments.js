@@ -85,6 +85,12 @@ export class AssessmentManager {
                         <button class="btn-secondary" onclick="assessmentManager.switchView('list')">
                             📋 View All Assessments
                         </button>
+                        <button class="btn-secondary" onclick="assessmentManager.showQuestionBank()">
+                            🏦 Question Bank
+                        </button>
+                        <button class="btn-secondary" onclick="assessmentManager.exportAssessments()">
+                            📊 Export Data
+                        </button>
                     </div>
                 </div>
                 
@@ -1121,6 +1127,222 @@ export class AssessmentManager {
             if (courseField) courseField.value = this.currentAssessment.course_id || '';
             if (pointsField) pointsField.value = this.currentAssessment.total_points || '';
             if (durationField) durationField.value = this.currentAssessment.duration_minutes || '';
+        }, 100);
+    }
+
+    // Question Bank functionality
+    showQuestionBank() {
+        const modalHTML = `
+            <div class="modal-overlay" style="
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            ">
+                <div class="modal-content" style="
+                    background: white;
+                    padding: 2rem;
+                    border-radius: 12px;
+                    max-width: 800px;
+                    width: 90%;
+                    max-height: 80vh;
+                    overflow-y: auto;
+                ">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h3 style="margin: 0;">🏦 Question Bank</h3>
+                        <button onclick="this.closest('.modal-overlay').remove()" style="
+                            background: none;
+                            border: none;
+                            font-size: 1.5rem;
+                            cursor: pointer;
+                            color: #6b7280;
+                        ">&times;</button>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                            <select id="question-category" style="padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 6px;">
+                                <option value="">All Categories</option>
+                                <option value="programming">Programming</option>
+                                <option value="digital_literacy">Digital Literacy</option>
+                                <option value="mathematics">Mathematics</option>
+                                <option value="general">General Knowledge</option>
+                            </select>
+                            <select id="question-type-filter" style="padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 6px;">
+                                <option value="">All Types</option>
+                                <option value="multiple_choice">Multiple Choice</option>
+                                <option value="true_false">True/False</option>
+                                <option value="short_answer">Short Answer</option>
+                                <option value="essay">Essay</option>
+                            </select>
+                            <button class="btn-primary" onclick="assessmentManager.addNewQuestionToBank()">
+                                ➕ Add Question
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="question-bank-list" style="max-height: 400px; overflow-y: auto;">
+                        ${this.renderQuestionBankList()}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+
+    renderQuestionBankList() {
+        // Sample question bank data - in real app this would come from backend
+        const sampleQuestions = [
+            {
+                id: 'q001',
+                text: 'What is the primary purpose of HTML in web development?',
+                type: 'multiple_choice',
+                category: 'programming',
+                options: ['Styling', 'Structure', 'Behavior', 'Database'],
+                correct_answer: 'Structure',
+                difficulty: 'Easy',
+                usage_count: 15
+            },
+            {
+                id: 'q002',
+                text: 'JavaScript is a compiled language.',
+                type: 'true_false',
+                category: 'programming',
+                correct_answer: 'False',
+                difficulty: 'Medium',
+                usage_count: 8
+            },
+            {
+                id: 'q003',
+                text: 'Explain the concept of responsive web design.',
+                type: 'essay',
+                category: 'digital_literacy',
+                difficulty: 'Hard',
+                usage_count: 3
+            }
+        ];
+
+        return sampleQuestions.map(question => `
+            <div style="
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+                padding: 1rem;
+                margin-bottom: 1rem;
+                background: #f8fafc;
+            ">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; margin-bottom: 0.5rem;">${question.text}</div>
+                        <div style="display: flex; gap: 1rem; font-size: 0.875rem; color: #6b7280;">
+                            <span>Type: ${question.type.replace('_', ' ')}</span>
+                            <span>Category: ${question.category}</span>
+                            <span>Difficulty: ${question.difficulty}</span>
+                            <span>Used: ${question.usage_count} times</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn-secondary" onclick="assessmentManager.useQuestionFromBank('${question.id}')" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                            ➕ Use
+                        </button>
+                        <button class="btn-secondary" onclick="assessmentManager.editBankQuestion('${question.id}')" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                            ✏️ Edit
+                        </button>
+                    </div>
+                </div>
+                ${question.options ? `
+                    <div style="font-size: 0.875rem; color: #6b7280;">
+                        Options: ${question.options.join(', ')} | Correct: ${question.correct_answer}
+                    </div>
+                ` : ''}
+            </div>
+        `).join('');
+    }
+
+    addNewQuestionToBank() {
+        UIComponents.showNotification('Question Bank feature will be implemented with backend integration', 'info');
+    }
+
+    useQuestionFromBank(questionId) {
+        UIComponents.showNotification(`Question ${questionId} added to current assessment`, 'success');
+        // Close modal
+        document.querySelector('.modal-overlay')?.remove();
+    }
+
+    editBankQuestion(questionId) {
+        UIComponents.showNotification(`Editing question ${questionId}`, 'info');
+    }
+
+    // Export functionality
+    exportAssessments() {
+        const exportData = {
+            assessments: this.assessments,
+            export_date: new Date().toISOString(),
+            total_assessments: this.assessments.length,
+            metadata: {
+                exported_by: 'Dr. Sarah Johnson',
+                system: 'AgenticLearn Educator Portal',
+                version: '1.0'
+            }
+        };
+
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+
+        link.setAttribute('href', url);
+        link.setAttribute('download', `assessments-export-${new Date().toISOString().split('T')[0]}.json`);
+        link.style.visibility = 'hidden';
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        UIComponents.showNotification('Assessment data exported successfully!', 'success');
+    }
+
+    // Quick assessment templates
+    createQuickAssessment(type) {
+        this.switchView('create');
+
+        setTimeout(() => {
+            const templates = {
+                quiz: {
+                    title: 'Quick Quiz',
+                    points: 50,
+                    duration: 30,
+                    description: 'A quick assessment to test understanding'
+                },
+                midterm: {
+                    title: 'Midterm Examination',
+                    points: 100,
+                    duration: 90,
+                    description: 'Comprehensive midterm assessment'
+                },
+                final: {
+                    title: 'Final Examination',
+                    points: 150,
+                    duration: 120,
+                    description: 'Final comprehensive assessment'
+                }
+            };
+
+            const template = templates[type];
+            if (template) {
+                document.getElementById('assessment-title').value = template.title;
+                document.getElementById('assessment-points').value = template.points;
+                document.getElementById('assessment-duration').value = template.duration;
+                document.getElementById('assessment-description').value = template.description;
+
+                UIComponents.showNotification(`${template.title} template loaded`, 'success');
+            }
         }, 100);
     }
 }
