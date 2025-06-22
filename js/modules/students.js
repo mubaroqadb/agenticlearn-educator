@@ -27,7 +27,15 @@ export class StudentModule {
 
     async initialize() {
         console.log('👥 Initializing Student Management Module...');
-        this.renderStudentInterface();
+
+        // Only render interface if not already rendered
+        if (!document.getElementById('students-list')) {
+            console.log('🎨 Rendering student interface (first time)...');
+            this.renderStudentInterface();
+        } else {
+            console.log('♻️ Student interface already exists, skipping render');
+        }
+
         this.bindEventHandlers();
         await this.loadStudents();
     }
@@ -392,6 +400,91 @@ export class StudentModule {
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;">
                 ${this.filteredStudents.map(student => this.renderStudentCard(student)).join('')}
             </div>
+        `;
+    }
+
+    renderStudentTable() {
+        return `
+            <div style="background: var(--white); border-radius: 12px; box-shadow: var(--shadow-sm); overflow: hidden;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead style="background: var(--accent);">
+                        <tr>
+                            <th style="padding: 1rem; text-align: left; font-weight: 600; color: var(--gray-700);">Student</th>
+                            <th style="padding: 1rem; text-align: left; font-weight: 600; color: var(--gray-700);">Progress</th>
+                            <th style="padding: 1rem; text-align: left; font-weight: 600; color: var(--gray-700);">Risk Level</th>
+                            <th style="padding: 1rem; text-align: left; font-weight: 600; color: var(--gray-700);">Last Active</th>
+                            <th style="padding: 1rem; text-align: left; font-weight: 600; color: var(--gray-700);">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${this.filteredStudents.map(student => this.renderStudentRow(student)).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+
+    renderStudentRow(student) {
+        const riskColor = this.getRiskColor(student.risk_level);
+
+        return `
+            <tr style="border-bottom: 1px solid var(--accent); cursor: pointer;"
+                onclick="studentModule.viewStudentDetail('${student.student_id}')"
+                onmouseover="this.style.backgroundColor='var(--accent)'"
+                onmouseout="this.style.backgroundColor='transparent'">
+                <td style="padding: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="
+                            width: 40px; height: 40px; border-radius: 50%;
+                            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+                            display: flex; align-items: center; justify-content: center;
+                            color: white; font-weight: bold; font-size: 1.1rem;
+                        ">
+                            ${student.name.charAt(0)}
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; color: var(--gray-800);">${student.name}</div>
+                            <div style="font-size: 0.875rem; color: var(--gray-600);">${student.email}</div>
+                        </div>
+                    </div>
+                </td>
+                <td style="padding: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="flex: 1; background: var(--accent); border-radius: 4px; height: 8px; overflow: hidden;">
+                            <div style="
+                                width: ${student.progress_percentage}%;
+                                height: 100%;
+                                background: ${this.getProgressColor(student.progress_percentage)};
+                                transition: width 0.3s ease;
+                            "></div>
+                        </div>
+                        <span style="font-size: 0.875rem; font-weight: 500; color: var(--gray-700);">
+                            ${student.progress_percentage}%
+                        </span>
+                    </div>
+                </td>
+                <td style="padding: 1rem;">
+                    ${UIComponents.createBadge(student.risk_level, this.getRiskBadgeType(student.risk_level))}
+                </td>
+                <td style="padding: 1rem;">
+                    <span style="font-size: 0.875rem; color: var(--gray-600);">
+                        ${student.days_since_active} days ago
+                    </span>
+                </td>
+                <td style="padding: 1rem;">
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); studentModule.sendMessage('${student.student_id}')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                            💬
+                        </button>
+                        <button class="btn btn-sm btn-info" onclick="event.stopPropagation(); studentModule.viewProgress('${student.student_id}')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                            📊
+                        </button>
+                        <button class="btn btn-sm btn-success" onclick="event.stopPropagation(); studentModule.viewStudentDetail('${student.student_id}')" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                            👁️
+                        </button>
+                    </div>
+                </td>
+            </tr>
         `;
     }
 

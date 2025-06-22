@@ -331,9 +331,12 @@ async function loadStudentsData() {
             console.log("✅ Student module initialized successfully");
         }
 
-        // Load and render students
-        await window.studentModule.loadStudents();
+        // FIXED ORDER: Render interface first, then load data
+        console.log("🎨 Rendering student interface...");
         window.studentModule.renderStudentInterface();
+
+        console.log("📊 Loading student data...");
+        await window.studentModule.loadStudents();
 
         console.log("✅ Students module loaded and initialized successfully");
     } catch (error) {
