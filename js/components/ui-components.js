@@ -229,8 +229,9 @@ export class UIComponents {
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
-                width: 100%;
                 box-sizing: border-box;
+                flex-shrink: 0;
+                min-width: 160px;
             ">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
                     <div style="

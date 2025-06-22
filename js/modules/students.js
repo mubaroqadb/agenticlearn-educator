@@ -86,48 +86,61 @@ export class StudentModule {
                         </div>
                     </div>
                     
-                    <!-- Quick Stats -->
+                    <!-- Quick Stats - FORCED HORIZONTAL FLEXBOX -->
                     <div id="student-stats" style="
-                        display: grid;
-                        grid-template-columns: repeat(5, 1fr);
-                        gap: 1rem;
-                        margin-bottom: 2rem;
-                        width: 100%;
+                        display: flex !important;
+                        flex-direction: row !important;
+                        flex-wrap: nowrap !important;
+                        gap: 1rem !important;
+                        margin-bottom: 2rem !important;
+                        width: 100% !important;
+                        overflow-x: auto !important;
                     ">
                         <!-- Stats will be rendered here -->
                     </div>
 
-                    <!-- Force horizontal layout with responsive behavior -->
+                    <!-- FORCE HORIZONTAL LAYOUT WITH FLEXBOX -->
                     <style>
                         #student-stats {
-                            display: grid !important;
-                            grid-template-columns: repeat(5, 1fr) !important;
+                            display: flex !important;
+                            flex-direction: row !important;
+                            flex-wrap: nowrap !important;
                             gap: 1rem !important;
                             margin-bottom: 2rem !important;
                             width: 100% !important;
+                            overflow-x: auto !important;
+                            padding: 0 !important;
                         }
 
                         #student-stats .metric-card {
-                            min-width: 0 !important;
-                            width: 100% !important;
+                            flex: 1 1 0 !important;
+                            min-width: 160px !important;
+                            max-width: none !important;
+                            width: auto !important;
                             height: 100px !important;
                             min-height: 100px !important;
                             max-height: 100px !important;
+                            flex-shrink: 0 !important;
                         }
 
-                        @media (max-width: 1200px) {
-                            #student-stats {
-                                grid-template-columns: repeat(3, 1fr) !important;
-                            }
-                        }
+                        /* Responsive: Allow wrapping on smaller screens */
                         @media (max-width: 768px) {
                             #student-stats {
-                                grid-template-columns: repeat(2, 1fr) !important;
+                                flex-wrap: wrap !important;
+                                overflow-x: visible !important;
+                            }
+                            #student-stats .metric-card {
+                                flex: 1 1 calc(50% - 0.5rem) !important;
+                                min-width: 140px !important;
                             }
                         }
                         @media (max-width: 480px) {
                             #student-stats {
-                                grid-template-columns: 1fr !important;
+                                flex-direction: column !important;
+                            }
+                            #student-stats .metric-card {
+                                flex: 1 1 100% !important;
+                                min-width: 100% !important;
                             }
                         }
                     </style>
@@ -244,6 +257,28 @@ export class StudentModule {
         `;
 
         setInner('student-stats', statsHTML);
+
+        // Debug: Force horizontal layout after render
+        setTimeout(() => {
+            const statsContainer = document.getElementById('student-stats');
+            if (statsContainer) {
+                console.log('🔧 Forcing horizontal layout for student stats...');
+                statsContainer.style.display = 'flex';
+                statsContainer.style.flexDirection = 'row';
+                statsContainer.style.flexWrap = 'nowrap';
+                statsContainer.style.gap = '1rem';
+                statsContainer.style.overflowX = 'auto';
+
+                const cards = statsContainer.querySelectorAll('.metric-card');
+                cards.forEach((card, index) => {
+                    card.style.flex = '1 1 0';
+                    card.style.minWidth = '160px';
+                    card.style.flexShrink = '0';
+                    console.log(`📊 Card ${index + 1} styled for horizontal layout`);
+                });
+                console.log('✅ Student stats forced to horizontal layout');
+            }
+        }, 100);
     }
 
     renderStudentGrid() {
