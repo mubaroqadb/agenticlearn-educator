@@ -73,15 +73,15 @@ export class StudentModule {
                 ">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                         <div>
-                            <h2 style="margin: 0 0 0.5rem 0; color: var(--gray-800);">🤖 AI-Powered Insights &amp; Recommendations</h2>
-                            <p style="margin: 0; color: var(--gray-600);">Intelligent analysis and personalized teaching recommendations</p>
+                            <h2 style="margin: 0 0 0.5rem 0; color: var(--gray-800);">👥 Student Management</h2>
+                            <p style="margin: 0; color: var(--gray-600);">Monitor and manage student progress and performance</p>
                         </div>
                         <div style="display: flex; gap: 1rem;">
-                            <button class="btn btn-success" onclick="studentModule.generateInsights()">
-                                ✨ Generate Insights
+                            <button class="btn btn-success" onclick="studentModule.sendBulkMessage()">
+                                💬 Send Message
                             </button>
-                            <button class="btn btn-info" onclick="studentModule.exportReport()">
-                                📊 Export Report
+                            <button class="btn btn-info" onclick="studentModule.exportStudentData()">
+                                📊 Export Data
                             </button>
                             <button class="btn btn-primary" onclick="studentModule.loadStudents()">
                                 🔄 Refresh
@@ -275,37 +275,35 @@ export class StudentModule {
         setInner('students-list', studentsHTML);
     }
 
-    // Configuration for AI-style stats cards
+    // Configuration for student stats cards
     getStatsConfig() {
         return [
             {
-                title: "High Priority",
-                icon: "⚠️",
-                getValue: (data) => data.filter(s => s.risk_level === 'High').length
+                title: "Total Students",
+                icon: "👥",
+                getValue: (data) => data.length
             },
             {
-                title: "Implemented",
+                title: "Active (7 days)",
                 icon: "✅",
-                getValue: (data) => data.filter(s => s.progress_percentage >= 80).length
+                getValue: (data) => data.filter(s => s.days_since_active <= 7).length
             },
             {
-                title: "Patterns Found",
-                icon: "📈",
+                title: "At Risk",
+                icon: "⚠️",
                 getValue: (data) => {
-                    // Calculate learning patterns based on engagement and progress
-                    const patterns = data.filter(s =>
-                        s.engagement_score > 70 && s.progress_percentage > 60
-                    ).length;
-                    return patterns || 5; // Default to 5 as shown in example
+                    const atRisk = data.filter(s => s.risk_level === 'High' || s.risk_level === 'Medium').length;
+                    const percentage = data.length > 0 ? ((atRisk / data.length) * 100).toFixed(1) : 0;
+                    return `${atRisk} (${percentage}%)`;
                 }
             },
             {
-                title: "Avg Confidence",
-                icon: "🎯",
+                title: "Avg Progress",
+                icon: "📈",
                 getValue: (data) => {
-                    if (data.length === 0) return "88.4%";
-                    const avgConfidence = data.reduce((sum, s) => sum + (s.average_score || 0), 0) / data.length;
-                    return `${avgConfidence.toFixed(1)}%`;
+                    if (data.length === 0) return "0%";
+                    const avg = data.reduce((sum, s) => sum + (s.progress_percentage || 0), 0) / data.length;
+                    return `${avg.toFixed(1)}%`;
                 }
             }
         ];
@@ -391,53 +389,7 @@ export class StudentModule {
         `;
     }
 
-    // AI-Powered Methods
-    async generateInsights() {
-        console.log('✨ Generating AI insights...');
-        UIComponents.showNotification('AI insights generation started...', 'info');
-
-        // Simulate AI processing
-        setTimeout(() => {
-            UIComponents.showNotification('AI insights generated successfully!', 'success');
-        }, 2000);
-    }
-
-    async exportReport() {
-        console.log('📊 Exporting AI report...');
-        UIComponents.showNotification('Generating comprehensive report...', 'info');
-
-        try {
-            // Prepare AI report data
-            const reportData = {
-                timestamp: new Date().toISOString(),
-                totalStudents: this.students.length,
-                highPriority: this.students.filter(s => s.risk_level === 'High').length,
-                implemented: this.students.filter(s => s.progress_percentage >= 80).length,
-                patterns: this.students.filter(s => s.engagement_score > 70 && s.progress_percentage > 60).length,
-                avgConfidence: this.students.reduce((sum, s) => sum + (s.average_score || 0), 0) / this.students.length
-            };
-
-            // Convert to JSON for download
-            const jsonContent = JSON.stringify(reportData, null, 2);
-            const blob = new Blob([jsonContent], { type: 'application/json' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-
-            link.setAttribute('href', url);
-            link.setAttribute('download', `ai-student-report-${new Date().toISOString().split('T')[0]}.json`);
-            link.style.visibility = 'hidden';
-
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            UIComponents.showNotification('AI report exported successfully!', 'success');
-
-        } catch (error) {
-            console.error('Export failed:', error);
-            UIComponents.showNotification('Export failed', 'error');
-        }
-    }
+    // Student Management Methods - keeping existing functionality
 
     renderStudentGrid() {
         return `
