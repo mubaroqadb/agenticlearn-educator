@@ -1,4 +1,5 @@
 // ===== ASSESSMENT MANAGEMENT MODULE =====
+// NULL SAFETY UPDATE: 2025-01-22 15:35 - Fixed detailed_results null handling
 
 import { apiClient } from '../core/api-client.js';
 import { API_CONFIG } from '../core/config.js';
