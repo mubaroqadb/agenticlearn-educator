@@ -444,7 +444,6 @@ export class AIRecommendationsModule {
 
         return patterns;
     }
-}
 
     renderInsights() {
         if (this.insights.length === 0) {
