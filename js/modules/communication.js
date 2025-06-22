@@ -13,8 +13,6 @@ export class CommunicationManager {
         this.isLoading = false;
         this.currentView = 'messages'; // messages, announcements, notifications
         this.messageTemplates = this.getMessageTemplates();
-        this.isUserTyping = false;
-        this.typingTimeout = null;
     }
 
     async initialize() {
@@ -23,7 +21,7 @@ export class CommunicationManager {
             await this.loadAllData();
             this.renderCommunicationInterface();
             this.setupEventListeners();
-            this.startAutoRefresh();
+            // Removed auto-refresh - only refresh on user actions
             console.log('✅ Communication System initialized successfully');
         } catch (error) {
             console.error('❌ Communication System initialization failed:', error);
@@ -88,7 +86,17 @@ export class CommunicationManager {
         const communicationHTML = `
             <div class="communication-container">
                 <div class="communication-header">
-                    <h2>💬 Communication Center</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h2 style="margin: 0;">💬 Communication Center</h2>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn-secondary" onclick="communicationManager.refreshCurrentView()" title="Refresh current view">
+                                🔄 Refresh
+                            </button>
+                            <button class="btn-secondary" onclick="communicationManager.markAllNotificationsRead()" title="Mark all notifications as read">
+                                ✅ Mark All Read
+                            </button>
+                        </div>
+                    </div>
                     <div class="communication-tabs">
                         <button class="tab-btn ${this.currentView === 'messages' ? 'active' : ''}"
                                 data-view="messages"
@@ -453,58 +461,6 @@ export class CommunicationManager {
         if (createAnnouncementForm) {
             createAnnouncementForm.addEventListener('submit', (e) => this.handleCreateAnnouncement(e));
         }
-
-        // Add typing detection to prevent auto-refresh during typing
-        this.setupTypingDetection();
-    }
-
-    setupTypingDetection() {
-        // Monitor form inputs for typing activity
-        const formInputs = [
-            'message-to-student',
-            'message-subject',
-            'message-content',
-            'announcement-title',
-            'announcement-content'
-        ];
-
-        formInputs.forEach(inputId => {
-            const input = document.getElementById(inputId);
-            if (input) {
-                input.addEventListener('input', () => this.handleUserTyping());
-                input.addEventListener('focus', () => this.handleUserTyping());
-                input.addEventListener('blur', () => this.handleUserStoppedTyping());
-            }
-        });
-    }
-
-    handleUserTyping() {
-        this.isUserTyping = true;
-
-        // Clear existing timeout
-        if (this.typingTimeout) {
-            clearTimeout(this.typingTimeout);
-        }
-
-        // Set timeout to detect when user stops typing
-        this.typingTimeout = setTimeout(() => {
-            this.isUserTyping = false;
-        }, 3000); // Consider user stopped typing after 3 seconds of inactivity
-    }
-
-    handleUserStoppedTyping() {
-        // Delay to allow for quick focus changes
-        setTimeout(() => {
-            const activeElement = document.activeElement;
-            const isStillInForm = activeElement && (
-                activeElement.id.includes('message-') ||
-                activeElement.id.includes('announcement-')
-            );
-
-            if (!isStillInForm) {
-                this.isUserTyping = false;
-            }
-        }, 100);
     }
 
     async handleSendMessage(event) {
@@ -533,7 +489,6 @@ export class CommunicationManager {
 
             // Show loading state
             const submitButton = event.target.querySelector('button[type="submit"]');
-            const originalText = submitButton.textContent;
             submitButton.textContent = '⏳ Sending...';
             submitButton.disabled = true;
 
@@ -876,40 +831,49 @@ export class CommunicationManager {
         setInner('communication-content', errorHTML);
     }
 
-    // Auto-refresh functionality
-    startAutoRefresh() {
-        // Refresh notifications every 10 seconds
-        setInterval(() => {
-            if (this.currentView === 'notifications' && !this.isUserTyping) {
-                this.loadNotifications().then(() => {
-                    if (this.currentView === 'notifications' && !this.isUserTyping) {
-                        this.updateNotificationsList();
-                    }
-                });
-            }
-        }, 10000);
+    // Manual refresh functionality
+    async refreshCurrentView() {
+        try {
+            console.log(`🔄 Manually refreshing ${this.currentView} view...`);
 
-        // Refresh messages every 15 seconds (but skip if user is typing)
-        setInterval(() => {
-            if (this.currentView === 'messages' && !this.isUserTyping) {
-                this.loadMessages().then(() => {
-                    if (this.currentView === 'messages' && !this.isUserTyping) {
-                        this.updateMessagesList();
-                    }
-                });
+            switch (this.currentView) {
+                case 'messages':
+                    await this.loadMessages();
+                    this.updateMessagesList();
+                    UIComponents.showNotification('Messages refreshed', 'success');
+                    break;
+                case 'announcements':
+                    await this.loadAnnouncements();
+                    this.updateAnnouncementsList();
+                    UIComponents.showNotification('Announcements refreshed', 'success');
+                    break;
+                case 'notifications':
+                    await this.loadNotifications();
+                    this.updateNotificationsList();
+                    UIComponents.showNotification('Notifications refreshed', 'success');
+                    break;
             }
-        }, 15000);
+        } catch (error) {
+            console.error('❌ Failed to refresh view:', error);
+            UIComponents.showNotification('Failed to refresh data', 'error');
+        }
+    }
 
-        // Refresh announcements every 20 seconds
-        setInterval(() => {
-            if (this.currentView === 'announcements' && !this.isUserTyping) {
-                this.loadAnnouncements().then(() => {
-                    if (this.currentView === 'announcements' && !this.isUserTyping) {
-                        this.updateAnnouncementsList();
-                    }
-                });
-            }
-        }, 20000);
+    async markAllNotificationsRead() {
+        try {
+            console.log('🔄 Marking all notifications as read...');
+
+            // Mark all notifications as read
+            this.notifications.forEach(notification => {
+                notification.read = true;
+            });
+
+            this.updateNotificationsList();
+            UIComponents.showNotification('All notifications marked as read', 'success');
+        } catch (error) {
+            console.error('❌ Failed to mark all notifications as read:', error);
+            UIComponents.showNotification('Failed to mark notifications as read', 'error');
+        }
     }
 
     // Smart update methods that don't touch forms
