@@ -652,50 +652,68 @@ export class UIComponents {
 
     static createStatsCard(config, data) {
         const value = config.getValue(data);
-        
+
         return `
-            <div class="metric-card" style="
-                background: var(--white);
-                border-radius: 10px;
-                padding: 1rem;
-                border-left: 4px solid ${config.color};
-                box-shadow: var(--shadow-sm);
-                transition: transform 0.2s, box-shadow 0.2s;
-                height: 100px;
+            <div class="ai-metric-card" style="
+                background: ${config.bgColor || '#ffffff'};
+                border-radius: 12px;
+                padding: 1.25rem;
+                border: 2px solid ${config.color};
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                transition: all 0.2s ease;
+                height: 120px;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
                 box-sizing: border-box;
                 flex: 1;
-                min-width: 0;
+                min-width: 200px;
+                position: relative;
             ">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                <!-- Header with title and icon -->
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
                     <div style="
                         font-size: 0.75rem;
-                        color: var(--gray-600);
-                        font-weight: 500;
+                        color: #6c757d;
+                        font-weight: 600;
                         line-height: 1.2;
                         text-transform: uppercase;
                         letter-spacing: 0.5px;
                     ">${config.title}</div>
                     <div style="
-                        font-size: 1.2rem;
-                        opacity: 0.8;
-                        width: 24px;
-                        height: 24px;
+                        font-size: 1.25rem;
+                        color: ${config.color};
+                        width: 28px;
+                        height: 28px;
                         display: flex;
                         align-items: center;
                         justify-content: center;
+                        background: rgba(255, 255, 255, 0.8);
+                        border-radius: 50%;
                     ">${config.icon}</div>
                 </div>
+
+                <!-- Main value -->
                 <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
                     <div style="
-                        font-size: 1.5rem;
+                        font-size: 2rem;
                         font-weight: 700;
-                        color: var(--gray-800);
+                        color: #2c3e50;
                         margin-bottom: 0.25rem;
                         line-height: 1;
                     ">${value}</div>
+
+                    <!-- Subtitle -->
+                    <div style="
+                        font-size: 0.75rem;
+                        color: #dc3545;
+                        font-weight: 500;
+                        display: flex;
+                        align-items: center;
+                        gap: 0.25rem;
+                    ">
+                        📊 ${config.subtitle || 'NaN%'}
+                    </div>
                 </div>
             </div>
         `;
@@ -868,6 +886,37 @@ export class UIComponents {
                 .metric-card:hover {
                     transform: translateY(-2px);
                     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                }
+
+                /* AI-Style Cards */
+                .ai-metric-card {
+                    background: #ffffff;
+                    border-radius: 12px;
+                    padding: 1.25rem;
+                    border: 2px solid #007bff;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                    transition: all 0.2s ease;
+                    height: 120px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    box-sizing: border-box;
+                    flex: 1;
+                    min-width: 200px;
+                    position: relative;
+                }
+
+                .ai-metric-card:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+                }
+
+                .ai-header {
+                    background: #f8f9fa;
+                    border: 1px solid #e9ecef;
+                    border-radius: 12px;
+                    padding: 1.5rem;
+                    margin-bottom: 2rem;
                 }
 
                 .modal {
