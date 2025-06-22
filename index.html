@@ -108,7 +108,7 @@
                     <button class="btn" onclick="loadNotifications()" style="background: var(--info); padding: 0.5rem 1rem; font-size: 0.875rem;">
                         🔔 Notifications
                     </button>
-                    <button class="btn" style="background: var(--primary); padding: 0.5rem 1rem; font-size: 0.875rem;">
+                    <button class="btn" onclick="loadProfile()" style="background: var(--primary); padding: 0.5rem 1rem; font-size: 0.875rem;">
                         👤 Profile
                     </button>
                 </div>
@@ -762,6 +762,26 @@
                 // Fallback: show placeholder notification
                 alert('🔔 Notifications\n\nNotification system is loading...\n\nFeatures:\n• Real-time alerts\n• Message notifications\n• System updates\n• Assignment reminders');
                 console.log('⚠️ Notifications system not ready, showing placeholder');
+            }
+        };
+
+        // Global profile function - NEW
+        window.loadProfile = async function() {
+            console.log('👤 Loading profile...');
+
+            try {
+                // Import and initialize Profile module
+                const { profileModule } = await import('./js/modules/profile.js');
+
+                // Make it globally available
+                window.profileModule = profileModule;
+
+                // Initialize the module
+                await profileModule.initialize();
+                console.log('✅ Profile module loaded and initialized');
+            } catch (error) {
+                console.error('❌ Failed to load Profile module:', error);
+                alert('👤 Profile\n\nProfile system is loading...\n\nFeatures:\n• Edit profile information\n• Change settings\n• View statistics\n• Export data');
             }
         };
 

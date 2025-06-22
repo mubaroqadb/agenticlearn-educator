@@ -255,6 +255,19 @@ export class EducatorAPIClient {
         });
     }
 
+    // ✅ PROFILE METHODS
+
+    async getUserProfile() {
+        return await this.request(API_CONFIG.ENDPOINTS.PROFILE);
+    }
+
+    async updateUserProfile(profileData) {
+        return await this.request(API_CONFIG.ENDPOINTS.PROFILE, {
+            method: 'PUT',
+            body: profileData
+        });
+    }
+
     // ✅ UTILITY METHODS
 
     async markNotificationRead(notificationId) {
