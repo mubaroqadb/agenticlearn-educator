@@ -89,12 +89,48 @@ export class StudentModule {
                     <!-- Quick Stats -->
                     <div id="student-stats" style="
                         display: grid;
-                        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-                        gap: 1.25rem;
-                        margin-bottom: 1.5rem;
+                        grid-template-columns: repeat(5, 1fr);
+                        gap: 1rem;
+                        margin-bottom: 2rem;
+                        width: 100%;
                     ">
                         <!-- Stats will be rendered here -->
                     </div>
+
+                    <!-- Force horizontal layout with responsive behavior -->
+                    <style>
+                        #student-stats {
+                            display: grid !important;
+                            grid-template-columns: repeat(5, 1fr) !important;
+                            gap: 1rem !important;
+                            margin-bottom: 2rem !important;
+                            width: 100% !important;
+                        }
+
+                        #student-stats .metric-card {
+                            min-width: 0 !important;
+                            width: 100% !important;
+                            height: 100px !important;
+                            min-height: 100px !important;
+                            max-height: 100px !important;
+                        }
+
+                        @media (max-width: 1200px) {
+                            #student-stats {
+                                grid-template-columns: repeat(3, 1fr) !important;
+                            }
+                        }
+                        @media (max-width: 768px) {
+                            #student-stats {
+                                grid-template-columns: repeat(2, 1fr) !important;
+                            }
+                        }
+                        @media (max-width: 480px) {
+                            #student-stats {
+                                grid-template-columns: 1fr !important;
+                            }
+                        }
+                    </style>
                 </div>
 
                 <!-- Filters and Controls -->
@@ -196,10 +232,13 @@ export class StudentModule {
         const avgProgress = this.students.reduce((sum, s) => sum + (s.progress_percentage || 0), 0) / totalStudents;
         const avgScore = this.students.reduce((sum, s) => sum + (s.average_score || 0), 0) / totalStudents;
 
+        // Calculate at-risk percentage
+        const atRiskPercentage = totalStudents > 0 ? (atRiskStudents / totalStudents * 100) : 0;
+
         const statsHTML = `
             ${UIComponents.createMetricCard('Total Students', totalStudents, null, '👥')}
             ${UIComponents.createMetricCard('Active (7 days)', activeStudents, null, '✅')}
-            ${UIComponents.createMetricCard('At Risk', atRiskStudents, atRiskStudents > 0 ? 'warning' : 'success', '⚠️')}
+            ${UIComponents.createMetricCard('At Risk', `${atRiskStudents} (${formatPercentage(atRiskPercentage)})`, atRiskStudents > 0 ? { value: atRiskStudents, unit: ' students', period: 'need attention' } : null, '⚠️')}
             ${UIComponents.createMetricCard('Avg Progress', formatPercentage(avgProgress), null, '📈')}
             ${UIComponents.createMetricCard('Avg Score', formatNumber(avgScore, 1), null, '🏆')}
         `;

@@ -220,37 +220,40 @@ export class UIComponents {
             <div class="metric-card" style="
                 background: var(--white);
                 border-radius: 10px;
-                padding: 1.25rem;
+                padding: 1rem;
                 border-left: 4px solid var(--primary);
                 box-shadow: var(--shadow-sm);
                 transition: transform 0.2s, box-shadow 0.2s;
-                min-height: 120px;
+                min-height: 100px;
+                height: 100px;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
+                width: 100%;
+                box-sizing: border-box;
             ">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
                     <div style="
-                        font-size: 0.875rem;
+                        font-size: 0.75rem;
                         color: var(--gray-600);
                         font-weight: 500;
                         line-height: 1.2;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
                     ">${title}</div>
                     ${icon ? `<div style="
-                        font-size: 1.5rem;
-                        opacity: 0.7;
-                        background: var(--accent);
-                        width: 36px;
-                        height: 36px;
-                        border-radius: 8px;
+                        font-size: 1.2rem;
+                        opacity: 0.8;
+                        width: 24px;
+                        height: 24px;
                         display: flex;
                         align-items: center;
                         justify-content: center;
                     ">${icon}</div>` : ''}
                 </div>
-                <div>
+                <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
                     <div style="
-                        font-size: 1.75rem;
+                        font-size: 1.5rem;
                         font-weight: 700;
                         color: var(--gray-800);
                         margin-bottom: 0.25rem;
