@@ -634,9 +634,48 @@ export class UIComponents {
                     color: white;
                 }
 
+                .metric-card {
+                    background: var(--white);
+                    border-radius: 10px;
+                    padding: 1rem;
+                    border-left: 4px solid var(--primary);
+                    box-shadow: var(--shadow-sm);
+                    transition: transform 0.2s, box-shadow 0.2s;
+                    height: 100px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    box-sizing: border-box;
+                    flex: 1;
+                    min-width: 0;
+                }
+
                 .metric-card:hover {
                     transform: translateY(-2px);
-                    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                }
+
+                /* Mobile responsive for student stats */
+                @media (max-width: 768px) {
+                    .student-header > div:first-child {
+                        flex-direction: column !important;
+                        align-items: flex-start !important;
+                        gap: 1rem;
+                    }
+
+                    .student-header > div:first-child > div:last-child {
+                        align-self: stretch;
+                        justify-content: center;
+                    }
+
+                    #student-stats > div {
+                        flex-direction: column !important;
+                        gap: 0.5rem !important;
+                    }
+
+                    .metric-card {
+                        margin-bottom: 0.5rem;
+                    }
                 }
             `;
             document.head.appendChild(styles);

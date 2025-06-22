@@ -86,12 +86,15 @@ export class StudentModule {
                         </div>
                     </div>
 
-                    <!-- Quick Stats - Dynamic Data with New Style -->
+                    <!-- Quick Stats - SINGLE ROW LAYOUT -->
                     <div id="student-stats" style="
                         margin-bottom: 2rem;
                         width: 100%;
                     ">
-                        <!-- Stats will be rendered here dynamically -->
+                        <!-- Single Row: All cards -->
+                        <div style="display: flex; gap: 1rem;" id="stats-container">
+                            <!-- Cards will be generated dynamically -->
+                        </div>
                     </div>
 
                     <!-- CSS Variables for styling -->
@@ -271,43 +274,75 @@ export class StudentModule {
         setInner('students-list', studentsHTML);
     }
 
+    // Configuration for stats cards
+    getStatsConfig() {
+        return [
+            {
+                title: "Total Students",
+                icon: "👥",
+                getValue: (data) => data.length,
+                color: "var(--primary)"
+            },
+            {
+                title: "Active (7 days)",
+                icon: "✅",
+                getValue: (data) => data.filter(s => s.days_since_active <= 7).length,
+                color: "#22c55e"
+            },
+            {
+                title: "At Risk",
+                icon: "⚠️",
+                getValue: (data) => {
+                    const atRisk = data.filter(s => s.risk_level === 'High' || s.risk_level === 'Medium').length;
+                    const percentage = data.length > 0 ? ((atRisk / data.length) * 100).toFixed(1) : 0;
+                    return `${atRisk} (${percentage}%)`;
+                },
+                color: "#ef4444"
+            },
+            {
+                title: "Avg Progress",
+                icon: "📈",
+                getValue: (data) => {
+                    if (data.length === 0) return "0%";
+                    const avg = data.reduce((sum, s) => sum + (s.progress_percentage || 0), 0) / data.length;
+                    return `${avg.toFixed(1)}%`;
+                },
+                color: "#8b5cf6"
+            },
+            {
+                title: "Avg Score",
+                icon: "🏆",
+                getValue: (data) => {
+                    if (data.length === 0) return "0";
+                    const avg = data.reduce((sum, s) => sum + (s.average_score || 0), 0) / data.length;
+                    return avg.toFixed(1);
+                },
+                color: "#f59e0b"
+            }
+        ];
+    }
+
     renderStudentStats() {
         if (!this.students.length) return;
 
-        const totalStudents = this.students.length;
-        const activeStudents = this.students.filter(s => s.days_since_active <= 7).length;
-        const atRiskStudents = this.students.filter(s => s.risk_level === 'High' || s.risk_level === 'Medium').length;
-        const avgProgress = this.students.reduce((sum, s) => sum + (s.progress_percentage || 0), 0) / totalStudents;
-        const avgScore = this.students.reduce((sum, s) => sum + (s.average_score || 0), 0) / totalStudents;
+        const statsConfig = this.getStatsConfig();
+        const container = document.getElementById('stats-container');
 
-        // Calculate at-risk percentage
-        const atRiskPercentage = totalStudents > 0 ? (atRiskStudents / totalStudents * 100) : 0;
+        if (!container) return;
 
-        // Use the new style structure with dynamic data
-        const statsHTML = `
-            <!-- First Row: 3 cards -->
-            <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
-                ${this.createStyledMetricCard('Total Students', totalStudents, '👥')}
-                ${this.createStyledMetricCard('Active (7 days)', activeStudents, '✅')}
-                ${this.createStyledMetricCard('At Risk', `${atRiskStudents} (${formatPercentage(atRiskPercentage)})`, '⚠️')}
-            </div>
-            <!-- Second Row: 2 cards -->
-            <div style="display: flex; gap: 1rem;">
-                ${this.createStyledMetricCard('Avg Progress', formatPercentage(avgProgress), '📈')}
-                ${this.createStyledMetricCard('Avg Score', formatNumber(avgScore, 1), '🏆')}
-            </div>
-        `;
-
-        setInner('student-stats', statsHTML);
+        const statsHTML = statsConfig.map(config => this.createStatsCard(config, this.students)).join('');
+        container.innerHTML = statsHTML;
     }
 
-    createStyledMetricCard(title, value, icon) {
+    createStatsCard(config, data) {
+        const value = config.getValue(data);
+
         return `
             <div class="metric-card" style="
                 background: var(--white);
                 border-radius: 10px;
                 padding: 1rem;
-                border-left: 4px solid var(--primary);
+                border-left: 4px solid ${config.color};
                 box-shadow: var(--shadow-sm);
                 transition: transform 0.2s, box-shadow 0.2s;
                 height: 100px;
@@ -326,7 +361,7 @@ export class StudentModule {
                         line-height: 1.2;
                         text-transform: uppercase;
                         letter-spacing: 0.5px;
-                    ">${title}</div>
+                    ">${config.title}</div>
                     <div style="
                         font-size: 1.2rem;
                         opacity: 0.8;
@@ -335,7 +370,7 @@ export class StudentModule {
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                    ">${icon}</div>
+                    ">${config.icon}</div>
                 </div>
                 <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
                     <div style="
