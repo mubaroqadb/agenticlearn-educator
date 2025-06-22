@@ -5,6 +5,7 @@ export const API_CONFIG = {
     ENDPOINTS: {
         // ✅ CORE ENDPOINTS - Per Backend Documentation
         EDUCATOR_PROFILE: "/api/agenticlearn/educator/profile",
+        PROFILE: "/api/agenticlearn/educator/profile",  // Alias for profile module
 
         // ✅ ANALYTICS & DASHBOARD - Fixed endpoint per backend documentation
         DASHBOARD_ANALYTICS: "/api/agenticlearn/educator/analytics/dashboard",
@@ -52,7 +53,10 @@ export const API_CONFIG = {
         REPORTS_GENERATE: "/api/agenticlearn/educator/reports/generate",
         REPORTS_HISTORY: "/api/agenticlearn/educator/reports/history",
         REPORTS_DOWNLOAD: "/api/agenticlearn/educator/reports/download",
-        ADVANCED_ANALYTICS: "/api/agenticlearn/educator/analytics/advanced"
+        ADVANCED_ANALYTICS: "/api/agenticlearn/educator/analytics/advanced",
+
+        // ✅ DATA POPULATION (for testing)
+        DATA_POPULATE: "/api/agenticlearn/educator/data/populate"
     }
 };
 
