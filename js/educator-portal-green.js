@@ -749,6 +749,8 @@ function renderReports() {
 // ===== RENDERING FUNCTIONS =====
 function renderHeader() {
     if (state.educator) {
+        console.log('🎨 Rendering header for:', state.educator.name);
+
         // Update header profile section
         const headerElement = document.querySelector('header');
         if (headerElement) {
@@ -763,6 +765,7 @@ function renderHeader() {
                         ${state.educator.name.charAt(0)}
                     </div>
                 `;
+                console.log('✅ Header profile section updated');
             }
         }
 
@@ -770,7 +773,12 @@ function renderHeader() {
         const sidebarName = document.getElementById('sidebar-educator-name');
         if (sidebarName) {
             sidebarName.textContent = state.educator.name;
+            console.log('✅ Sidebar name updated:', state.educator.name);
+        } else {
+            console.warn('⚠️ Sidebar name element not found');
         }
+    } else {
+        console.warn('⚠️ No educator data available for header rendering');
     }
 }
 
