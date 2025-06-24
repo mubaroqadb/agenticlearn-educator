@@ -118,16 +118,19 @@ async function initializePortal() {
     try {
         // 1. Test backend connection - NO FALLBACK per green computing requirements
         const connectionResult = await api.testConnection();
-        
+
         if (!connectionResult.success) {
             throw new Error(`Backend connection failed: ${connectionResult.error || 'Unknown error'}`);
         }
-        
+
+        console.log('🔗 Connection result:', connectionResult);
+
         // 2. Store educator profile
         state.educator = connectionResult.profile;
         state.isBackendConnected = true;
 
         console.log('👤 Educator profile loaded:', state.educator?.name);
+        console.log('📋 Full educator data:', state.educator);
 
         // 3. Initialize UI with retry mechanism
         renderHeader();
@@ -159,7 +162,8 @@ async function initializePortal() {
         // 4. Load initial page
         await loadPage('beranda');
         
-        // 5. Show success notification
+        // 5. Show success notification with debug
+        console.log('📢 Showing welcome notification for:', state.educator?.name);
         UIComponents.showNotification(
             `✅ Connected to AgenticAI Backend! Welcome ${state.educator?.name || 'Educator'}`,
             'success'
