@@ -44,25 +44,9 @@ class ProfileModule {
             this.profile = response.profile || response.data || response;
 
         } catch (error) {
-            this.profile = this.getDefaultProfile();
+            // No fallback data per green computing principles
+            throw new Error('Failed to load profile from backend: ' + error.message);
         }
-    }
-
-    getDefaultProfile() {
-        return {
-            name: 'Dr. Sarah Johnson',
-            email: 'sarah.johnson@agenticlearn.edu',
-            role: 'Senior Educator',
-            department: 'Digital Literacy',
-            phone: '+1 (555) 123-4567',
-            bio: 'Passionate educator with 10+ years of experience in digital literacy and online learning.',
-            preferences: {
-                notifications: true,
-                theme: 'green',
-                language: 'en',
-                timezone: 'UTC+7'
-            }
-        };
     }
 
     renderProfileInterface() {

@@ -84,26 +84,20 @@ class SimpleAPIClient {
 
     async testConnection() {
         console.log("🔄 Testing AgenticAI backend connection...");
-        console.log("🔗 Testing endpoint:", `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.DASHBOARD_ANALYTICS}`);
+        console.log("🔗 Testing profile endpoint:", `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.EDUCATOR_PROFILE}`);
 
-        const response = await this.request(API_CONFIG.ENDPOINTS.DASHBOARD_ANALYTICS);
-        console.log("📥 AgenticAI response:", response);
+        // Get real profile data from backend
+        const profileResponse = await this.request(API_CONFIG.ENDPOINTS.EDUCATOR_PROFILE);
+        console.log("📥 Profile response:", profileResponse);
 
-        // ✅ BACKEND WORKS - Parse real response from AgenticAI
-        if (response && response.success && response.data) {
+        if (profileResponse && profileResponse.success && profileResponse.profile) {
             console.log("✅ AgenticAI backend connection successful!");
             return {
                 success: true,
-                profile: {
-                    name: "Dr. Sarah Johnson",
-                    email: "sarah.johnson@agenticlearn.com",
-                    role: "educator",
-                    backend_status: "connected",
-                    data_source: response.source || "database"
-                }
+                profile: profileResponse.profile
             };
         } else {
-            console.error("❌ AgenticAI backend response invalid:", response);
+            console.error("❌ AgenticAI backend response invalid:", profileResponse);
             throw new Error("Backend connection failed - no fallback allowed per Green Computing principles");
         }
     }
