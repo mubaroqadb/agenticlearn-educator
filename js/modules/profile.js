@@ -365,7 +365,23 @@ class ProfileModule {
         // Save to backend
         await apiClient.updateUserProfile(formData);
 
-        UIComponents.showNotification('Profile updated successfully!', 'success');
+        // Update global state to refresh UI components
+        if (window.educatorPortal && window.educatorPortal.state) {
+            window.educatorPortal.state.educator = { ...window.educatorPortal.state.educator, ...formData };
+
+            // Re-render header with updated data
+            if (window.renderHeader) {
+                window.renderHeader();
+            }
+
+            // Show updated welcome message
+            UIComponents.showNotification(
+                `✅ Profile updated! Welcome ${formData.name}`,
+                'success'
+            );
+        } else {
+            UIComponents.showNotification('Profile updated successfully!', 'success');
+        }
 
         this.isEditing = false;
         this.renderProfileInterface();

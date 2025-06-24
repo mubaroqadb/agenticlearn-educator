@@ -148,6 +148,9 @@ async function initializePortal() {
             refreshData: refreshData
         };
 
+        // 7. Expose global functions for modules
+        window.renderHeader = renderHeader;
+
         // 7. Expose global API client for modules
         window.apiClient = api;
         
