@@ -126,9 +126,20 @@ async function initializePortal() {
         // 2. Store educator profile
         state.educator = connectionResult.profile;
         state.isBackendConnected = true;
-        
+
+        console.log('👤 Educator profile loaded:', state.educator?.name);
+
         // 3. Initialize UI
         renderHeader();
+
+        // 3.1. Ensure sidebar is updated (fallback)
+        setTimeout(() => {
+            const sidebarName = document.getElementById('sidebar-educator-name');
+            if (sidebarName && sidebarName.textContent === 'Loading...' && state.educator?.name) {
+                sidebarName.textContent = state.educator.name;
+                console.log('✅ Sidebar name updated via fallback:', state.educator.name);
+            }
+        }, 100);
         
         // 4. Load initial page
         await loadPage('beranda');
