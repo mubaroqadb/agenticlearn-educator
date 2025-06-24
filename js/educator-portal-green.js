@@ -129,17 +129,32 @@ async function initializePortal() {
 
         console.log('👤 Educator profile loaded:', state.educator?.name);
 
-        // 3. Initialize UI
+        // 3. Initialize UI with retry mechanism
         renderHeader();
 
-        // 3.1. Ensure sidebar is updated (fallback)
-        setTimeout(() => {
+        // 3.1. Robust sidebar update with multiple retries
+        let retryCount = 0;
+        const maxRetries = 10;
+        const updateSidebar = () => {
             const sidebarName = document.getElementById('sidebar-educator-name');
-            if (sidebarName && sidebarName.textContent === 'Loading...' && state.educator?.name) {
+            if (sidebarName && state.educator?.name) {
                 sidebarName.textContent = state.educator.name;
-                console.log('✅ Sidebar name updated via fallback:', state.educator.name);
+                console.log('✅ Sidebar name updated:', state.educator.name);
+                return true;
+            } else {
+                retryCount++;
+                if (retryCount < maxRetries) {
+                    console.log(`⏳ Retry ${retryCount}/${maxRetries} - Sidebar element not ready`);
+                    setTimeout(updateSidebar, 50);
+                } else {
+                    console.error('❌ Failed to update sidebar after', maxRetries, 'retries');
+                }
+                return false;
             }
-        }, 100);
+        };
+
+        // Start sidebar update process
+        setTimeout(updateSidebar, 50);
         
         // 4. Load initial page
         await loadPage('beranda');
