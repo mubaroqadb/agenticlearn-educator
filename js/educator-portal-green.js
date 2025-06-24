@@ -737,19 +737,28 @@ function renderReports() {
 
 // ===== RENDERING FUNCTIONS =====
 function renderHeader() {
-    const headerElement = document.querySelector('header');
-    if (headerElement && state.educator) {
-        const profileSection = headerElement.querySelector('.profile-section');
-        if (profileSection) {
-            profileSection.innerHTML = `
-                <div class="profile-info">
-                    <div class="profile-name">${state.educator.name}</div>
-                    <div class="profile-role">${state.educator.role}</div>
-                </div>
-                <div class="profile-avatar">
-                    ${state.educator.name.charAt(0)}
-                </div>
-            `;
+    if (state.educator) {
+        // Update header profile section
+        const headerElement = document.querySelector('header');
+        if (headerElement) {
+            const profileSection = headerElement.querySelector('.profile-section');
+            if (profileSection) {
+                profileSection.innerHTML = `
+                    <div class="profile-info">
+                        <div class="profile-name">${state.educator.name}</div>
+                        <div class="profile-role">${state.educator.role}</div>
+                    </div>
+                    <div class="profile-avatar">
+                        ${state.educator.name.charAt(0)}
+                    </div>
+                `;
+            }
+        }
+
+        // Update sidebar footer name
+        const sidebarName = document.getElementById('sidebar-educator-name');
+        if (sidebarName) {
+            sidebarName.textContent = state.educator.name;
         }
     }
 }

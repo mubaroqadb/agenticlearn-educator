@@ -365,9 +365,16 @@ class ProfileModule {
         // Save to backend
         await apiClient.updateUserProfile(formData);
 
+        // Refresh profile data from backend to ensure consistency
+        const freshProfile = await apiClient.getProfile();
+        const updatedProfile = freshProfile.profile || freshProfile.data || freshProfile;
+
+        // Update local profile with fresh data
+        this.profile = updatedProfile;
+
         // Update global state to refresh UI components
         if (window.educatorPortal && window.educatorPortal.state) {
-            window.educatorPortal.state.educator = { ...window.educatorPortal.state.educator, ...formData };
+            window.educatorPortal.state.educator = updatedProfile;
 
             // Re-render header with updated data
             if (window.renderHeader) {
@@ -376,7 +383,7 @@ class ProfileModule {
 
             // Show updated welcome message
             UIComponents.showNotification(
-                `✅ Profile updated! Welcome ${formData.name}`,
+                `✅ Profile updated! Welcome ${updatedProfile.name}`,
                 'success'
             );
         } else {
