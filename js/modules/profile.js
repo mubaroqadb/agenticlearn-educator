@@ -12,8 +12,6 @@ class ProfileModule {
     }
 
     async initialize() {
-        console.log('👤 Initializing Profile Module...');
-
         try {
             // First try to load from cache for faster display
             this.loadFromCache();
@@ -23,10 +21,7 @@ class ProfileModule {
 
             this.renderProfileInterface();
             this.bindEventHandlers();
-            console.log('✅ Profile Module initialized successfully');
         } catch (error) {
-            console.error('❌ Profile Module initialization failed:', error);
-            // Don't throw error, just show notification
             UIComponents.showNotification('Profile initialization failed: ' + error.message, 'error');
         }
     }
@@ -36,23 +31,19 @@ class ProfileModule {
         if (savedProfile) {
             try {
                 this.profile = JSON.parse(savedProfile);
-                console.log('⚡ Profile loaded from cache for fast display');
             } catch (error) {
-                console.warn('⚠️ Failed to parse cached profile:', error);
+                // Silent fail for cache parsing errors
             }
         }
     }
 
     async loadProfile() {
         try {
-            console.log('🔄 Loading profile from backend...');
             const response = await apiClient.getProfile();
             // Backend returns profile in different structure
             this.profile = response.profile || response.data || response;
-            console.log('✅ Profile loaded from backend:', this.profile);
 
         } catch (error) {
-            console.warn('⚠️ Backend profile load failed, using default:', error);
             this.profile = this.getDefaultProfile();
         }
     }
@@ -75,16 +66,12 @@ class ProfileModule {
     }
 
     renderProfileInterface() {
-        console.log('🎨 Rendering Profile Interface...');
-
         // Get profile page (should already exist and be active from showPage)
         const profilePage = document.getElementById('page-profile');
         if (!profilePage) {
-            console.error('❌ Profile page not found!');
             return;
         }
 
-        console.log('✅ Profile page found and should be active');
         const container = profilePage;
 
         const profileHTML = `
@@ -244,7 +231,6 @@ class ProfileModule {
         `;
 
         container.innerHTML = profileHTML;
-        console.log('✅ Profile interface rendered');
     }
 
     renderProfileForm() {
@@ -373,14 +359,11 @@ class ProfileModule {
             bio: document.getElementById('profile-bio').value
         };
 
-        console.log('💾 Saving profile:', formData);
-
         // Update local profile
         this.profile = { ...this.profile, ...formData };
 
         // Save to backend
-        const response = await apiClient.updateUserProfile(formData);
-        console.log('✅ Profile saved to backend:', response);
+        await apiClient.updateUserProfile(formData);
 
         UIComponents.showNotification('Profile updated successfully!', 'success');
 
