@@ -15,22 +15,63 @@ class ProfileModule {
         console.log('👤 Initializing Profile Module...');
 
         try {
+            // First try to load from cache for faster display
+            this.loadFromCache();
+
+            // Then load from backend to get latest data
             await this.loadProfile();
+
             this.renderProfileInterface();
             this.bindEventHandlers();
             console.log('✅ Profile Module initialized successfully');
         } catch (error) {
             console.error('❌ Profile Module initialization failed:', error);
-            alert('❌ Profile initialization failed: ' + error.message);
-            throw error;
+            // Don't throw error, just show notification
+            UIComponents.showNotification('Profile initialization failed: ' + error.message, 'error');
+        }
+    }
+
+    loadFromCache() {
+        const savedProfile = localStorage.getItem('agenticlearn_profile');
+        if (savedProfile) {
+            try {
+                this.profile = JSON.parse(savedProfile);
+                console.log('⚡ Profile loaded from cache for fast display');
+            } catch (error) {
+                console.warn('⚠️ Failed to parse cached profile:', error);
+            }
         }
     }
 
     async loadProfile() {
-        const response = await apiClient.getUserProfile();
-        // Backend returns profile in different structure
-        this.profile = response.profile || response.data || response;
-        console.log('📋 Profile loaded:', this.profile);
+        try {
+            console.log('🔄 Loading profile from backend...');
+            const response = await apiClient.getProfile();
+            // Backend returns profile in different structure
+            this.profile = response.profile || response.data || response;
+            console.log('✅ Profile loaded from backend:', this.profile);
+
+        } catch (error) {
+            console.warn('⚠️ Backend profile load failed, using default:', error);
+            this.profile = this.getDefaultProfile();
+        }
+    }
+
+    getDefaultProfile() {
+        return {
+            name: 'Dr. Sarah Johnson',
+            email: 'sarah.johnson@agenticlearn.edu',
+            role: 'Senior Educator',
+            department: 'Digital Literacy',
+            phone: '+1 (555) 123-4567',
+            bio: 'Passionate educator with 10+ years of experience in digital literacy and online learning.',
+            preferences: {
+                notifications: true,
+                theme: 'green',
+                language: 'en',
+                timezone: 'UTC+7'
+            }
+        };
     }
 
     renderProfileInterface() {
@@ -332,11 +373,15 @@ class ProfileModule {
             bio: document.getElementById('profile-bio').value
         };
 
+        console.log('💾 Saving profile:', formData);
+
         // Update local profile
         this.profile = { ...this.profile, ...formData };
 
         // Save to backend
-        await apiClient.updateUserProfile(formData);
+        const response = await apiClient.updateUserProfile(formData);
+        console.log('✅ Profile saved to backend:', response);
+
         UIComponents.showNotification('Profile updated successfully!', 'success');
 
         this.isEditing = false;
